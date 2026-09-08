@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học phần: Mạng máy tính (INT4401) - Chương 1: Tổng quan về Mạng máy tính</title>
+    <style>
+        :root {
+            --primary-color: #0b3c5d;
+            --secondary-color: #328cc1;
+            --accent-color: #d9b310;
+            --dark-color: #1d2731;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f4f6f9;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #082d47);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .vhu-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        .main-content {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .sidebar {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li.active a {
+            background-color: #e6f2ff;
+            color: var(--primary-color);
+            padding-left: 18px;
+        }
+
+        h2.section-title {
+            color: var(--primary-color);
+            border-left: 6px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        h2.section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        h3.subsection-title {
+            color: var(--secondary-color);
+            margin: 25px 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul.list, ol.list {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        ul.list li, ol.list li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background-color: #f0f7f4;
+            border-left: 4px solid var(--success-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .highlight-box h4 {
+            color: #1e7e34;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .theory-diagram {
+            border: 1px solid #ddd;
+            background-color: #fafbfc;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .diagram-art {
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 12px;
+            line-height: 1.2;
+            color: var(--primary-color);
+            background-color: #1d2731;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: left;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 25px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Password protection controls */
+        .password-guard {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 1px solid #ffeeba;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .password-guard h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .password-guard input[type="password"] {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 250px;
+            margin-right: 10px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .password-guard input[type="password"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(11, 60, 93, 0.5);
+        }
+
+        .password-guard button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .password-guard button:hover {
+            background-color: #082d47;
+        }
+
+        .teacher-key-active {
+            border: 2px solid var(--success-color) !important;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb) !important;
+        }
+
+        .teacher-key-active h3 {
+            color: #155724 !important;
+        }
+
+        /* Teacher-only content block */
+        .teacher-content {
+            display: none;
+            background-color: #e2f0d9;
+            border-left: 5px solid var(--success-color);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #1e4620;
+        }
+
+        .correct-answer-badge {
+            display: inline-block;
+            background-color: var(--success-color);
+            color: var(--white);
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        .question-card {
+            background-color: var(--light-bg);
+            border: 1px solid #e1e4e8;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-color: var(--secondary-color);
+        }
+
+        .question-num {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .options-list {
+            list-style: none;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        .options-list li {
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            border: 1px solid #e1e4e8;
+            background-color: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .options-list li:hover {
+            background-color: #f1f8ff;
+            border-color: #0366d6;
+        }
+
+        .options-list li.marked-correct {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+            color: #155724 !important;
+            font-weight: 600;
+        }
+
+        .exercise-card {
+            border: 1px solid #e1e4e8;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            background-color: var(--white);
+            box-shadow: var(--box-shadow);
+        }
+
+        .exercise-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #e1e4e8;
+            padding-bottom: 8px;
+        }
+
+        .exercise-scenario {
+            background-color: #fdfffe;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .vhu-info {
+            background-color: #e8f4fd;
+            border: 1px solid #b8daff;
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .vhu-info-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            font-size: 0.9rem;
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .tab-menu {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="vhu-logo">TRƯỜNG ĐẠI HỌC VĂN HIẾN</div>
+            <h1>BÀI GIẢNG CHI TIẾT: CHƯƠNG 1 - TỔNG QUAN MẠNG MÁY TÍNH</h1>
+            <p>Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ) | Giảng viên hỗ trợ học tập chuyên sâu</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+
+            <div class="vhu-info">
+                <div class="vhu-info-icon">🎓</div>
+                <div>
+                    <strong>Tài liệu biên soạn chuẩn sư phạm đại học:</strong> Giáo trình được hệ thống hoá theo chương trình đào tạo của Khoa Công nghệ thông tin - Đại học Văn Hiến, dựa trên tài liệu chuẩn của ThS. Hồ Văn Ngọc và TS. Nguyễn Quang Tấn (2025).
+                </div>
+            </div>
+
+            <!-- Tab Menu -->
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="switchTab('theory')">I. PHẦN LÝ THUYẾT CHUYÊN SÂU</button>
+                <button class="tab-btn" onclick="switchTab('practice')">II. PHẦN THỰC HÀNH & ĐÁP ÁN</button>
+            </div>
+
+            <!-- TAB 1: THEORY -->
+            <div id="theory-tab" class="tab-content active">
+                
+                <!-- SECTION 1.1 -->
+                <h2 id="theory-1.1" class="section-title">1.1. Mở đầu</h2>
+                <p>
+                    Sự ra đời của mạng máy tính bắt nguồn từ nhu cầu cốt lõi của con người: <strong>chia sẻ tài nguyên</strong> và <strong>giao tiếp trực tuyến</strong> [83]. Tài nguyên ở đây có thể là các ứng dụng phần mềm, các nguồn cơ sở dữ liệu dùng chung, hoặc các thiết bị ngoại vi đắt tiền như máy in, máy quét, hệ thống lưu trữ dung lượng lớn [83, 88].
+                </p>
+                <p>
+                    Trước khi mạng máy tính xuất hiện và phổ biến, mỗi người dùng phải hoạt động một cách độc lập trên một hệ thống cục bộ riêng biệt [84, 91]. Để sử dụng một máy in, người ta buộc phải sao chép dữ liệu ra thiết bị lưu trữ di động (băng từ, đĩa mềm), rồi di chuyển vật lý đến máy tính được kết nối trực tiếp với máy in đó [84]. Quy trình thủ công này gây tốn kém thời gian, làm suy giảm năng suất làm việc và tăng chi phí trang bị phần cứng [84, 88].
+                </p>
+                <p>
+                    Sự kết hợp chặt chẽ giữa máy tính điện tử và công nghệ truyền dữ liệu (viễn thông) đã tạo ra một cuộc cách mạng vĩ đại trong việc tổ chức và khai thác hệ thống thông tin [84-85]. Thay vì phụ thuộc hoàn toàn vào một máy tính lớn (mainframe) duy nhất hoạt động tập trung, mạng máy tính cho phép phân tán năng lực xử lý đến các máy tính đơn lẻ kết nối với nhau, cùng phối hợp thực hiện các tác vụ phức tạp một cách linh hoạt, tạo lập nên môi trường làm việc phân tán và chia sẻ tối ưu [85].
+                </p>
+
+                <!-- SECTION 1.2 -->
+                <h2 id="theory-1.2" class="section-title">1.2. Các khái niệm cơ bản về mạng máy tính</h2>
+                
+                <h3 class="subsection-title">1.2.1. Định nghĩa và các thành phần cốt lõi</h3>
+                <p>
+                    Theo giáo trình chuẩn ngành CNTT Đại học Văn Hiến, các thuật ngữ nền tảng được định nghĩa chặt chẽ như sau:
+                </p>
+                <ul class="list">
+                    <li><strong>Mạng máy tính (Computer Network):</strong> Là một tập hợp các thiết bị tính toán (máy tính cá nhân, máy chủ, điện thoại thông minh, máy tính bảng...) được kết nối vật lý hoặc phi vật lý với nhau bằng các liên kết truyền thông nhằm mục đích chia sẻ tài nguyên và giao tiếp với nhau theo một quy chuẩn nhất quán [86].</li>
+                    <li><strong>Nút mạng (Node):</strong> Bất kỳ thiết bị đầu cuối hay thiết bị trung gian nào được gán địa chỉ định danh và kết nối vào hệ thống mạng, có khả năng gửi, nhận hoặc chuyển tiếp thông tin dữ liệu [86]. Ví dụ: Máy tính, máy chủ, Router, Switch, IP Camera [86].</li>
+                    <li><strong>Đường truyền (Transmission Medium):</strong> Phương tiện vật lý hữu tuyến hoặc sóng vô tuyến tầm xa được sử dụng làm môi trường lan truyền tín hiệu mang dữ liệu giữa các nút mạng [86-87]. Ví dụ: Cáp đồng xoắn đôi, cáp quang, sóng điện từ Wi-Fi [87].</li>
+                    <li><strong>Giao thức (Protocol):</strong> Tập hợp các quy tắc, chuẩn hóa cú pháp, ngữ nghĩa và thời gian định hình cách thức truyền thông, đóng gói dữ liệu và xử lý lỗi trên mạng [87, 208]. Ví dụ: Giao thức IP, TCP, HTTP [87].</li>
+                    <li><strong>Dữ liệu (Data) và Thông tin (Information):</strong> Dữ liệu là tập hợp các đại lượng biểu diễn dưới dạng bit nhị phân truyền trên đường truyền mạng [87, 136]. Thông tin là dữ liệu đã qua xử lý, sắp xếp và mang ý nghĩa thực tế đối với người dùng cuối [87].</li>
+                    <li><strong>Tài nguyên mạng (Resource):</strong> Tất cả phần cứng (máy in, ổ đĩa), phần mềm (công cụ cấu hình, cơ sở dữ liệu) và dịch vụ (kết nối Internet) được chia sẻ dùng chung trong hệ thống mạng [88-89].</li>
+                </ul>
+
+                <div class="theory-diagram">
+                    <div class="diagram-art">
++---------------+                  +---------------+
+|   Nút Mạng A  |                  |   Nút Mạng B  |
+|  (PC Client)  |                  | (Web Server)  |
++-------+-------+                  +-------+-------+
+        |                                  |
+        |      Gửi yêu cầu mạng (Request)   |
+        +=================================>|
+        |   Tuân thủ Giao thức HTTP/TCP    |
+        |                                  |
+        |      Trả dữ liệu (Response)      |
+        |<=================================+
+        |    Thông qua cáp quang/Wi-Fi     |
+        v                                  v
+    (Vật lý) <~~~~~~~~~~~~~~~~~~~~~~~~~~> (Vật lý)
+                 Môi trường truyền dẫn
+                    (Cáp/Sóng RF)
+                    </div>
+                    <div class="diagram-title">Hình 1.1: Sơ đồ tương tác logic và vật lý giữa hai nút mạng đồng cấp thông qua giao thức truyền thông chung</div>
+                </div>
+
+                <h3 class="subsection-title">1.2.2. Lợi ích của mạng máy tính</h3>
+                <p>
+                    Việc xây dựng hệ thống mạng máy tính mang lại các lợi ích to lớn sau cho cá nhân và tổ chức:
+                </p>
+                <ul class="list">
+                    <li><strong>Chia sẻ tài nguyên phần cứng và phần mềm:</strong> Tiết kiệm chi phí đầu tư thiết bị đắt tiền bằng cách cho phép nhiều máy tính dùng chung máy in, máy quét, dung lượng lưu trữ lớn trên máy chủ SAN/NAS [88-89].</li>
+                    <li><strong>Truy cập thông tin tập trung:</strong> Quản lý cơ sở dữ liệu đồng bộ, giúp nhân viên truy xuất thông tin thời gian thực nhanh chóng, đồng thời hỗ trợ làm việc nhóm, cộng tác từ xa tiện lợi [89-91].</li>
+                    <li><strong>Nâng cao tính sẵn sàng và tin cậy:</strong> Nếu một máy trạm bị hỏng hóc vật lý, dữ liệu và công việc vẫn được lưu trữ an toàn trên hệ thống máy chủ sao lưu đám mây, giúp doanh nghiệp duy trì hoạt động liên tục [90-91].</li>
+                    <li><strong>Thương mại điện tử và kết nối toàn cầu:</strong> Mở ra kỷ nguyên mua sắm trực tuyến, giao dịch ngân hàng trực tuyến và giao tiếp vượt biên giới [90].</li>
+                </ul>
+
+                <!-- SECTION 1.3 -->
+                <h2 id="theory-1.3" class="section-title">1.3. Lịch sử phát triển mạng máy tính</h2>
+                <p>
+                    Lịch sử phát triển của mạng máy tính là quá trình tiến hóa không ngừng của công nghệ phần cứng và các giao thức truyền thông tin trực tuyến, được chia làm các cột mốc lịch sử vĩ đại:
+                </p>
+                <ol class="list">
+                    <li><strong>Thập niên 1950 - Đầu 1960s (Khởi đầu):</strong> Kỷ nguyên của các máy tính lớn (Mainframe) hoạt động độc lập [91-92]. Sự phát minh transistor bán dẫn (1947) và vi mạch tích hợp IC giúp tăng năng lực tính toán nhưng máy tính vẫn chưa có khả năng kết nối liên lạc trực tiếp với nhau [92].</li>
+                    <li><strong>Thập niên 1960 (Ý tưởng chuyển mạch gói & ARPANET):</strong> Do sức ép Chiến tranh Lạnh, Bộ Quốc phòng Mỹ thành lập cơ quan ARPA để nghiên cứu mạng truyền thông bền bỉ, có khả năng chịu lỗi cao [92-93]. Kỹ thuật chuyển mạch gói (Packet Switching) ra đời thay thế chuyển mạch kênh [93]. Năm 1969, mạng <strong>ARPANET</strong> được thiết lập thành công nối 4 nút mạng đầu tiên: UCLA, Stanford, UCSB, và Đại học Utah [93].</li>
+                    <li><strong>Thập niên 1970 - 1980 (Sự phát triển giao thức cốt lõi):</strong> Bộ giao thức <strong>TCP/IP</strong> được Vint Cerf và Bob Kahn phát triển để kết nối các mạng khác nhau [95]. Ngày <strong>01/01/1983</strong>, TCP/IP chính thức trở thành chuẩn giao thức duy nhất cho ARPANET, khai sinh ra mạng Internet toàn cầu [95]. Hệ thống phân giải tên miền (DNS) ra đời năm 1984 giúp ánh xạ IP sang tên miền dễ nhớ [95-96].</li>
+                    <li><strong>Thập niên 1980 - 1990 (Thương mại hóa toàn cầu):</strong> NSFNET đóng vai trò xương sống cho Internet phát triển bùng nổ [96]. Năm 1989, nhà khoa học Tim Berners-Lee tại CERN phát minh ra <strong>World Wide Web (WWW)</strong>, sử dụng giao thức HTTP và ngôn ngữ HTML, mở ra giao diện trực quan cho người dùng [97].</li>
+                    <li><strong>Thập niên 1990 đến nay (Mạng không dây, IoT và Cloud):</strong> Sự bùng nổ của mạng không dây Wi-Fi (IEEE 802.11) và các thế hệ di động 3G/4G/5G/6G [98]. Các xu hướng công nghệ hiện đại như Điện toán đám mây (Cloud Computing), Internet vạn vật (IoT), AI và Big Data biến mạng máy tính thành mạch máu của kỷ nguyên số [98].</li>
+                </ol>
+
+                <!-- SECTION 1.4 -->
+                <h2 id="theory-1.4" class="section-title">1.4. Phân loại mạng máy tính</h2>
+                
+                <h3 class="subsection-title">1.4.1. Theo phương thức kết nối</h3>
+                <ul class="list">
+                    <li><strong>Kết nối Point-to-Point (Điểm - Điểm):</strong> Liên kết truyền thông trực tiếp duy nhất được thiết lập giữa hai thiết bị máy tính đồng cấp [99]. Nếu một đầu kết nối gặp lỗi vật lý, đường truyền bị ngắt hoàn toàn [99, 102].</li>
+                    <li><strong>Kết nối Point-to-Multipoint (Điểm - Đa điểm):</strong> Một thiết bị trung tâm (Hub/Switch/WAP) thiết lập kết nối đồng thời đến nhiều thiết bị nhánh độc lập, mọi lưu lượng truyền thông đều buộc phải đi qua nút trung tâm này [100].</li>
+                    <li><strong>Kết nối Mesh (Lưới):</strong> Mỗi thiết bị máy tính đều thiết lập các đường kết nối trực tiếp đến tất cả các thiết bị khác trong mạng [100-101]. Kiến trúc này mang tính dự phòng cực kỳ cao, đảm bảo mạng hoạt động liên tục ngay cả khi có nhiều liên kết vật lý bị đứt gãy [101].</li>
+                </ul>
+
+                <h3 class="subsection-title">1.4.2. Theo kỹ thuật chuyển mạch</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tiêu chí so sánh</th>
+                                <th>Chuyển mạch kênh (Circuit Switching)</th>
+                                <th>Chuyển mạch gói (Packet Switching)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Cơ chế hoạt động</strong></td>
+                                <td>Thiết lập một đường truyền vật lý riêng biệt cố định giữa hai trạm trước khi truyền dữ liệu [101].</td>
+                                <td>Dữ liệu được chia nhỏ thành các gói tin (packet) độc lập tự tìm đường đi tối ưu đến đích [104-105].</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hiệu suất băng thông</strong></td>
+                                <td>Thấp (gây lãng phí băng thông nếu không có dữ liệu truyền trên kênh đã thiết lập).</td>
+                                <td>Cao (các gói tin chia sẻ đường truyền linh hoạt, tận dụng tối đa dung lượng cáp mạng).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Khả năng chịu lỗi</strong></td>
+                                <td>Kém (nếu bất kỳ nút trung gian nào trên kênh bị lỗi, kết nối truyền thông lập tức thất bại) [102].</td>
+                                <td>Cực tốt (nếu một nút/đường truyền bị nghẽn, gói tin tự động tìm tuyến đi khác thay thế) [105-106].</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Độ trễ truyền dẫn</strong></td>
+                                <td>Không đổi sau khi đã thiết lập kênh truyền.</td>
+                                <td>Biến động (phụ thuộc vào tình trạng hàng đợi, thời gian xử lý và nghẽn mạng tại các router).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ứng dụng phổ biến</strong></td>
+                                <td>Mạng điện thoại truyền thống (PSTN) [101].</td>
+                                <td>Mạng Internet hiện đại, VoIP, dịch vụ Web [105].</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="subsection-title">1.4.3. Theo phạm vi địa lý</h3>
+                <ul class="list">
+                    <li><strong>Mạng PAN (Personal Area Network):</strong> Mạng cá nhân trong phạm vi vài mét kết nối các thiết bị của một người dùng (điện thoại, tai nghe không dây, chuột máy tính) bằng Bluetooth hoặc hồng ngoại [110-111, 124].</li>
+                    <li><strong>Mạng LAN (Local Area Network):</strong> Mạng cục bộ hoạt động trong phạm vi nhỏ như toà nhà, văn phòng, trường học [106-107]. Sử dụng kiến trúc hình sao (STAR), tốc độ truyền tải cực cao (1 Gbps - 100 Gbps), độ trễ thấp và chi phí triển khai, quản trị thấp [107].</li>
+                    <li><strong>Mạng MAN (Metropolitan Area Network):</strong> Mạng đô thị kết nối nhiều mạng LAN của các doanh nghiệp, tổ chức trong phạm vi một thành phố [108]. Cung cấp hạ tầng băng thông lớn tích hợp đa dịch vụ (dữ liệu, video, âm thanh) [109].</li>
+                    <li><strong>Mạng WAN (Wide Area Network):</strong> Mạng diện rộng bao phủ phạm vi địa lý lớn nhất (quốc gia, châu lục hoặc toàn cầu) [109]. Sử dụng thiết bị định tuyến Router làm nòng cốt, tốc độ truyền dẫn bị giới hạn bởi khoảng cách địa lý xa xôi và chi phí thuê đường truyền đắt đỏ [110, 342, 347].</li>
+                </ul>
+
+                <h3 class="subsection-title">1.4.4. Theo kiến trúc quản trị mạng</h3>
+                <p>
+                    <strong>Mạng ngang hàng (Peer-to-Peer - P2P):</strong> Tất cả các máy tính trạm đều có vai trò và quyền hạn logic hoàn toàn như nhau [111, 147-148]. Mỗi máy tính vừa hoạt động như một máy khách (client) vừa là máy chủ (server) cung cấp dữ liệu [111, 397]. Ưu điểm là triển khai nhanh chóng, chi phí bằng không [148, 171]. Nhược điểm lớn nhất là quản trị phi tập trung dẫn đến an toàn thông tin rất kém và khó mở rộng khi số lượng máy tính vượt quá 10 thiết bị [148, 171].
+                </p>
+                <p>
+                    <strong>Mạng khách-chủ (Client-Server):</strong> Có sự phân cấp quyền lực logic rõ ràng [149]. Máy chủ chuyên dụng (Server) chịu trách nhiệm quản lý, lưu trữ và cung cấp tài nguyên, dịch vụ cho các máy trạm (Client) gửi yêu cầu [149]. Ưu điểm: Quản lý tập trung dữ liệu, an toàn bảo mật cực kỳ cao, khả năng mở rộng lên hàng ngàn máy trạm linh hoạt [150-151]. Nhược điểm: Chi phí đầu tư phần cứng máy chủ đắt đỏ và yêu cầu quản trị viên có trình độ chuyên môn cao [173].
+                </p>
+
+                <!-- SECTION 1.5 -->
+                <h2 id="theory-1.5" class="section-title">1.5. Môi trường truyền dẫn tín hiệu mạng</h2>
+                
+                <h3 class="subsection-title">1.5.1. Môi trường truyền có dây (Hữu tuyến)</h3>
+                <p>
+                    Đây là môi trường truyền dẫn sử dụng dây dẫn vật lý làm kênh định hướng truyền tải tín hiệu điện hoặc ánh sáng mang dữ liệu giữa các nút mạng [112]. Có 3 dòng cáp mạng tiêu biểu:
+                </p>
+                <ul class="list">
+                    <li><strong>Cáp đồng trục (Coaxial Cable):</strong> Gồm lõi đồng trung tâm truyền dữ liệu điện, bọc ngoài bởi lớp cách điện plastic, lớp lưới đồng chống nhiễu từ trường và lớp vỏ bảo vệ ngoài cùng [113]. Cáp đồng trục không bị nhiễu xuyên âm nhờ cấu trúc lõi đơn, truyền xa 100m - 500m [113, 115]. Hiện nay cáp đồng trục chủ yếu dùng cho truyền hình cáp, camera analog và mạng đường trục chuyên dụng [114].</li>
+                    <li><strong>Cáp đồng xoắn đôi (Twisted Pair):</strong> Gồm 8 sợi dây đồng cách điện xoắn chặt với nhau từng đôi một nhằm triệt tiêu hiện tượng nhiễu điện từ ngoài và nhiễu xuyên âm sinh ra giữa các sợi dây đồng chạy song song [115]. Gồm 2 loại chính:
+                        <ul>
+                            <li><em>UTP (Unshielded Twisted Pair):</em> Cáp xoắn đôi không có lớp vỏ bọc kim loại chống nhiễu [116, 118]. Giá thành rẻ, dễ lắp đặt và uốn cong, thích hợp cho văn phòng tiêu chuẩn [116-118].</li>
+                            <li><em>STP (Shielded Twisted Pair):</em> Cáp xoắn đôi được trang bị lớp lưới bọc kim loại bảo vệ xung quanh từng cặp dây xoắn hoặc xung quanh cả bó dây [116-117]. STP chống nhiễu điện từ cực kỳ tốt nhưng giá thành cao và thi công lắp đặt phức tạp hơn [117].</li>
+                        </ul>
+                        Khoảng cách truyền tín hiệu tối đa của cáp xoắn đôi là <strong>100 mét</strong> [117-118]. Sử dụng đầu nối chuẩn <strong>RJ-45</strong> [116]. Các chuẩn thông dụng: Cat 5, Cat 5e, Cat 6, Cat 6a, Cat 7 [116].
+                    </li>
+                    <li><strong>Cáp quang (Fiber Optic):</strong> Sợi dây truyền dẫn làm bằng thuỷ tinh siêu tinh khiết hoặc chất dẻo đặc biệt, thực hiện truyền tải thông tin bằng các xung ánh sáng (tín hiệu quang) thay cho tín hiệu điện [118]. Do ánh sáng không bị ảnh hưởng bởi từ trường, cáp quang hoàn toàn miễn nhiễm với mọi loại nhiễu điện từ ngoài, tốc độ truyền dẫn cực lớn, bảo mật thông tin an toàn cao [119]. Nhược điểm là chi phí lắp đặt, thiết bị chuyển đổi đắt đỏ và kỹ thuật đấu nối yêu cầu tay nghề thi công cao [120].</li>
+                </ul>
+
+                <h3 class="subsection-title">1.5.2. Môi trường truyền không dây (Vô tuyến)</h3>
+                <p>
+                    Lan truyền thông tin thông qua sóng vô tuyến (sóng RF) trong không khí mà không cần kênh dẫn vật lý định hướng [112, 120-121, 293]. Có các công nghệ và cấu trúc mạng tiêu biểu:
+                </p>
+                <ul class="list">
+                    <li><strong>Công nghệ Wi-Fi (IEEE 802.11):</strong> Chuẩn kết nối không dây phổ biến nhất trong mạng WLAN [121]. Tín hiệu truyền từ các thiết bị không dây (Wireless Clients) đến thiết bị trung tâm là điểm truy cập không dây <strong>WAP (Wireless Access Point)</strong> [122]. Các mô hình cơ bản:
+                        <ul>
+                            <li><em>BSS (Basic Service Set):</em> Một vùng phủ sóng cơ bản được quản lý bởi duy nhất một thiết bị WAP trung tâm [123].</li>
+                            <li><em>ESS (Extended Service Set):</em> Mô hình mở rộng kết nối nhiều BSS lại với nhau để tạo vùng phủ sóng rộng lớn và cho phép thiết bị di chuyển liên tục giữa các vùng (Roaming) [123-124].</li>
+                        </ul>
+                    </li>
+                    <li><strong>Các công nghệ không dây khác:</strong>
+                        <ul>
+                            <li><em>Bluetooth:</em> Truyền dẫn sóng vô tuyến tầm ngắn kết nối các thiết bị PAN của cá nhân [124].</li>
+                            <li><em>Công nghệ di động (3G/4G/5G/6G):</em> Kết nối truyền thông không dây tầm rộng thông qua trạm phát sóng nhà mạng di động [124].</li>
+                            <li><em>Vệ tinh (Satellite):</em> Định hướng truyền tải thông tin toàn cầu thông qua hệ thống vệ tinh quỹ đạo Trái Đất [125].</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+
+            <!-- TAB 2: PRACTICE -->
+            <div id="practice-tab" class="tab-content">
+                
+                <!-- PASSWORD GUARD -->
+                <div id="pwd-guard" class="password-guard">
+                    <h3>🔐 KHÓA BẢO MẬT TÀI LIỆU GIÁO VIÊN</h3>
+                    <p style="text-align: center; margin-bottom: 15px; color: #666;">
+                        Vui lòng nhập mật khẩu của Giảng viên để hiển thị toàn bộ đáp án trắc nghiệm và lời giải chi tiết của 10 bài tập thực hành.
+                    </p>
+                    <input type="password" id="teacher-pwd" placeholder="Nhập mật khẩu..." onkeypress="handleKeyPress(event)">
+                    <button onclick="verifyPassword()">Giải Mã Đáp Án</button>
+                    <p id="error-msg" style="color: red; margin-top: 10px; font-weight: bold; display: none;">Mật khẩu sai! Vui lòng kiểm tra lại.</p>
+                </div>
+
+                <h2 class="section-title">Phần 1: 30 Câu hỏi trắc nghiệm kiểm tra kiến thức</h2>
+                
+                <!-- Questions Container -->
+                <div id="questions-container">
+                    <!-- QUESTIONS GENERATED DYNAMICALLY -->
+                </div>
+
+                <h2 class="section-title">Phần 2: 10 Bài tập tình huống thực hành rèn luyện tư duy</h2>
+                
+                <!-- Exercises Container -->
+                <div id="exercises-container">
+                    <!-- EXERCISES GENERATED DYNAMICALLY -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h3>MỤC LỤC CHƯƠNG 1</h3>
+            <ul>
+                <li><a href="#theory-1.1" onclick="switchTab('theory')">1.1. Mở đầu</a></li>
+                <li><a href="#theory-1.2" onclick="switchTab('theory')">1.2. Các khái niệm cơ bản</a></li>
+                <li><a href="#theory-1.3" onclick="switchTab('theory')">1.3. Lịch sử phát triển</a></li>
+                <li><a href="#theory-1.4" onclick="switchTab('theory')">1.4. Phân loại mạng</a></li>
+                <li><a href="#theory-1.5" onclick="switchTab('theory')">1.5. Môi trường mạng</a></li>
+                <li style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px;">
+                    <a href="#pwd-guard" onclick="switchTab('practice')" style="background-color: var(--accent-color); color: var(--dark-color); text-align: center; font-weight: bold;">
+                        🔑 GÓC GIÁO VIÊN
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Khoa Công nghệ thông tin - Trường Đại học Văn Hiến</p>
+        <p>Hệ thống học liệu Mạng máy tính INT4401 - Thiết kế chuẩn cấu trúc giảng dạy Đại học</p>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const btns = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            btns.forEach(btn => btn.classList.remove('active'));
+
+            if(tabId === 'theory') {
+                document.getElementById('theory-tab').classList.add('active');
+                btns[0].classList.add('active');
+            } else {
+                document.getElementById('practice-tab').classList.add('active');
+                btns[1].classList.add('active');
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                verifyPassword();
+            }
+        }
+
+        function verifyPassword() {
+            const pwdInput = document.getElementById('teacher-pwd').value;
+            const errorMsg = document.getElementById('error-msg');
+            const guard = document.getElementById('pwd-guard');
+            
+            // Teacher password validation: VHU@INT4401
+            if(pwdInput === 'VHU@INT4401') {
+                errorMsg.style.display = 'none';
+                guard.classList.add('teacher-key-active');
+                guard.innerHTML = "<h3>✓ TRẠNG THÁI: CHẾ ĐỘ GIÁO VIÊN ĐÃ ĐƯỢC KÍCH HOẠT</h3><p style='color: #155724; font-weight: bold;'>Tất cả đáp án trắc nghiệm và lời giải chi tiết các bài tập thực hành đã được mở khoá tự động bên dưới.</p>";
+                
+                // Show teacher content
+                const hiddenElements = document.querySelectorAll('.teacher-content');
+                hiddenElements.forEach(el => el.style.display = 'block');
+                
+                // Highlight correct answers in MCQs
+                highlightAnswers();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function highlightAnswers() {
+            // Apply correct styling to marked items
+            const correctItems = document.querySelectorAll('li[data-correct="true"]');
+            correctItems.forEach(item => {
+                item.classList.add('marked-correct');
+                const badge = document.createElement('span');
+                badge.className = 'correct-answer-badge';
+                badge.innerText = 'ĐÁP ÁN ĐÚNG';
+                item.appendChild(badge);
+            });
+        }
+
+        // Generate 30 MCQs
+        const mcqs = [
+            {
+                num: 1,
+                q: "Mạng máy tính là gì theo định nghĩa chính thống?",
+                options: [
+                    { t: "A. Một hệ thống gồm các máy tính lớn hoạt động độc lập và không giao tiếp với nhau.", c: false },
+                    { t: "B. Một tập hợp các thiết bị tính toán được kết nối với nhau bằng các liên kết truyền thông để chia sẻ tài nguyên và giao tiếp.", c: true },
+                    { t: "C. Một thiết bị phần cứng chuyên dụng để lưu trữ và bảo mật dữ liệu của riêng cá nhân.", c: false },
+                    { t: "D. Một chương trình phần mềm được lập trình nhằm mục đích tăng tốc máy tính đơn lẻ.", c: false }
+                ]
+            },
+            {
+                num: 2,
+                q: "Nút mạng (Node) được định nghĩa là thiết bị như thế nào?",
+                options: [
+                    { t: "A. Chỉ là máy tính để bàn (Desktop) được nối vào nguồn điện gia đình.", c: false },
+                    { t: "B. Bất kỳ thiết bị nào kết nối vào mạng có khả năng giao tiếp, gửi nhận hoặc chuyển tiếp dữ liệu.", c: true },
+                    { t: "C. Là lớp vỏ bọc bên ngoài bảo vệ sợi dây đồng trục chống nhiễu.", c: false },
+                    { t: "D. Là kìm bấm cáp chuyên dụng dùng để gắn đầu nối RJ-45.", c: false }
+                ]
+            },
+            {
+                num: 3,
+                q: "Thiết bị chuyển mạch gói đầu tiên đóng vai trò như Router trong mạng ARPANET được gọi là gì?",
+                options: [
+                    { t: "A. Interface Message Processor (IMP).", c: true },
+                    { t: "B. Network Control Protocol (NCP).", c: false },
+                    { t: "C. Domain Name System (DNS).", c: false },
+                    { t: "D. Transistor bán dẫn silicon.", c: false }
+                ]
+            },
+            {
+                num: 4,
+                q: "Cột mốc lịch sử nào đánh dấu sự xuất hiện chính thức của Internet toàn cầu bằng việc đưa bộ giao thức TCP/IP làm chuẩn duy nhất của ARPANET?",
+                options: [
+                    { t: "A. Ngày 01 tháng 01 năm 1983.", c: true },
+                    { t: "B. Ngày 25 tháng 11 năm 2024.", c: false },
+                    { t: "C. Ngày 04 tháng 07 năm 1976.", c: false },
+                    { t: "D. Ngày 31 tháng 12 năm 1999.", c: false }
+                ]
+            },
+            {
+                num: 5,
+                q: "Ai là người phát minh ra World Wide Web (WWW) tại CERN năm 1989?",
+                options: [
+                    { t: "A. Vint Cerf và Bob Kahn.", c: false },
+                    { t: "B. Tim Berners-Lee.", c: true },
+                    { t: "C. Larry L. Peterson.", c: false },
+                    { t: "D. James F. Kurose.", c: false }
+                ]
+            },
+            {
+                num: 6,
+                q: "Kỹ thuật kết nối nào mà trong đó một thiết bị trung tâm kết nối trực tiếp đến nhiều thiết bị nhánh và mọi luồng kết nối đều đi qua nút trung tâm này?",
+                options: [
+                    { t: "A. Kết nối Point-to-Point (Điểm - Điểm).", c: false },
+                    { t: "B. Kết nối Point-to-Multipoint (Điểm - Đa điểm).", c: true },
+                    { t: "C. Kết nối Mesh (Lưới).", c: false },
+                    { t: "D. Kết nối Ring (Vòng).", c: false }
+                ]
+            },
+            {
+                num: 7,
+                q: "Ưu điểm lớn nhất của kiến trúc kết nối lưới (Mesh Topology) trong mạng diện rộng là gì?",
+                options: [
+                    { t: "A. Giá thành triển khai cực kỳ rẻ và lắp đặt cáp nhanh chóng.", c: false },
+                    { t: "B. Khả năng dự phòng lỗi và chịu lỗi cực kỳ cao, đảm bảo mạng hoạt động liên tục khi có lỗi.", c: true },
+                    { t: "C. Không cần sử dụng bất kỳ giao thức hay thuật toán định tuyến nào.", d: false },
+                    { t: "D. Thích hợp cho mạng nhỏ dưới 3 máy tính hoạt động nội bộ.", c: false }
+                ]
+            },
+            {
+                num: 8,
+                q: "Nguyên lý hoạt động cốt lõi của kỹ thuật Chuyển mạch kênh (Circuit Switching) là gì?",
+                options: [
+                    { t: "A. Dữ liệu được chia nhỏ thành các gói độc lập rồi truyền tự do qua mạng.", c: false },
+                    { t: "B. Thiết lập một đường truyền (kênh) vật lý riêng biệt cố định giữa hai thiết bị trước khi bắt đầu truyền tải dữ liệu.", c: true },
+                    { t: "C. Lưu trữ toàn bộ thông điệp ở máy chủ trung gian rồi mới chuyển tiếp.", c: false },
+                    { t: "D. Chỉ truyền qua môi trường vô tuyến sóng cực ngắn.", c: false }
+                ]
+            },
+            {
+                num: 9,
+                q: "Trong mạng Chuyển mạch gói (Packet Switching), dữ liệu được truyền tải như thế nào?",
+                options: [
+                    { t: "A. Truyền dưới dạng một luồng tín hiệu liên tục không ngắt quãng trên kênh riêng biệt.", c: false },
+                    { t: "B. Được chia nhỏ thành các gói tin có cấu trúc chuẩn, chứa địa chỉ nguồn/đích và tự tìm đường đi tối ưu độc lập.", c: true },
+                    { t: "C. Lưu lại toàn bộ tại một máy chủ trung tâm rồi truyền đồng loạt.", c: false },
+                    { t: "D. Buộc phải truyền qua hệ thống dây cáp đồng trục dày đặc.", c: false }
+                ]
+            },
+            {
+                num: 10,
+                q: "Mạng LAN (Local Area Network) có đặc điểm nổi bật nào dưới đây?",
+                options: [
+                    { t: "A. Phạm vi phủ sóng địa lý toàn cầu, tốc độ truyền dẫn bị giới hạn dưới 10 Mbps.", c: false },
+                    { t: "B. Phạm vi nhỏ trong một toà nhà/văn phòng, tốc độ truyền dẫn cực cao, chi phí thiết lập và bảo trì thấp.", c: true },
+                    { t: "C. Sử dụng nhiều thiết bị Gateway vệ tinh đắt tiền để truyền dẫn tín hiệu.", c: false },
+                    { t: "D. Khó tích hợp các dịch vụ mạng cơ bản.", c: false }
+                ]
+            },
+            {
+                num: 11,
+                q: "Mạng MAN (Metropolitan Area Network) được thiết lập nhằm mục đích nào?",
+                options: [
+                    { t: "A. Kết nối các thiết bị cá nhân của một người dùng trong phạm vi dưới 10 mét.", c: false },
+                    { t: "B. Cung cấp hạ tầng kết nối đô thị rộng lớn, kết nối nhiều mạng LAN của các tổ chức trong phạm vi một thành phố.", c: true },
+                    { t: "C. Thay thế hoàn toàn mạng Internet toàn cầu.", c: false },
+                    { t: "D. Chỉ phục vụ mục đích quân sự mật.", c: false }
+                ]
+            },
+            {
+                num: 12,
+                q: "Thiết bị mạng đóng vai trò quan trọng nhất trong việc định tuyến dữ liệu giữa các mạng con trong mạng diện rộng WAN là thiết bị nào?",
+                options: [
+                    { t: "A. Switch Layer 2.", c: false },
+                    { t: "B. Router.", c: true },
+                    { t: "C. Repeater.", c: false },
+                    { t: "D. Hub.", c: false }
+                ]
+            },
+            {
+                num: 13,
+                q: "Kiến trúc mạng Ngang hàng (Peer-to-Peer - P2P) phù hợp nhất với quy mô mạng như thế nào?",
+                options: [
+                    { t: "A. Hệ thống mạng doanh nghiệp quy mô lớn trên 100 máy trạm.", c: false },
+                    { t: "B. Mạng quy mô nhỏ (dưới 10 máy trạm), tài nguyên chia sẻ phân tán, không có yêu cầu bảo mật cao.", c: true },
+                    { t: "C. Các trung tâm dữ liệu lớn của nhà mạng viễn thông toàn cầu.", c: false },
+                    { t: "D. Mạng ngân hàng giao dịch tài chính cốt lõi.", c: false }
+                ]
+            },
+            {
+                num: 14,
+                q: "Ưu điểm vượt trội nhất của mô hình quản lý mạng Domain (Client-Server) so với Workgroup (P2P) là gì?",
+                options: [
+                    { t: "A. Không tốn bất kỳ chi phí phần cứng hay bản quyền phần mềm nào.", c: false },
+                    { t: "B. Quản trị tập trung tài khoản, phân quyền chặt chẽ, an toàn bảo mật cực kỳ cao, dễ dàng sao lưu dữ liệu.", c: true },
+                    { t: "C. Cấu hình cực kỳ đơn giản, không cần người có trình độ kỹ thuật cao.", c: false },
+                    { t: "D. Tốc độ truyền tải nhanh gấp 100 lần P2P trong mọi hoàn cảnh vật lý.", c: false }
+                ]
+            },
+            {
+                num: 15,
+                q: "Cáp đồng trục có lõi bằng chất liệu gì và truyền dẫn tín hiệu gì?",
+                options: [
+                    { t: "A. Lõi bằng sợi thuỷ tinh, truyền tín hiệu ánh sáng.", c: false },
+                    { t: "B. Lõi bằng đồng trung tâm, truyền dẫn tín hiệu điện.", c: true },
+                    { t: "C. Lõi làm bằng chất dẻo polymer, truyền sóng vô tuyến.", c: false },
+                    { t: "D. Lõi bằng hợp kim nhôm rỗng, truyền tải sóng vi ba.", c: false }
+                ]
+            },
+            {
+                num: 16,
+                q: "Tại sao trong cấu tạo của cáp xoắn đôi (Twisted Pair), các sợi dây đồng lại được xoắn chặt với nhau từng cặp?",
+                options: [
+                    { t: "A. Để tăng độ bền kéo đứt cơ học khi thi công đi dây.", c: false },
+                    { t: "B. Để triệt tiêu hiện tượng nhiễu điện từ bên ngoài và nhiễu xuyên âm giữa các sợi dây kề nhau.", c: true },
+                    { t: "C. Để giúp dòng điện chạy nhanh hơn trong lõi đồng.", c: false },
+                    { t: "D. Để phân biệt màu sắc dễ dàng khi tiến hành bấm cáp.", c: false }
+                ]
+            },
+            {
+                num: 17,
+                q: "Khoảng cách truyền tín hiệu tối đa được khuyến nghị của cáp mạng xoắn đôi UTP/STP là bao nhiêu mét?",
+                options: [
+                    { t: "A. 10 mét.", c: false },
+                    { t: "B. 100 mét.", c: true },
+                    { t: "C. 500 mét.", c: false },
+                    { t: "D. 1000 mét.", c: false }
+                ]
+            },
+            {
+                num: 18,
+                q: "Sự khác biệt cơ bản về mặt cấu trúc chống nhiễu giữa cáp UTP và cáp STP là gì?",
+                options: [
+                    { t: "A. Cáp UTP truyền ánh sáng còn cáp STP truyền dòng điện.", c: false },
+                    { t: "B. Cáp STP được trang bị thêm lớp vỏ bọc kim loại chống nhiễu bảo vệ xung quanh các cặp dây.", c: true },
+                    { t: "C. Cáp UTP có khoảng cách truyền xa lên tới 5 km còn STP chỉ truyền được 10m.", c: false },
+                    { t: "D. Cáp UTP sử dụng đầu nối RJ-11 còn STP dùng đầu nối sợi quang.", c: false }
+                ]
+            },
+            {
+                num: 19,
+                q: "Đầu nối (connector) tiêu chuẩn sử dụng cho các dòng cáp xoắn đôi Ethernet hiện nay là loại nào?",
+                options: [
+                    { t: "A. Đầu nối BNC.", c: false },
+                    { t: "B. Đầu nối RJ-45.", c: true },
+                    { t: "C. Đầu nối RJ-11.", c: false },
+                    { t: "D. Đầu nối SC/ST quang.", c: false }
+                ]
+            },
+            {
+                num: 20,
+                q: "Vì sao cáp quang có tốc độ truyền tải cực kỳ nhanh và hoàn toàn không bị ảnh hưởng bởi nhiễu điện từ?",
+                options: [
+                    { t: "A. Vì lõi đồng của nó có kích thước dày gấp 10 lần cáp đồng trục.", c: false },
+                    { t: "B. Vì nó được làm từ sợi thuỷ tinh tinh khiết và truyền dẫn tín hiệu bằng xung ánh sáng.", c: true },
+                    { t: "C. Vì nó truyền tải sóng vô tuyến tầm ngắn bảo mật tốt.", c: false },
+                    { t: "D. Vì cáp quang chạy trực tiếp trên nền tảng nguồn điện cao thế.", c: false }
+                ]
+            },
+            {
+                num: 21,
+                q: "Chuẩn đặc tả kỹ thuật IEEE nào chịu trách nhiệm chuẩn hoá công nghệ mạng LAN không dây (Wi-Fi)?",
+                options: [
+                    { t: "A. IEEE 802.3.", c: false },
+                    { t: "B. IEEE 802.11.", c: true },
+                    { t: "C. IEEE 802.5.", c: false },
+                    { t: "D. IEEE 802.1Q.", c: false }
+                ]
+            },
+            {
+                num: 22,
+                q: "Thiết bị trung tâm phát sóng vô tuyến trong mạng WLAN đóng vai trò điểm truy cập không dây được gọi là gì?",
+                options: [
+                    { t: "A. Wireless Access Point (WAP).", c: true },
+                    { t: "B. Network Interface Card (NIC).", c: false },
+                    { t: "C. Switch Layer 2.", c: false },
+                    { t: "D. CSU/DSU.", c: false }
+                ]
+            },
+            {
+                num: 23,
+                q: "Mô hình mạng không dây BSS (Basic Service Set) có cấu tạo cơ bản như thế nào?",
+                options: [
+                    { t: "A. Kết nối nhiều điểm truy cập WAP trải rộng khắp quốc gia.", c: false },
+                    { t: "B. Gồm một trạm WAP duy nhất phục vụ kết nối cho các wireless client trong một vùng phủ sóng nhất định.", c: true },
+                    { t: "C. Các client kết nối trực tiếp với nhau không qua WAP.", c: false },
+                    { t: "D. Chỉ truyền tải tín hiệu quang qua dây cáp.", c: false }
+                ]
+            },
+            {
+                num: 24,
+                q: "Mô hình mạng không dây ESS (Extended Service Set) được tạo ra bằng cách nào?",
+                options: [
+                    { t: "A. Gộp nhiều vùng BSS lại với nhau thông qua mạng phân phối để mở rộng phạm vi phủ sóng.", c: true },
+                    { t: "B. Tắt hoàn toàn tính năng bảo mật mật khẩu của router.", c: false },
+                    { t: "C. Sử dụng sóng vi ba tầm xa thay cho sóng Wi-Fi thông thường.", c: false },
+                    { t: "D. Nối chéo trực tiếp 2 laptop với nhau.", c: false }
+                ]
+            },
+            {
+                num: 25,
+                q: "Ngoài Wi-Fi, công nghệ kết nối không dây tầm ngắn sử dụng sóng vô tuyến tầm cực ngắn để kết nối thiết bị cá nhân (chuột, tai nghe) là gì?",
+                options: [
+                    { t: "A. Cáp quang sợi thuỷ tinh.", c: false },
+                    { t: "B. Bluetooth.", c: true },
+                    { t: "C. Vệ tinh Satellite.", c: false },
+                    { t: "D. Cáp đồng trục dày.", c: false }
+                ]
+            },
+            {
+                num: 26,
+                q: "Mạng máy tính ra đời giải quyết tối ưu bài toán kinh tế nào cho doanh nghiệp?",
+                options: [
+                    { t: "A. Tăng giá thành mua bản quyền phần mềm cho mỗi cá nhân.", c: false },
+                    { t: "B. Tiết kiệm chi phí đầu tư phần cứng đắt tiền nhờ chia sẻ dùng chung tài nguyên thiết bị ngoại vi và bộ nhớ.", c: true },
+                    { t: "C. Loại bỏ hoàn toàn sự cần thiết của hệ điều hành máy tính.", c: false },
+                    { t: "D. Bắt buộc mọi người phải ngồi làm việc chung một phòng.", c: false }
+                ]
+            },
+            {
+                num: 27,
+                q: "Trong mạng LAN hiện đại, người ta thường dùng loại cáp nào làm môi trường truyền dẫn vật lý chủ đạo kết nối máy tính trạm đến Switch?",
+                options: [
+                    { t: "A. Cáp đồng trục mỏng RG59.", c: false },
+                    { t: "B. Cáp đồng xoắn đôi UTP/STP.", c: true },
+                    { t: "C. Cáp điện lực xoay chiều 220V.", c: false },
+                    { t: "D. Đường truyền thuê riêng Dedicated Leased Line.", c: false }
+                ]
+            },
+            {
+                num: 28,
+                q: "Nhược điểm lớn nhất của cáp mạng không chống nhiễu UTP là gì?",
+                options: [
+                    { t: "A. Giá thành quá đắt đỏ so với các dòng cáp khác.", c: false },
+                    { t: "B. Dễ bị ảnh hưởng bởi nhiễu điện từ trường từ các thiết bị và nguồn điện xung quanh.", c: true },
+                    { t: "C. Độ cứng cơ học quá cao gây gãy gập dây khi đi qua góc hẹp.", c: false },
+                    { t: "D. Không thể cắm vừa vào đầu nối chuẩn RJ-45.", c: false }
+                ]
+            },
+            {
+                num: 29,
+                q: "Ý tưởng cốt lõi giúp ARPANET có khả năng chịu lỗi cao trước các sự cố chiến tranh quy mô lớn là gì?",
+                options: [
+                    { t: "A. Sử dụng đường truyền dây cáp mạ vàng bảo vệ tuyệt đối.", c: false },
+                    { t: "B. Sử dụng kỹ thuật chuyển mạch gói, cho phép dữ liệu tự động định tuyến qua nhiều ngả đường khác nhau.", c: true },
+                    { t: "C. Tập trung dữ liệu tại một siêu máy tính mainframe lớn đặt ở trung tâm.", c: false },
+                    { t: "D. Cấm hoàn toàn mọi hoạt động truyền thông dân sự.", c: false }
+                ]
+            },
+            {
+                num: 30,
+                q: "Phát biểu nào dưới đây về mạng ngang hàng (P2P) là hoàn toàn CHÍNH XÁC?",
+                options: [
+                    { t: "A. Mạng P2P bắt buộc phải có ít nhất một máy chủ điều khiển miền (Domain Controller).", c: false },
+                    { t: "B. Mạng P2P có cấu trúc logic bình đẳng, các máy trạm vừa chia sẻ vừa sử dụng tài nguyên của nhau.", c: true },
+                    { t: "C. Mạng P2P an toàn tuyệt đối và bảo mật cao nhất trong mọi mô hình.", c: false },
+                    { t: "D. Không thể kết nối internet khi sử dụng mô hình P2P.", c: false }
+                ]
+            }
+        ];
+
+        // Generate 10 exercises
+        const exercises = [
+            {
+                num: 1,
+                title: "Bài tập 1: Thiết kế sơ đồ mạng LAN Star cho Văn phòng Khoa CNTT",
+                scenario: "Văn phòng Khoa CNTT của Trường Đại học Văn Hiến được trang bị 5 máy tính trạm độc lập (Desktop) dùng cho các cán bộ quản trị học vụ và 1 máy in mạng chất lượng cao. Các máy tính cần chia sẻ file học tập nhanh chóng và cùng truy xuất đến máy in mạng này.",
+                req: "Hãy đề xuất cấu trúc liên kết mạng (topology) thích hợp nhất, liệt kê các thiết bị vật lý cần thiết và vẽ/mô tả chi tiết sơ đồ kết nối vật lý bằng tay để đảm bảo hiệu suất tốt nhất.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Đề xuất Kiến trúc Topology:</strong><br>Kiến trúc phù hợp nhất là <strong>Mô hình hình sao (Star Topology)</strong> [107]. Sử dụng 1 thiết bị chuyển mạch Switch Layer 2 làm nút trung tâm kết nối [107, 286].<br><em>Lý do chọn:</em> Dễ lắp đặt, dễ thêm bớt thiết bị mà không ảnh hưởng nút khác; khi 1 cáp nối PC bị lỗi, toàn bộ hệ thống mạng LAN vẫn hoạt động ổn định [156-157].<br><br><strong>2. Danh sách thiết bị vật lý cần mua sắm:</strong><br>- 01 Switch 8-ports Gigabit Ethernet (ví dụ dòng Switch TP-Link hay Cisco) [287].<br>- 06 Sợi cáp xoắn đôi UTP chuẩn Cat 6 bấm cáp thẳng ở 2 đầu chuẩn T-568B (đầu nối RJ-45) [116, 191-192].<br>- 5 PC trạm được lắp sẵn Card mạng Ethernet NIC 10/100/1000 Mbps [187, 284].<br>- 1 Máy in hỗ trợ kết nối mạng qua cổng RJ-45 Ethernet [284].<br><br><strong>3. Mô tả Sơ đồ kết nối vật lý:</strong><br>- Switch đặt ở tủ rack trung tâm văn phòng.<br>- 5 Sợi cáp xoắn đôi đi từ 5 cổng LAN trên 5 PC trạm về cắm vào cổng 1, 2, 3, 4, 5 của Switch (Cáp thẳng nối PC-Switch) [192].<br>- 1 Sợi cáp xoắn đôi đi từ cổng LAN trên máy in mạng về cắm vào cổng 6 của Switch (Cáp thẳng nối Printer-Switch) [192]."
+            },
+            {
+                num: 2,
+                title: "Bài tập 2: Lập bảng ma trận phân loại mạng theo phạm vi địa lý",
+                scenario: "Một quản trị viên hệ thống cần trình bày báo cáo phân bổ ngân sách hạ tầng viễn thông cho giám đốc doanh nghiệp, yêu cầu làm rõ sự khác biệt giữa các quy mô mạng để đưa ra quyết định đầu tư đúng đắn.",
+                req: "Hãy xây dựng bảng so sánh chi tiết giữa 4 quy mô mạng: PAN, LAN, MAN, WAN dựa trên các tiêu chí: Phạm vi địa lý điển hình, Tốc độ truyền tải thực tế, Thiết bị truyền thông đặc trưng, và Giao thức/Công nghệ chủ đạo.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>Bảng Ma trận So sánh Phân loại mạng theo địa lý [106-110, 124, 128]:</strong><br><br><table><tr><th>Quy mô mạng</th><th>Phạm vi địa lý</th><th>Tốc độ truyền dữ liệu</th><th>Thiết bị đặc trưng</th><th>Công nghệ/Giao thức chủ đạo</th></tr><tr><td><strong>PAN</strong></td><td>Trong phòng cá nhân (vài mét) [110]</td><td>Trung bình (1 Mbps - 24 Mbps)</td><td>Điện thoại, tai nghe, USB Bluetooth [111]</td><td>Bluetooth, Hồng ngoại (Infrared), Zigbee [111, 124]</td></tr><tr><td><strong>LAN</strong></td><td>Tòa nhà, văn phòng (dưới 100m - 1km) [106]</td><td>Cực cao (1 Gbps - 10 Gbps) [108]</td><td>Switch, Hub, WAP, Card mạng NIC [182, 186, 283]</td><td>Ethernet (IEEE 802.3), Wi-Fi (IEEE 802.11) [121, 186]</td></tr><tr><td><strong>MAN</strong></td><td>Trong phạm vi thành phố (vài km - chục km) [108]</td><td>Cao (100 Mbps - 1 Gbps)</td><td>Bộ chuyển mạch trung tâm, đường cáp trục quang [108]</td><td>Metro Ethernet, cáp quang Single-mode [108, 114]</td></tr><tr><td><strong>WAN</strong></td><td>Quốc gia, châu lục, toàn cầu (hàng trăm, hàng ngàn km) [109]</td><td>Thấp-Trung bình (vài Mbps - 1 Gbps, bị giới hạn bởi khoảng cách) [110]</td><td>Router, Modem, CSU/DSU, Switch ATM [342, 347-348]</td><td>TCP/IP, MPLS, SD-WAN, Leased Line [342, 344-345]</td></tr></table>"
+            },
+            {
+                num: 3,
+                title: "Bài tập 3: Phân tích đường đi của gói tin trong kỹ thuật Chuyển mạch gói",
+                scenario: "Xét một mô hình mạng lưới chuyển mạch gói đơn giản gồm máy gửi A, máy nhận B và 4 router trung gian R1, R2, R3, R4 nối với nhau như sơ đồ hình lưới hình thoi. Giả sử đường truyền trực tiếp nối R1-R2 đang bị sự cố đứt cáp hoặc nghẽn lưu lượng cực kỳ nặng.",
+                req: "Hãy phân tích chi tiết quá trình truyền gói dữ liệu từ máy A qua router biên đến máy B. Giải thích rõ vai trò của trường thông tin tiêu đề (Header IP) giúp gói tin tự tìm đường đi tối ưu thay thế.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Phân tích tiến trình chuyển mạch gói:</strong><br>- Dữ liệu gốc tại máy A được chia nhỏ thành các gói tin kích thước chuẩn [104-105]. Tại mỗi gói tin, hệ thống tiến hành gắn Header chứa các thông tin logic [105, 222].<br>- Khi gói tin đến Router biên R1, Router sẽ tra cứu <em>Bảng định tuyến (Routing Table)</em> của nó [223].<br><br><strong>2. Giải pháp tự tìm đường khi có sự cố R1-R2:</strong><br>- Theo bảng định tuyến ban đầu, đường tối ưu là A -> R1 -> R2 -> B. Tuy nhiên do liên kết R1-R2 bị ngắt, cơ chế định tuyến động (nhờ các giao thức OSPF, RIP) sẽ lập tức cập nhật thông tin lỗi [357, 362].<br>- Router R1 sẽ chuyển hướng gói tin qua đường truyền dự phòng: R1 -> R3 -> R4 -> B [105].<br><br><strong>3. Vai trò của trường thông tin trong Header IP [105, 226]:</strong><br>- <em>Địa chỉ nguồn (Source IP) & Địa chỉ đích (Destination IP):</em> Giúp mọi router trung gian đọc được gói tin này đi từ đâu và cần gửi đến đâu để chuyển tiếp chính xác [226].<br>- <em>Số thứ tự gói tin (Sequence Number):</em> Giúp máy nhận B nhận diện thứ tự các gói tin bị đảo lộn khi đi theo nhiều ngả đường khác nhau, tự động sắp xếp lại thành tệp dữ liệu hoàn chỉnh [105-106].<br>- <em>TTL (Time to Live):</em> Tránh vòng lặp định tuyến vô tận làm nghẽn mạng; mỗi khi qua 1 router, TTL giảm 1 đơn vị, về 0 gói tin sẽ tự động bị huỷ và gửi báo lỗi ICMP về nguồn [226, 244]."
+            },
+            {
+                num: 4,
+                title: "Bài tập 4: Lựa chọn môi trường truyền dẫn có dây tối ưu cho Nhà máy",
+                scenario: "Doanh nghiệp xây dựng một khu nhà xưởng sản xuất cơ khí tự động hóa quy mô lớn, có rất nhiều động cơ điện công suất cao sinh ra từ trường nhiễu điện cực kỳ lớn. Quản trị viên mạng cần kết nối mạng Ethernet LAN từ văn phòng điều hành ra nhà xưởng cách đó đúng 95 mét.",
+                req: "Hãy đề xuất loại cáp mạng có dây phù hợp nhất cho 2 phương án: Phương án tiết kiệm chi phí tối đa nhưng vẫn hoạt động tốt và Phương án tối ưu tuyệt đối an toàn thông tin, không bị ảnh hưởng bởi bất kỳ loại nhiễu từ nào. Giải thích lý do lựa chọn khoa học.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Phương án 1 - Tiết kiệm chi phí nhưng vẫn đảm bảo chống nhiễu:</strong><br>- <em>Đề xuất:</em> Cáp đồng xoắn đôi <strong>STP (Shielded Twisted Pair) chuẩn Cat 6</strong> đi kèm đầu nối RJ-45 kim loại chuyên dụng [116].<br>- <em>Giải thích lý do:</em> Khoảng cách 95 mét nằm dưới giới hạn vật lý 100m của cáp xoắn đôi [117-118]. Khác với cáp UTP thông thường dễ bị nhiễu điện từ [118], cáp STP được trang bị lớp lưới bọc kim loại bảo vệ xung quanh lõi đồng giúp triệt tiêu từ trường nhiễu mạnh của động cơ điện nhà xưởng sinh ra [117]. Chi phí STP cao hơn UTP một ít nhưng rẻ hơn cáp quang rất nhiều.<br><br><strong>2. Phương án 2 - Tối ưu tuyệt đối, an toàn thông tin và miễn nhiễm từ hoàn toàn:</strong><br>- <em>Đề xuất:</em> <strong>Cáp quang (Fiber Optic) dòng Multi-mode</strong> [87, 118].<br>- <em>Giải thích lý do:</em> Cáp quang làm bằng chất liệu thuỷ tinh tinh khiết truyền dẫn bằng xung ánh sáng [118]. Ánh sáng hoàn toàn không bị ảnh hưởng bởi từ trường hay dòng điện, do đó cáp quang miễn nhiễm nhiễu điện từ 100% [119]. Đồng thời, tín hiệu quang không thể bị rò rỉ hay trích xuất bằng cách nghe lén từ trường bên ngoài, mang lại độ bảo mật và tốc độ truyền tải cực cao, loại bỏ nguy cơ chập cháy điện [119]."
+            },
+            {
+                num: 5,
+                title: "Bài tập 5: Thiết kế sơ đồ mạng không dây Wi-Fi cho Quán cà phê",
+                scenario: "Bạn được yêu cầu thiết kế hệ thống mạng không dây Wi-Fi cho quán cà phê 'Văn Hiến Coffee' gồm 2 tầng diện tích rộng, lưu lượng khách truy cập đồng thời trung bình khoảng 80 người dùng (Desktop, Laptop, Smartphone) [293, 296].",
+                req: "Hãy đề xuất mô hình kiến trúc không dây phù hợp (BSS hay ESS), số lượng thiết bị WAP cần thiết, dải tần số phát sóng khuyên dùng và các biện pháp bảo mật SSID cơ bản để tránh bị bẻ khóa trộm mật khẩu [122-124, 294, 296].",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Đề xuất mô hình kiến trúc không dây:</strong><br>- Sử dụng mô hình <strong>ESS (Extended Service Set)</strong> kết hợp ít nhất 02 thiết bị WAP để đảm bảo phủ sóng đều khắp toàn bộ 2 tầng của quán cà phê [123-124].<br><em>Giải thích:</em> ESS cho phép khách hàng tự động chuyển vùng kết nối (Roaming) mượt mà giữa tầng 1 và tầng 2 mà không bị ngắt kết nối hay phải kết nối lại mạng mới [123-124].<br><br><strong>2. Lựa chọn thiết bị và tần số:</strong><br>- Trang bị 02 Wireless Router/Access Point hỗ trợ chuẩn IEEE 802.11ac trở lên phát sóng băng tần kép (Dual-band: 2.4 GHz cho tầm phủ sóng xa xuyên tường và 5 GHz cho tốc độ cao ít nghẽn kênh truyền) [122, 336].<br><br><strong>3. Giải pháp Bảo mật mạng không dây tránh bẻ khoá [294]:</strong><br>- Sử dụng phương thức mã hóa bảo mật chuẩn <strong>WPA2 Personal (hoặc WPA3)</strong> với thuật toán mã hóa mạnh AES [296, 300, 337].<br>- Thiết lập mật khẩu mạnh chứa ký tự viết hoa, số và ký tự đặc biệt (Ví dụ: `VHCoffee@2026!`).<br>- Định cấu hình <em>Ẩn SSID Broadcast</em> (tắt quảng bá tên Wi-Fi công khai) cho mạng quản lý của quán, chỉ cho phép khách truy cập mạng khách riêng biệt cô lập bằng tính năng Guest Network [328]."
+            },
+            {
+                num: 6,
+                title: "Bài tập 6: Phân tích so sánh bảo mật và vận hành Workgroup và Domain",
+                scenario: "Một công ty khởi nghiệp công nghệ ban đầu có 6 nhân viên sử dụng mô hình mạng ngang hàng Workgroup để tự quản lý tệp dữ liệu. Sau 1 năm, quy mô nhân viên tăng lên 45 người, lượng dữ liệu khách hàng nhạy cảm tăng mạnh, hiện tượng rò rỉ thông tin bắt đầu xuất hiện.",
+                req: "Dưới góc độ chuyên gia, hãy phân tích tại sao mô hình Workgroup hiện tại không còn đáp ứng được yêu cầu bảo mật. Hãy chỉ ra các lợi ích cốt lõi khi chuyển đổi sang mô hình quản trị Domain tập trung.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Tại sao Workgroup không còn đáp ứng được bảo mật ở quy mô 45 người [148, 171]:</strong><br>- <em>Quản trị phi tập trung:</em> Mỗi máy tính trong mạng Workgroup tự quản lý tài khoản người dùng và chính sách bảo mật riêng [170]. Khi có sự thay đổi mật khẩu hoặc quyền truy cập của nhân viên nghỉ việc, quản trị viên buộc phải cấu hình thủ công trên cả 45 máy tính riêng biệt, điều này gây mất thời gian và dễ xảy ra sai sót [171].<br>- <em>Bảo mật lỏng lẻo rời rạc:</em> Không có chính sách kiểm soát quyền hạn chung, nhân viên dễ dàng chia sẻ file không mã hóa, dẫn đến nguy cơ cao bị virus xâm nhập chéo hoặc lộ thông tin khách hàng nhạy cảm ra ngoài [171].<br><br><strong>2. Các lợi ích cốt lõi khi chuyển đổi sang mô hình Domain [172-173]:</strong><br>- <em>Quản trị tập trung toàn diện:</em> Toàn bộ thông tin tài khoản người dùng, phân quyền truy cập thư mục chung được lưu trữ trong một cơ sở dữ liệu duy nhất là <strong>Active Directory</strong> chạy trên máy chủ điều khiển miền <strong>Domain Controller</strong> [172].<br>- <em>Tăng cường bảo mật:</em> Dễ dàng áp dụng chính sách mật khẩu mạnh bắt buộc cho tất cả 45 người dùng cùng một lúc, quản lý, giám sát và thu hồi quyền truy cập của bất kỳ nhân viên nào ngay lập tức từ máy chủ trung tâm [172-173].<br>- <em>Sao lưu dữ liệu tự động:</em> Dữ liệu quan trọng của nhân viên được lưu tập trung tại File Server của Domain, dễ dàng thiết lập lịch trình sao lưu tự động hàng ngày phòng ngừa thảm họa ransomware [172, 294]."
+            },
+            {
+                num: 7,
+                title: "Bài tập 7: Khắc phục sự cố kết nối cáp mạng Ethernet LAN lỗi",
+                scenario: "Sinh viên thực hành lắp đặt phòng Lab, sử dụng sợi cáp mạng xoắn đôi vừa bấm xong để nối trực tiếp từ cổng Ethernet của máy tính PC1 sang cổng Ethernet của máy tính PC2 (hai thiết bị cùng loại) nhưng đèn tín hiệu cổng mạng không sáng và lệnh ping báo lỗi 'Request timed out'.",
+                req: "Dựa vào quy tắc đấu nối cáp mạng Ethernet, hãy xác định nguyên nhân lỗi kỹ thuật bấm cáp ở trên và hướng dẫn sinh viên quy trình khắc phục sự cố chi tiết từng bước.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Xác định nguyên nhân lỗi vật lý bấm cáp:</strong><br>- Theo quy tắc đấu nối thiết bị trong mạng LAN: <strong>Kết nối 2 thiết bị cùng loại (PC-to-PC) buộc phải sử dụng Cáp chéo (Crossover cable)</strong> [115, 192, 287-288].<br>- Sinh viên đã bấm sợi cáp này theo chuẩn <strong>Cáp thẳng (Straight-through)</strong> (tức là cả hai đầu cáp đều bấm theo cùng một tiêu chuẩn màu là T-568B hoặc cả hai đều là T-568A) [191-192].<br>- Cáp thẳng chỉ dùng nối hai thiết bị khác loại (như PC nối Switch) [191]. Do đó, tín hiệu truyền (TX) của PC1 bị nối thẳng vào chân truyền (TX) của PC2 thay vì chân nhận (RX), gây mất tín hiệu kết nối vật lý hoàn toàn [141, 192].<br><br><strong>2. Quy trình khắc phục sự cố chi tiết:</strong><br>- <em>Bước 1:</em> Cắt bỏ đầu mạng RJ-45 bị bấm sai ở một đầu của sợi cáp.<br>- <em>Bước 2:</em> Thực hiện tuốt vỏ bảo vệ ngoài cáp, giữ nguyên các sợi đồng xoắn.<br>- <em>Bước 3:</em> Tiến hành sắp xếp các sợi dây đồng theo tiêu chuẩn màu của đầu còn lại để tạo cáp chéo [192-193]:<br>  + Nếu đầu cáp thứ nhất đang bấm theo chuẩn <strong>T-568B</strong>, đầu thứ hai này bắt buộc phải xếp theo chuẩn <strong>T-568A</strong> [193].<br>  + Thứ tự chuẩn màu T-568A: 1. Trắng Xanh lá, 2. Xanh lá, 3. Trắng Cam, 4. Xanh dương, 5. Trắng Xanh dương, 6. Cam, 7. Trắng Nâu, 8. Nâu [193].<br>- <em>Bước 4:</em> Vuốt thẳng các sợi dây đồng, đưa vào đầu nối RJ-45 và dùng kìm bấm cáp mạng bóp chặt chắc chắn [191, 193].<br>- <em>Bước 5:</em> Sử dụng máy test cáp mạng (Cable Tester) để kiểm tra các đèn led nhấp nháy đúng sơ đồ cáp chéo chéo chéo chéo (1-3, 2-6, 3-1, 6-2) [193-194]. Cắm lại vào hai máy tính và kiểm tra lệnh ping thông kết nối [290]."
+            },
+            {
+                num: 8,
+                title: "Bài tập 8: Tính toán băng thông truyền tải Chuyển mạch kênh và gói",
+                scenario: "Một công ty truyền thông viễn thông có đường cáp trục truyền tải dung lượng băng thông vật lý là C = 100 Mbps. Giả sử có 10 người dùng cần truyền tải dữ liệu, mỗi người cần băng thông ổn định liên tục là 8 Mbps khi hoạt động tích cực.",
+                req: "Tính toán số lượng người dùng tối đa có thể phục vụ đồng thời trong 2 phương án: Phương án dùng Chuyển mạch kênh (mỗi kênh được cấp phát cứng băng thông cố định) và Phương án dùng Chuyển mạch gói (Giả sử xác suất một người hoạt động tích cực truyền tải dữ liệu thực tế chỉ là 15% thời gian làm việc). Phân tích hiệu suất.",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Tính toán Phương án Chuyển mạch kênh (Circuit Switching):</strong><br>- Do mỗi người dùng (kênh) được cấp phát cứng và chiếm dụng riêng biệt băng thông cố định là 8 Mbps [101]:<br>  Số người phục vụ đồng thời tối đa = \( \lfloor \frac{C}{8} \rfloor = \lfloor \frac{100}{8} \rfloor = 12 \) người dùng.<br>- Nếu người dùng thứ 13 kết nối, hệ thống sẽ báo bận (busy) mặc dù các người dùng đang kết nối có thể không gửi bất kỳ dữ liệu nào tại thời điểm đó (lãng phí băng thông rỗi) [102].<br><br><strong>2. Tính toán Phương án Chuyển mạch gói (Packet Switching) [104-105]:</strong><br>- Do dữ liệu được truyền tải linh hoạt dưới dạng gói tin, chia sẻ chung băng thông vật lý 100 Mbps [104]. Xác suất hoạt động thực tế của mỗi người chỉ là 15% (0.15).<br>- Theo lý thuyết hàng đợi và phân phối xác xuất thống kê nhị thức, hệ thống chuyển mạch gói có thể hỗ trợ cấu hình tải động lên tới <strong>30 - 45 người dùng</strong> đăng ký cùng lúc mà xác suất bị nghẽn mạng (vượt quá 100 Mbps tại 1 thời điểm cực kỳ nhỏ, dưới 1%).<br><br><strong>3. Phân tích hiệu suất kinh tế:</strong><br>- Chuyển mạch gói giúp tăng hiệu suất sử dụng băng thông vật lý gấp 3-4 lần so với chuyển mạch kênh bằng cách tận dụng thời gian rỗi của người dùng, giảm thiểu tối đa chi phí thuê băng thông trục đắt đỏ của ISP [106]."
+            },
+            {
+                num: 9,
+                title: "Bài tập 9: Thiết kế mô hình mạng LAN tích hợp có dây và không dây cho hộ gia đình",
+                scenario: "Một gia đình 3 tầng có nhu cầu lắp đặt mạng Internet [295]. Thiết bị nhà mạng cấp là 1 Wireless Router chuẩn Wi-Fi 5 đặt tại tầng 1 (có IP mặc định là 192.168.0.1/24, hỗ trợ DHCP Server cấp phát dải IP từ 192.168.0.100 đến 192.168.0.149) [296-298]. Gia đình có 2 máy tính bàn PC ở tầng 1 cần nối mạng dây ổn định và 3 điện thoại di động kết nối Wi-Fi [296].",
+                req: "Hãy vẽ sơ đồ khối mô tả kết nối vật lý, xác định các thông số cấu hình IP, Subnet Mask, Gateway và DNS Server cần cấu hình trên 2 PC và 3 điện thoại để đảm bảo kết nối ra ngoài Internet thành công [288-289, 296, 298].",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Sơ đồ khối kết nối vật lý [295, 300]:</strong><br>- <em>Tầng 1:</em> Đặt Wireless Router kết nối cổng WAN với cổng quang của nhà mạng ISP [291, 296].<br>- <em>Kết nối có dây:</em> Sử dụng 02 sợi cáp thẳng xoắn đôi UTP Cat 6 nối từ 2 PC để cắm vào 2 cổng LAN RJ-45 trên Wireless Router [192, 287].<br>- <em>Kết nối không dây:</em> 3 Điện thoại di động kết nối sóng Wi-Fi (SSID: `Mangmaytinh`, Password: `12345678`) phát ra từ Wireless Router [296, 304].<br><br><strong>2. Thông số cấu hình logic cho các thiết bị [288-289, 291-292]:</strong><br>- <strong>Máy tính bàn PC 1 (Cấu hình IP Tĩnh để quản lý):</strong><br>  + Địa chỉ IP: `192.168.0.10` (nằm ngoài dải DHCP để tránh trùng lặp) [291-292].<br>  + Subnet Mask: `255.255.255.0` (Lớp C chuẩn) [234, 292].<br>  + Default Gateway: `192.168.0.1` (Địa chỉ IP của Wireless Router) [288, 292].<br>  + DNS Server: `8.8.8.8` (Google Public DNS để lướt Web ổn định) [289, 379].<br>- <strong>Máy tính bàn PC 2 (Cấu hình IP Tĩnh):</strong><br>  + Địa chỉ IP: `192.168.0.11` | Subnet Mask: `255.255.255.0` | Gateway: `192.168.0.1` | DNS: `8.8.8.8` [292].<br>- <strong>3 Điện thoại di động (Cấu hình nhận IP Động - DHCP):</strong><br>  + Trên điện thoại bật chế độ 'Obtain an IP address automatically' [298, 303]. Wireless Router sẽ tự động kích hoạt tiến trình D.O.R.A cấp phát các IP trong dải `192.168.0.100 - 192.168.0.149`, kèm theo thông tin Gateway là `192.168.0.1` và DNS tự động [298]."
+            },
+            {
+                num: 10,
+                title: "Bài tập 10: Nghiên cứu Case Study: Bảo mật mạng Camera thông minh (IoT) nhà xưởng",
+                scenario: "Một nhà xưởng lắp đặt hệ thống 15 IP Camera giám sát kết nối không dây về đầu ghi hình NVR [568, 572]. Sau một thời gian, hệ thống camera bị tin tặc hack chiếm quyền xem trộm hình ảnh nhạy cảm và phát tán lưu lượng dữ liệu bất thường làm nghẽn toàn bộ mạng LAN công ty [572-573].",
+                req: "Hãy phân tích các nguyên nhân bảo mật thường gặp khiến camera IoT bị tấn công dựa trên lý thuyết Chương 1 (xu hướng bảo mật IoT) và Chương 7. Đề xuất quy trình 4 biện pháp bảo vệ khẩn cấp khắc phục triệt để lỗ hổng này [569-571, 575].",
+                sol: "<h4>Lời giải chi tiết chuẩn sư phạm:</h4><br><strong>1. Phân tích nguyên nhân an ninh thông tin lỗi [569-571]:</strong><br>- <em>Mật khẩu mặc định:</em> Hệ thống camera vẫn sử dụng tài khoản/mật khẩu mặc định của nhà sản xuất (như admin/admin, admin/123456) khiến tin tặc dễ dàng quét IP và brute-force truy cập [570].<br>- <em>Firmware lỗi thời:</em> Không cập nhật các bản vá lỗi bảo mật firmware của camera, để lộ lỗ hổng bảo mật zero-day [570].<br>- <em>Không phân đoạn mạng:</em> Camera IoT lắp đặt chung dải mạng LAN văn phòng của nhân viên, không được cô lập, cho phép mã độc lây lan chéo [574, 576-577].<br><br><strong>2. Đề xuất quy trình 4 biện pháp bảo vệ khẩn cấp [575-580]:</strong><br>- <em>Biện pháp 1 - Thay đổi mật khẩu mạnh tức thì:</em> Đặt mật khẩu cực kỳ phức tạp (Ví dụ: `CamXưởngVH@2026#`) cho tất cả 15 camera và đầu ghi NVR, vô hiệu hoá các tài khoản không dùng [575].<br>- <em>Biện pháp 2 - Cập nhật bản vá Firmware:</em> Tải phiên bản firmware mới nhất từ website nhà sản xuất uy tín để vá mọi lỗ hổng bảo mật cũ [576, 579].<br>- <em>Biện pháp 3 - Phân đoạn mạng cô lập (Mạng LAN ảo - VLAN):</em> Tạo một VLAN riêng biệt (VLAN 100 - IP_CAMERA) trên switch chuyên dụng dành riêng cho 15 camera này, cô lập hoàn toàn khỏi VLAN văn phòng chính [576-577].<br>- <em>Biện pháp 4 - Thiết lập kết nối VPN an toàn từ xa:</em> Tắt tính năng UPnP trên Router [580]. Khi ban giám đốc muốn truy cập xem camera từ xa bằng điện thoại, buộc phải kết nối thông qua kênh truyền mã hoá bảo mật VPN thiết lập trên Router trước khi mở app camera [577-578]."
+            }
+        ];
+
+        // Populate MCQs
+        const qContainer = document.getElementById('questions-container');
+        mcqs.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="question-num">Câu hỏi ${item.num}: ${item.q}</div>
+                <ul class="options-list">
+                    ${item.options.map(opt => `<li data-correct="${opt.c}">${opt.t}</li>`).join('')}
+                </ul>
+            `;
+            qContainer.appendChild(card);
+        });
+
+        // Populate Exercises
+        const exContainer = document.getElementById('exercises-container');
+        exercises.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'exercise-card';
+            card.innerHTML = `
+                <div class="exercise-title">${item.title}</div>
+                <div class="exercise-scenario">
+                    <strong>Tình huống giả định:</strong><br>${item.scenario}
+                </div>
+                <p><strong>Yêu cầu thực hành:</strong><br>${item.req}</p>
+                <div class="teacher-content">
+                    ${item.sol}
+                </div>
+            `;
+            exContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
