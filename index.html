@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học phần Mạng máy tính (INT4401) - Trang chủ</title>
+    <style>
+        :root {
+            --primary-color: #0b3c5d;
+            --secondary-color: #328cc1;
+            --accent-color: #d9b310;
+            --dark-color: #1d2731;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --success-color: #2ecc71;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f4f6f9;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #082d47);
+            color: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .vhu-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .course-info {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .intro-section {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 50px;
+        }
+
+        .intro-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 15px;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .chapter-card {
+            background-color: var(--white);
+            border: 2px solid #e1e4e8;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .chapter-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .chapter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+        }
+
+        .chapter-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .chapter-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chapter-description {
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .chapter-topics {
+            background-color: #f5f9fb;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .chapter-topics h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .chapter-topics ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .chapter-topics li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #555;
+        }
+
+        .chapter-topics li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .chapter-link {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            transition: var(--transition);
+            margin-top: auto;
+        }
+
+        .chapter-link:hover {
+            background: linear-gradient(135deg, #082d47, #286ba3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            background-color: var(--dark-color);
+            color: var(--white);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer-highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="vhu-logo">🎓 TRƯỜNG ĐẠI HỌC VĂN HIẾN</div>
+            <h1>TRANG CHỦ HỌC PHẦN</h1>
+            <p><strong>MẠNG MÁY TÍNH</strong></p>
+            <div class="course-info">
+                <strong>Mã học phần:</strong> INT4401 | <strong>Số tín chỉ:</strong> 3 | <strong>Hình thức:</strong> Giáo dục Đại học
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <section class="intro-section">
+            <h2>📚 Giới thiệu Học phần</h2>
+            <p>
+                Học phần <strong>Mạng máy tính (INT4401)</strong> là một trong những học phần cơ bản và bắt buộc 
+                trong chương trình đào tạo chuyên ngành Công nghệ Thông tin tại Trường Đại học Văn Hiến.
+            </p>
+            <p>
+                Nội dung học phần được biên soạn và cấu trúc theo tiêu chuẩn sư phạm đại học, với mục tiêu cung cấp 
+                cho sinh viên những kiến thức nền tảng về:
+            </p>
+            <ul style="margin-left: 30px; margin-bottom: 15px;">
+                <li>📡 <strong>Cấu trúc và kiến trúc</strong> của hệ thống mạng máy tính hiện đại</li>
+                <li>🔌 <strong>Các công nghệ truyền dẫn</strong> và phương tiện truyền thông mạng</li>
+                <li>🔄 <strong>Giao thức truyền thông</strong> và các tầng mô hình OSI/TCP-IP</li>
+                <li>🌐 <strong>Ứng dụng thực tiễn</strong> trong Internet, VoIP, Cloud Computing, IoT</li>
+                <li>🔒 <strong>Bảo mật mạng</strong> và các giải pháp bảo vệ hạ tầng công nghệ thông tin</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>💡 Yêu cầu tiên quyết</h3>
+                <p>
+                    Để học tập hiệu quả học phần này, sinh viên cần có kiến thức cơ bản về:
+                    <strong>Toán rời rạc, Cơ sở dữ liệu, và Kỹ năng sử dụng máy tính.</strong>
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="color: var(--primary-color); font-size: 2.2rem; margin-bottom: 30px; text-align: center;">
+                📖 7 Chương Học phần
+            </h2>
+
+            <div class="chapters-grid">
+
+                <!-- CHƯƠNG 1 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">1</div>
+                        <div class="chapter-title">Tổng Quan Mạng Máy Tính</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Khám phá khái niệm cơ bản, lịch sử phát triển và phân loại các mạng máy tính trong thế kỷ 21.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>Khái niệm và định nghĩa</li>
+                                <li>Lịch sử phát triển</li>
+                                <li>Phân loại mạng máy tính</li>
+                                <li>Môi trường truyền dẫn</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_01.html" class="chapter-link">Vào Chương 1 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 2 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">2</div>
+                        <div class="chapter-title">Mô Hình Tầng OSI</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Tìm hiểu mô hình tham chiếu OSI - nền tảng lý thuyết cho việc hiểu rõ hoạt động của mạng.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>7 tầng của mô hình OSI</li>
+                                <li>Chức năng từng tầng</li>
+                                <li>Giao thức tại mỗi tầng</li>
+                                <li>So sánh OSI và TCP/IP</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_02.html" class="chapter-link">Vào Chương 2 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 3 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">3</div>
+                        <div class="chapter-title">Tầng Liên Kết Dữ Liệu</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Nghiên cứu tầng 2 OSI - nơi xử lý truyền dẫn dữ liệu giữa các thiết bị trong cùng mạng LAN.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>Địa chỉ MAC</li>
+                                <li>Giao thức Ethernet</li>
+                                <li>Công nghệ Switch</li>
+                                <li>VLAN và Spanning Tree</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_03.html" class="chapter-link">Vào Chương 3 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 4 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">4</div>
+                        <div class="chapter-title">Tầng Mạng</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Khám phá tầng 3 OSI - tầng định tuyến, nơi điều hành luồng dữ liệu giữa các mạng khác nhau.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>Giao thức IP (IPv4, IPv6)</li>
+                                <li>Định tuyến (Routing)</li>
+                                <li>ICMP và Ping/Traceroute</li>
+                                <li>NAT và Firewall</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_04.html" class="chapter-link">Vào Chương 4 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 5 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">5</div>
+                        <div class="chapter-title">Tầng Vận Chuyển</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Tìm hiểu tầng 4 OSI - nơi quản lý kết nối end-to-end và chất lượng dịch vụ QoS.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>Giao thức TCP</li>
+                                <li>Giao thức UDP</li>
+                                <li>Quản lý cổng (Ports)</li>
+                                <li>Socket và kết nối</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_05.html" class="chapter-link">Vào Chương 5 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 6 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">6</div>
+                        <div class="chapter-title">Tầng Ứng Dụng</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Khám phá các giao thức và ứng dụng mạng phổ biến nhất mà người dùng sử dụng hàng ngày.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>HTTP/HTTPS và Web</li>
+                                <li>DNS và phân giải tên</li>
+                                <li>Email (SMTP, POP3, IMAP)</li>
+                                <li>FTP, SSH, Telnet</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_06.html" class="chapter-link">Vào Chương 6 →</a>
+                    </div>
+                </div>
+
+                <!-- CHƯƠNG 7 -->
+                <div class="chapter-card">
+                    <div class="chapter-header">
+                        <div class="chapter-number">7</div>
+                        <div class="chapter-title">Bảo Mật Mạng</div>
+                    </div>
+                    <div class="chapter-body">
+                        <div class="chapter-description">
+                            Nắm vững các nguyên tắc, công nghệ và giải pháp bảo vệ hạ tầng mạng và dữ liệu.
+                        </div>
+                        <div class="chapter-topics">
+                            <h4>Nội dung chính:</h4>
+                            <ul>
+                                <li>Mật mã và Encryption</li>
+                                <li>Chứng thực và PKI</li>
+                                <li>Tường lửa (Firewall)</li>
+                                <li>VPN và Bảo mật ứng dụng</li>
+                            </ul>
+                        </div>
+                        <a href="Chuong_07.html" class="chapter-link">Vào Chương 7 →</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="info-box" style="margin-top: 50px;">
+            <h3>📌 Hướng dẫn sử dụng</h3>
+            <p>
+                ✓ Mỗi chương chứa <strong>phần lý thuyết chi tiết</strong> và <strong>phần bài tập thực hành</strong> 
+                với đáp án chuyên sâu dành cho giáo viên.
+            </p>
+            <p>
+                ✓ Sinh viên có thể học tuần tự từ chương 1 đến chương 7, hoặc chọn những chương quan tâm.
+            </p>
+            <p>
+                ✓ Mỗi tập tin .html có thể mở trực tiếp trong trình duyệt web - không cần cài đặt thêm phần mềm.
+            </p>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p><strong>Khoa Công nghệ Thông tin</strong></p>
+        <p>Trường Đại học Văn Hiến - TP. Hồ Chí Minh</p>
+        <p class="footer-highlight">© 2026 - Hệ thống Học liệu Mạng máy tính INT4401</p>
+        <p style="margin-top: 15px; font-size: 0.95rem;">
+            Thiết kế theo tiêu chuẩn cấu trúc giảng dạy Đại học | Phiên bản 1.0
+        </p>
+    </footer>
+
+</body>
+</html>
