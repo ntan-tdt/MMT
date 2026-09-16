@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu Điện tử: Chương 4 - Kỹ thuật Chia Mạng Con (Subnetting)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-indigo-900 via-blue-900 to-cyan-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <!-- Icon -->
+                        <svg class="w-8 h-8 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-cyan-300 uppercase">Trường Đại học Văn Hiến - Khoa CNTT</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">CHƯƠNG 4: KỸ THUẬT CHIA MẠNG CON (SUBNETTING)</h1>
+                        <p class="text-sm text-slate-300 mt-1">Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ)</p>
+                    </div>
+                </div>
+                <!-- Floating Teacher lock inside header -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-xs font-semibold text-cyan-300 mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        MỞ KHÓA GÓC GIẢNG VIÊN (PASSWORD: VHU@INT4401)
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." class="px-3 py-1.5 text-slate-800 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-44">
+                        <button onclick="checkPassword()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded font-bold text-sm transition">Giải Mã</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="switchTab('theory')" id="btn-theory" class="border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>I. PHẦN LÝ THUYẾT CHI TIẾT</span>
+                </button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>II. CÂU HỎI & BÀI TẬP THỰC HÀNH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Tab 1: THEORY -->
+        <div id="tab-theory" class="space-y-12">
+            
+            <!-- Intro Card -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">Tóm tắt nội dung học tập Chương 4</h2>
+                <p class="text-slate-600 leading-relaxed text-justify mb-4">
+                    Kỹ thuật chia mạng con (Subnetting) là giải pháp phân cấp logic tối thiểu hóa sự lãng phí tài nguyên IP và cô lập thông tin an toàn trong quản trị mạng máy tính. Bằng cách chia nhỏ một không gian địa chỉ IP lớn ban đầu thành nhiều vùng mạng cục bộ nhỏ hơn, người quản trị có thể tối ưu hiệu năng đường truyền bằng cách thu hẹp các miền quảng bá (Broadcast Domain), ngăn chặn tình trạng nghẽn băng thông do các bản tin quảng bá tràn ngập. Nội dung chương này cung cấp kiến thức thực tế toàn diện, hướng dẫn chi tiết phương pháp chia mạng con độ dài cố định (FLSM) và chia mạng con độ dài thay đổi (VLSM) bám sát theo nhu cầu thực tế của từng doanh nghiệp.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-blue-600 text-xl font-bold">01</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Nguyên lý Subnetting</h4>
+                            <p class="text-xs text-slate-500 mt-1">Lợi ích, miền quảng bá (Broadcast Domain) và mô hình toán học mượn bit nhị phân.</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-indigo-600 text-xl font-bold">02</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Kỹ thuật FLSM</h4>
+                            <p class="text-xs text-slate-500 mt-1">Chia mạng con độ dài mặt nạ cố định (Subnet Mask đồng nhất, kích thước bằng nhau).</p>
+                        </div>
+                    </div>
+                    <div class="bg-cyan-50 border border-cyan-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-cyan-600 text-xl font-bold">03</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Kỹ thuật VLSM</h4>
+                            <p class="text-xs text-slate-500 mt-1">Chia mạng con độ dài mặt nạ thay đổi linh hoạt theo quy mô phòng ban thực tế.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.1. Giới thiệu tổng quan về Subnetting -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">4.1. Tổng Quan về Kỹ Thuật Chia Mạng Con (Subnetting)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Chia mạng con (Subnetting)</strong> là quá trình phân chia một không gian địa chỉ mạng lớn ban đầu thành nhiều phân đoạn mạng nhỏ hơn hoạt động hoàn toàn độc lập về mặt logic. Trong kiến trúc IP ban đầu, nếu một doanh nghiệp sử dụng một dải mạng Class A, B hoặc C nguyên bản mà không chia mạng con, toàn bộ các máy trạm trong doanh nghiệp đó sẽ cùng thuộc về một miền quảng bá duy nhất.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="p-5 rounded-xl bg-rose-50 border border-rose-100 space-y-2">
+                            <h4 class="font-bold text-rose-900 flex items-center">
+                                <svg class="w-5 h-5 mr-1.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Vấn đề của miền quảng bá quá lớn (Broadcast Domain)
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                Khi một máy tính trong dải mạng gửi một gói tin quảng bá (Broadcast), mọi thiết bị Switch trong mạng LAN sẽ nhân bản gói tin đó ra toàn bộ các cổng vật lý khác. Nếu dải mạng có hàng trăm hoặc hàng nghìn máy tính, lưu lượng rác từ các bản tin quảng bá (như truy vấn ARP, DHCP Discover, thông báo NetBIOS...) sẽ chiếm dụng một lượng băng thông cực kỳ lớn, đồng thời ép bộ xử lý CPU của từng card mạng máy trạm phải liên tục hoạt động để bóc tách và phân tích gói tin, dẫn đến giảm sút nghiêm trọng hiệu năng truyền thông toàn hệ thống.
+                            </p>
+                        </div>
+                        <div class="p-5 rounded-xl bg-emerald-50 border border-emerald-100 space-y-2">
+                            <h4 class="font-bold text-emerald-900 flex items-center">
+                                <svg class="w-5 h-5 mr-1.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Lợi ích vượt trội của việc chia mạng con
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                <strong>1. Cải thiện hiệu năng đường truyền:</strong> Thu hẹp miền quảng bá về kích thước nhỏ nhất, cô lập luồng giao thông broadcast nội bộ của từng phòng ban.<br>
+                                <strong>2. Tiết kiệm không gian địa chỉ IP:</strong> Tránh lãng phí hàng nghìn địa chỉ IP nhàn rỗi trong các dải mạng lớp lớn.<br>
+                                <strong>3. Tăng cường tính bảo mật:</strong> Dễ dàng cô lập thông tin an toàn giữa các phòng ban (như phòng Kế toán, Nhân sự, R&D...) và áp dụng các quy tắc bảo mật Firewall ngăn chặn tấn công lan truyền.<br>
+                                <strong>4. Dễ dàng quản trị và cô lập sự cố:</strong> Khi một phân đoạn mạng xảy ra lỗi cấu hình hoặc nhiễm mã độc, nó sẽ bị cô lập hoàn toàn mà không ảnh hưởng đến hoạt động của toàn bộ doanh nghiệp.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.2. Nguyên tắc và Mô hình toán học chia mạng con -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">4.2. Nguyên Tắc và Mô Hình Toán Học Mượn Bit Nhị Phân</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Mô hình toán học của địa chỉ IP luôn bao gồm hai thành phần cơ bản: phần mạng <strong>NetID</strong> (đại diện cho liên mạng lớn) và phần thiết bị <strong>HostID</strong> (định danh thiết bị duy nhất trong phân đoạn mạng đó).
+                    </p>
+                    <p>
+                        <strong>Nguyên tắc mượn bit nhị phân để chia mạng con:</strong> Để tạo ra các mạng con, ta tiến hành "mượn" một số lượng bit liên tiếp từ phần HostID (các bit có giá trị bằng 0 ở Subnet Mask ban đầu tính từ ranh giới bên trái) chuyển thành phần NetID mới mở rộng (Subnet ID).
+                    </p>
+                    
+                    <div class="bg-slate-100 rounded-2xl p-6 border border-slate-200 shadow-inner max-w-3xl mx-auto my-6">
+                        <h4 class="font-bold text-slate-900 mb-3 text-center uppercase tracking-wide text-sm">Công thức toán học chia mạng con cơ bản</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-400 block uppercase">Thông số mạng gốc</span>
+                                <p class="mt-1 font-medium text-slate-800">Số bit NetID ban đầu: <strong class="text-blue-600">N</strong> bits</p>
+                                <p class="font-medium text-slate-800">Số bit HostID ban đầu: <strong class="text-blue-600">H</strong> bits</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-400 block uppercase">Thông số mượn bit</span>
+                                <p class="mt-1 font-medium text-slate-800">Số bit mượn từ HostID: <strong class="text-indigo-600">X</strong> bits (với X < H)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 sm:col-span-2">
+                                <span class="text-xs font-semibold text-slate-400 block uppercase">Thông số mạng con sau khi chia</span>
+                                <ul class="list-disc pl-6 space-y-1.5 mt-2 font-medium text-slate-800">
+                                    <li>Số bit NetID mới của các mạng con: <strong class="text-emerald-600">N + X</strong> bits</li>
+                                    <li>Số bit HostID còn lại của các mạng con: <strong class="text-emerald-600">H - X</strong> bits</li>
+                                    <li>Số lượng mạng con tạo được: <code class="font-mono text-indigo-700 bg-slate-50 px-1 rounded">Y = 2^X</code> subnets</li>
+                                    <li>Tổng số lượng IP trên mỗi mạng con: <code class="font-mono text-indigo-700 bg-slate-50 px-1 rounded">Y = 2^(H-X)</code> IPs</li>
+                                    <li>Số lượng IP khả dụng để gán cho các máy trạm (Hosts) thực tế: <code class="font-mono text-emerald-700 bg-emerald-50 px-1 rounded">2^(H-X) - 2</code> IPs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm border-l-4 border-amber-500 pl-4 py-1 text-slate-500 bg-amber-50/50 rounded-r-lg">
+                        <strong>Lưu ý bắt buộc:</strong> Tại sao phải luôn trừ đi 2 địa chỉ trong một mạng con? Bởi vì địa chỉ đầu tiên (toàn bộ các bit ở phần HostID còn lại bằng 0) là <strong>Địa chỉ mạng (Network ID)</strong> đại diện chung cho cả mạng con, và địa chỉ cuối cùng (toàn bộ các bit ở phần HostID còn lại bằng 1) là <strong>Địa chỉ quảng bá trực tiếp (Direct Broadcast Address)</strong> dùng để gửi dữ liệu cho tất cả các thiết bị trong mạng con đó. Cả hai địa chỉ này không được phép gán tĩnh hay động cho card mạng của bất kỳ máy trạm nào.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 4.3. Kỹ thuật chia mạng con có độ dài mặt nạ cố định FLSM -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">4.3. Kỹ Thuật Chia Mạng Con Độ Dài Mặt Nạ Cố Định (FLSM)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>FLSM (Fixed Length Subnet Mask)</strong> là kỹ thuật phân chia dải địa chỉ IP lớn ban đầu thành nhiều mạng con có kích thước hoàn toàn bằng nhau. Điều này có nghĩa là tất cả các mạng con được tạo ra đều mượn cùng số lượng bit X, sở hữu Subnet Mask giống hệt nhau, và hỗ trợ cùng một số lượng host tối đa trên mỗi phân đoạn mạng con.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <span class="font-bold text-slate-900 block mb-1">Ưu điểm của FLSM</span>
+                            <p class="text-sm">Đơn giản, cực kỳ dễ cấu hình và thiết lập các thông số định tuyến cơ bản trong các hệ thống mạng doanh nghiệp vừa và nhỏ, ít khi xảy ra lỗi do cấu hình đồng bộ thống nhất giữa các cổng.</p>
+                        </div>
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <span class="font-bold text-slate-900 block mb-1">Nhược điểm của FLSM</span>
+                            <p class="text-sm">Gây lãng phí tài nguyên IP rất lớn nếu quy mô thực tế của các phòng ban không đồng đều. Ví dụ, nếu dải mạng con có kích thước 30 IP mà đường kết nối WAN giữa 2 router chỉ cần đúng 2 IP, ta vẫn phải tiêu tốn dải IP này, bỏ phí 28 IP vô ích.</p>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-slate-900 text-lg mt-6 mb-2">Quy trình 5 bước chia FLSM chi tiết:</h4>
+                    <ol class="list-decimal pl-6 space-y-3 text-sm">
+                        <li>
+                            <strong>Bước 1: Chuyển dải mạng gốc và Subnet Mask gốc sang dạng nhị phân.</strong><br>
+                            Viết dải IP và mặt nạ mạng con nguyên bản thành chuỗi 32 bit nhị phân phân tách theo 4 octet rõ ràng.
+                        </li>
+                        <li>
+                            <strong>Bước 2: Xác định số bit cần mượn (X bits).</strong><br>
+                            - Dựa trên số lượng mạng con tối thiểu mong muốn: chọn X sao cho <code class="font-mono text-indigo-700 bg-slate-50 px-1 rounded">2^X &ge; số lượng mạng con yêu cầu</code>.<br>
+                            - Dựa trên số lượng host tối thiểu trên từng mạng con: chọn X sao cho <code class="font-mono text-indigo-700 bg-slate-50 px-1 rounded">2^(H-X) - 2 &ge; số lượng host yêu cầu</code>.
+                        </li>
+                        <li>
+                            <strong>Bước 3: Xác định Subnet Mask mới.</strong><br>
+                            Chuyển X bit mượn liên tiếp của phần HostID từ 0 thành 1 trong chuỗi nhị phân của Subnet Mask cũ. Đổi giá trị nhị phân này ngược về dạng thập phân chấm (Dotted-Decimal) để lấy Subnet Mask mới.
+                        </li>
+                        <li>
+                            <strong>Bước 4: Lũy tiến nhị phân phần bit mượn.</strong><br>
+                            Chạy dãy giá trị của X bit mượn từ giá trị nhị phân <code class="font-mono text-blue-700">00...0</code> cho đến <code class="font-mono text-blue-700">11...1</code> để xác định chính xác địa chỉ mạng của từng mạng con.
+                        </li>
+                        <li>
+                            <strong>Bước 5: Xác định các thông số thập phân cho từng mạng con.</strong><br>
+                            Chuyển đổi từng mạng con nhị phân sang dạng thập phân để xác định Network ID, dải IP host khả dụng gán gán cho máy trạm (từ IP Network + 1 đến IP Broadcast - 1), và địa chỉ Broadcast (bit phần host còn lại bằng 1).
+                        </li>
+                    </ol>
+
+                    <div class="p-6 rounded-xl border border-blue-200 bg-blue-50/50 my-6">
+                        <h4 class="font-bold text-blue-900 mb-2">Ví dụ thực tế chia FLSM mẫu:</h4>
+                        <p class="text-sm mb-3">
+                            <strong>Đề bài:</strong> Cho địa chỉ mạng gốc Lớp C: <code class="font-mono text-indigo-800 bg-white px-1 border border-slate-200 rounded">192.168.10.0/24</code>. Sử dụng kỹ thuật FLSM để chia dải mạng này thành các mạng con mượn đúng <strong>3 bits</strong>. Xác định thông số chi tiết của các mạng con.
+                        </p>
+                        <p class="text-sm font-semibold text-slate-800">Lời giải chi tiết từng bước:</p>
+                        <ul class="list-disc pl-6 text-xs space-y-2 mt-2 text-slate-700">
+                            <li>Mạng gốc ban đầu có NetID (N) = 24 bits, HostID (H) = 8 bits. Số bit mượn để chia X = 3 bits.</li>
+                            <li>Số mạng con tạo được: <code class="font-mono bg-white px-1 border border-slate-200 rounded">2^3 = 8</code> subnets.</li>
+                            <li>Số bit HostID còn lại của mạng con: <code class="font-mono bg-white px-1 border border-slate-200 rounded">8 - 3 = 5</code> bits.</li>
+                            <li>Số IP khả dụng trên mỗi mạng con: <code class="font-mono bg-white px-1 border border-slate-200 rounded">2^5 - 2 = 30</code> IPs.</li>
+                            <li>Mặt nạ Subnet Mask mới dạng nhị phân: <code class="font-mono bg-white px-1 border border-slate-200 rounded">11111111.11111111.11111111.11100000</code> tương đương thập phân là <code class="font-mono bg-white px-1 border border-slate-200 rounded">255.255.255.224</code> (viết gọn là prefix <code class="font-mono bg-white px-1 border border-slate-200 rounded">/27</code>).</li>
+                            <li>Dải bước nhảy của mạng con (Magic Number) bằng: <code class="font-mono bg-white px-1 border border-slate-200 rounded">256 - 224 = 32</code>. Các mạng con sẽ cách đều nhau 32 đơn vị ở octet thứ 4.</li>
+                        </ul>
+                        <!-- Detail Table -->
+                        <div class="overflow-x-auto mt-4">
+                            <table class="min-w-full divide-y divide-slate-200 text-xs text-left bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                                <thead class="bg-slate-100 font-semibold text-slate-700">
+                                    <tr>
+                                        <th class="px-3 py-2 border-b">STT</th>
+                                        <th class="px-3 py-2 border-b">Địa chỉ mạng (Network ID)</th>
+                                        <th class="px-3 py-2 border-b">Subnet Mask</th>
+                                        <th class="px-3 py-2 border-b">Dải IP khả dụng cho Host</th>
+                                        <th class="px-3 py-2 border-b">Địa chỉ Quảng bá (Broadcast)</th>
+                                        <th class="px-3 py-2 border-b">Biểu diễn nhị phân (Octet 4)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-slate-600 font-mono">
+                                    <tr>
+                                        <td class="px-3 py-2">#1</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.0/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.1 - 192.168.10.30</td>
+                                        <td class="px-3 py-2">192.168.10.31</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[000]</span>00000</td>
+                                    </tr>
+                                    <tr class="bg-slate-50/50">
+                                        <td class="px-3 py-2">#2</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.32/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.33 - 192.168.10.62</td>
+                                        <td class="px-3 py-2">192.168.10.63</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[001]</span>00000</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">#3</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.64/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.65 - 192.168.10.94</td>
+                                        <td class="px-3 py-2">192.168.10.95</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[010]</span>00000</td>
+                                    </tr>
+                                    <tr class="bg-slate-50/50">
+                                        <td class="px-3 py-2">#4</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.96/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.97 - 192.168.10.126</td>
+                                        <td class="px-3 py-2">192.168.10.127</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[011]</span>00000</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">#5</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.128/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.129 - 192.168.10.158</td>
+                                        <td class="px-3 py-2">192.168.10.159</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[100]</span>00000</td>
+                                    </tr>
+                                    <tr class="bg-slate-50/50">
+                                        <td class="px-3 py-2">#6</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.160/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.161 - 192.168.10.190</td>
+                                        <td class="px-3 py-2">192.168.10.191</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[101]</span>00000</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">#7</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.192/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.193 - 192.168.10.222</td>
+                                        <td class="px-3 py-2">192.168.10.223</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[110]</span>00000</td>
+                                    </tr>
+                                    <tr class="bg-slate-50/50">
+                                        <td class="px-3 py-2">#8</td>
+                                        <td class="px-3 py-2 font-bold text-slate-900">192.168.10.224/27</td>
+                                        <td class="px-3 py-2">255.255.255.224</td>
+                                        <td class="px-3 py-2 text-emerald-700">192.168.10.225 - 192.168.10.254</td>
+                                        <td class="px-3 py-2">192.168.10.255</td>
+                                        <td class="px-3 py-2"><span class="text-indigo-600 font-bold">[111]</span>00000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.4. Kỹ thuật chia mạng con có độ dài mặt nạ thay đổi VLSM -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">4.4. Kỹ Thuật Chia Mạng Con Độ Dài Mặt Nạ Thay Đổi (VLSM)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>VLSM (Variable Length Subnet Mask)</strong> là kỹ thuật chia mạng nâng cao, cho phép các mạng con được thiết lập với các mặt nạ mạng con khác nhau (Subnet Mask không đồng nhất), kích thước vùng mạng được tùy biến linh hoạt thích ứng tối đa với số lượng máy trạm yêu cầu thực tế của từng phân đoạn mạng.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <span class="font-bold text-slate-900 block mb-1">Ưu điểm vượt trội của VLSM</span>
+                            <p class="text-sm">Tối ưu hóa tài nguyên IP vượt trội, ngăn ngừa triệt để tình trạng lãng phí IP. Hỗ trợ tạo các dải mạng con cực nhỏ (như dải /30 chỉ có đúng 2 IP khả dụng) chuyên dùng cấu hình kết nối trực tiếp point-to-point giữa các Router.</p>
+                        </div>
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <span class="font-bold text-slate-900 block mb-1">Nhược điểm của VLSM</span>
+                            <p class="text-sm">Yêu cầu người quản trị phải có năng lực lập kế hoạch, tính toán nhị phân chính xác và tỉ mỉ, thiết kế dải mạng theo trình tự logic chặt chẽ để tránh xảy ra hiện tượng chồng chéo địa chỉ (Overlapping).</p>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-slate-900 text-lg mt-6 mb-2">Quy trình các bước thiết kế chia dải IP theo VLSM:</h4>
+                    <ul class="list-decimal pl-6 space-y-3.5 text-sm">
+                        <li>
+                            <strong>Bước 1: Sắp xếp các phòng ban theo thứ tự số lượng host yêu cầu giảm dần.</strong><br>
+                            Đây là nguyên tắc vàng của VLSM. Luôn luôn phải chia và cấp phát dải IP cho phòng ban có quy mô lớn nhất trước, sau đó lấy không gian IP còn lại chia tiếp cho các phòng ban nhỏ hơn.
+                        </li>
+                        <li>
+                            <strong>Bước 2: Xác định kích thước khối (Block Size) tối ưu cho phân đoạn mạng hiện tại.</strong><br>
+                            Tìm giá trị lũy thừa nhỏ nhất của 2 sao cho: <code class="font-mono text-indigo-700 bg-slate-50 px-1.5 py-0.5 rounded">Kích thước khối (Block Size) = 2^(Host_Bits) &ge; Số host yêu cầu + 2</code>. Từ đó, xác định được số bit HostID cần giữ lại và số bit NetID mới của dải mạng con (Prefix = 32 - Host_Bits).
+                        </li>
+                        <li>
+                            <strong>Bước 3: Xác định chi tiết dải IP cho phân đoạn hiện tại.</strong><br>
+                            Tìm địa chỉ mạng (Network ID), Subnet Mask, địa chỉ Quảng bá (Broadcast ID = Network ID + Block Size - 1) và dải IP khả dụng để gán cho các máy trạm.
+                        </li>
+                        <li>
+                            <strong>Bước 4: Xác định địa chỉ mạng bắt đầu cho phân đoạn tiếp theo.</strong><br>
+                            Địa chỉ mạng bắt đầu của phân đoạn mạng con tiếp theo chính là địa chỉ IP kế tiếp liền sau địa chỉ quảng bá của phân đoạn mạng con vừa hoàn tất tính toán (<code class="font-mono text-indigo-700 bg-slate-50 px-1.5 py-0.5 rounded">Next_Network = Current_Broadcast + 1</code>).
+                        </li>
+                        <li>
+                            <strong>Bước 5: Lặp lại quy trình.</strong><br>
+                            Lặp lại các bước 2, 3, 4 cho đến phân đoạn mạng nhỏ nhất trong danh sách.
+                        </li>
+                    </ul>
+
+                    <div class="p-6 rounded-xl border border-cyan-200 bg-cyan-50/50 my-6">
+                        <h4 class="font-bold text-cyan-900 mb-2">Ví dụ thực tế chia VLSM mẫu:</h4>
+                        <p class="text-sm mb-3">
+                            <strong>Đề bài:</strong> Một công ty được ISP cấp cho dải IP mạng gốc ban đầu là <code class="font-mono text-indigo-800 bg-white px-1 border border-slate-200 rounded">192.168.0.0/24</code>. Người quản trị cần chia dải IP này cho 3 phòng ban và dải mạng WAN kết nối router với quy mô cụ thể như sau:
+                        </p>
+                        <ul class="list-disc pl-6 text-xs space-y-1 mb-4 text-slate-700">
+                            <li>Phòng Kinh doanh: Cần gán IP cho 50 máy trạm.</li>
+                            <li>Phòng Kỹ thuật: Cần gán IP cho 30 máy trạm.</li>
+                            <li>Phòng Hành chính: Cần gán IP cho 20 máy trạm.</li>
+                        </ul>
+                        <p class="text-sm font-semibold text-slate-800">Tiến trình giải VLSM chuẩn:</p>
+                        <div class="text-xs space-y-4 mt-2 text-slate-700 bg-white p-5 rounded-lg border border-slate-200">
+                            <div>
+                                <h5 class="font-bold text-slate-900 mb-1">1. Phân bổ cho Phòng Kinh doanh (50 hosts - Quy mô lớn nhất):</h5>
+                                <p class="mb-1">Cần tối thiểu: 50 + 2 = 52 IP. Lũy thừa của 2 thỏa mãn là: <code class="font-mono">2^6 = 64 &ge; 52</code>. Số bit host giữ lại là 6 bits, suy ra bit NetID mới là: <code class="font-mono">32 - 6 = 26</code> (Prefix /26, Subnet Mask: <code class="font-mono">255.255.255.192</code>).</p>
+                                <p class="font-mono text-indigo-800 font-semibold pl-4">--> Mạng con Kinh doanh: 192.168.0.0/26 | Dải IP khả dụng: 192.168.0.1 - 192.168.0.62 | Broadcast: 192.168.0.63</p>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div>
+                                <h5 class="font-bold text-slate-900 mb-1">2. Phân bổ cho Phòng Kỹ thuật (30 hosts - Quy mô lớn thứ hai):</h5>
+                                <p class="mb-1">Địa chỉ mạng con bắt đầu: <code class="font-mono">192.168.0.63 + 1 = 192.168.0.64</code>.</p>
+                                <p class="mb-1">Cần tối thiểu: 30 + 2 = 32 IP. Lũy thừa của 2 thỏa mãn là: <code class="font-mono">2^5 = 32 &ge; 32</code>. Số bit host giữ lại là 5 bits, suy ra bit NetID mới là: <code class="font-mono">32 - 5 = 27</code> (Prefix /27, Subnet Mask: <code class="font-mono">255.255.255.224</code>).</p>
+                                <p class="font-mono text-indigo-800 font-semibold pl-4">--> Mạng con Kỹ thuật: 192.168.0.64/27 | Dải IP khả dụng: 192.168.0.65 - 192.168.0.94 | Broadcast: 192.168.0.95</p>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div>
+                                <h5 class="font-bold text-slate-900 mb-1">3. Phân bổ cho Phòng Hành chính (20 hosts - Quy mô lớn thứ ba):</h5>
+                                <p class="mb-1">Địa chỉ mạng con bắt đầu: <code class="font-mono">192.168.0.95 + 1 = 192.168.0.96</code>.</p>
+                                <p class="mb-1">Cần tối thiểu: 20 + 2 = 22 IP. Lũy thừa của 2 thỏa mãn là: <code class="font-mono">2^5 = 32 &ge; 22</code>. Số bit host giữ lại là 5 bits, suy ra bit NetID mới là: <code class="font-mono">32 - 5 = 27</code> (Prefix /27, Subnet Mask: <code class="font-mono">255.255.255.224</code>).</p>
+                                <p class="font-mono text-indigo-800 font-semibold pl-4">--> Mạng con Hành chính: 192.168.0.96/27 | Dải IP khả dụng: 192.168.0.97 - 192.168.0.126 | Broadcast: 192.168.0.127</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.5. Bảng so sánh ma trận FLSM và VLSM -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">4.5. Bảng So Sánh Ma Trận Kỹ Thuật FLSM và VLSM</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm text-left bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <thead class="bg-slate-100 font-semibold text-slate-700">
+                            <tr>
+                                <th class="px-4 py-3 border-b">Tiêu chí so sánh</th>
+                                <th class="px-4 py-3 border-b text-indigo-700">Chia mạng con FLSM</th>
+                                <th class="px-4 py-3 border-b text-cyan-700">Chia mạng con VLSM</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-slate-900 bg-slate-50/50">Mặt nạ mạng con (Subnet Mask)</td>
+                                <td class="px-4 py-3">Tất cả các mạng con bắt buộc có Subnet Mask giống nhau</td>
+                                <td class="px-4 py-3">Các mạng con có thể có Subnet Mask khác nhau</td>
+                            </tr>
+                            <tr class="bg-slate-50/30">
+                                <td class="px-4 py-3 font-semibold text-slate-900 bg-slate-50/50">Kích thước mạng con (Số IP)</td>
+                                <td class="px-4 py-3">Bằng nhau trên mọi phân đoạn</td>
+                                <td class="px-4 py-3">Khác nhau, co giãn linh hoạt theo quy mô phòng ban</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-slate-900 bg-slate-50/50">Mức độ lãng phí IP</td>
+                                <td class="px-4 py-3 text-red-600">Cao, đặc biệt lãng phí khi gán dải cho link WAN</td>
+                                <td class="px-4 py-3 text-emerald-700 font-semibold">Thấp, tối ưu hóa tối đa dải IP</td>
+                            </tr>
+                            <tr class="bg-slate-50/30">
+                                <td class="px-4 py-3 font-semibold text-slate-900 bg-slate-50/50">Độ phức tạp thiết kế & cấu hình</td>
+                                <td class="px-4 py-3">Rất thấp, dễ dàng quản lý và tránh xung đột</td>
+                                <td class="px-4 py-3">Trung bình - Cao, yêu cầu lập kế hoạch phân dải tỉ mỉ</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-slate-900 bg-slate-50/50">Khả năng tương thích giao thức định tuyến</td>
+                                <td class="px-4 py-3">Tương thích 100% với cả giao thức cũ (Classful như RIPv1)</td>
+                                <td class="px-4 py-3 font-medium text-slate-800">Chỉ hoạt động với giao thức định tuyến không phân lớp (Classless như RIPv2, OSPF, EIGRP)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Tab 2: PRACTICE -->
+        <div id="tab-practice" class="space-y-12 hidden">
+            
+            <!-- MCQ Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">30 Câu Hỏi Trắc Nghiệm Kiểm Tra Kiến Thức</h2>
+                <div class="space-y-6">
+
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 1</span>
+                        <p class="font-semibold text-slate-900">Mục đích chính của kỹ thuật chia mạng con (Subnetting) là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Chuyển đổi dải IP Private sang dải IP Public định tuyến</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Thu nhỏ miền quảng bá (Broadcast Domain) để tăng hiệu năng mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Thay thế hoàn toàn dải địa chỉ vật lý MAC của card mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tăng tốc độ xung nhịp CPU hoạt động cho các máy trạm</div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 2</span>
+                        <p class="font-semibold text-slate-900">Nếu mượn X bits từ phần HostID ban đầu để chia mạng con, công thức nào dưới đây biểu diễn số lượng mạng con tạo được?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Y = 2^X</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Y = 2^X - 2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Y = 2^(H-X)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Y = 2^(H-X) - 2</div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 3</span>
+                        <p class="font-semibold text-slate-900">Nếu một mạng con còn lại H-X bits cho phần HostID, công thức tính số lượng địa chỉ IP KHẢ DỤNG thực tế gán cho các host là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Z = 2^X - 2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Z = 2^(H-X)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Z = 2^(H-X) - 2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Z = 2^H</div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 4</span>
+                        <p class="font-semibold text-slate-900">Mặt nạ mạng con (Subnet Mask) mới của dải mạng Lớp C khi mượn 2 bits để chia mạng con là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 255.255.255.128</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 255.255.255.192</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 255.255.255.224</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.255.255.240</div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 5</span>
+                        <p class="font-semibold text-slate-900">Một mạng con sử dụng Prefix /27 tương ứng với mặt nạ Subnet Mask thập phân nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 255.255.255.192</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 255.255.255.224</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 255.255.255.240</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.255.255.248</div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 6</span>
+                        <p class="font-semibold text-slate-900">Dải IP khả dụng tối đa gán cho các host trên một phân đoạn mạng con dùng Prefix /30 là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 4</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 6</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 30</div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 7</span>
+                        <p class="font-semibold text-slate-900">Đặc trưng cốt lõi của phương pháp chia mạng con cố định FLSM là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Các mạng con được chia có kích thước tùy ý lớn nhỏ</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tất cả các mạng con bắt buộc có mặt nạ Subnet Mask giống nhau</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Mỗi mạng con sử dụng một giao thức định tuyến khác nhau</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Các bit mượn nằm phân tán không liên tục</div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 8</span>
+                        <p class="font-semibold text-slate-900">Kỹ thuật chia mạng con có độ dài mặt nạ thay đổi viết tắt là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. FLSM</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. VLSM</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. CIDR</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. NAT</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 9</span>
+                        <p class="font-semibold text-slate-900">Khi chia dải IP theo kỹ thuật VLSM, phân đoạn mạng nào bắt buộc phải được ưu tiên tính toán và cắt dải IP đầu tiên?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Phân đoạn kết nối WAN 2 hosts của Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Phân đoạn có yêu cầu số lượng hosts lớn nhất (quy mô lớn nhất)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Phân đoạn có yêu cầu số lượng hosts nhỏ nhất</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tiến hành chọn lựa ngẫu nhiên không cần thứ tự</div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 10</span>
+                        <p class="font-semibold text-slate-900">Với địa chỉ IP: 192.168.10.15/27, hãy xác định địa chỉ mạng (Network ID) chứa IP này?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. 192.168.10.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 192.168.10.1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 192.168.10.15</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 192.168.10.32</div>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 11</span>
+                        <p class="font-semibold text-slate-900">Cho dải mạng 192.168.1.128/26. Hãy xác định địa chỉ quảng bá (Broadcast ID) của dải mạng này?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.1.128</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 192.168.1.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 192.168.1.191</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 192.168.1.192</div>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 12</span>
+                        <p class="font-semibold text-slate-900">Nếu mặt nạ mạng con là 255.255.255.240, bước nhảy mạng con (Magic Number) ở octet 4 là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 32</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 8</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 16</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 4</div>
+                        </div>
+                    </div>
+
+                    <!-- Q13 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 13</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IP nào dưới đây KHÔNG hợp lệ để cấu hình gán trực tiếp cho máy tính của người dùng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.10.33/27</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 172.16.10.100/24</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 192.168.1.63/26</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 10.0.0.1/8</div>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 14</span>
+                        <p class="font-semibold text-slate-900">Một mạng con Class C được chia bằng Prefix /29. Số host khả dụng tối đa trên phân đoạn mạng này là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 8</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 6</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 14</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 30</div>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 15</span>
+                        <p class="font-semibold text-slate-900">Giao thức định tuyến nào dưới đây hỗ trợ chuyển tiếp bảng định tuyến đi kèm thông tin Subnet Mask (Classless)?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. RIPv1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. OSPF</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Giao thức IP tĩnh không có dải</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ARP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q16 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 16</span>
+                        <p class="font-semibold text-slate-900">Phép toán logic nào được thiết bị định tuyến Router sử dụng để bóc tách địa chỉ mạng (Network ID) từ IP và Subnet Mask?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Phép AND logic nhị phân</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Phép OR logic nhị phân</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Phép XOR nhị phân</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Phép dịch bit (Bitwise Shift)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 17</span>
+                        <p class="font-semibold text-slate-900">Doanh nghiệp cần chia mạng gốc Class C thành ít nhất 6 mạng con độc lập. Số lượng bit tối thiểu cần mượn từ phần HostID là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 2 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 3 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 4 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 5 bits</div>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 18</span>
+                        <p class="font-semibold text-slate-900">Với địa chỉ mạng gốc là 192.168.10.0/24. Sau khi mượn 2 bits, địa chỉ mạng con thứ 2 (STT #2) là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.10.0/26</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 192.168.10.64/26</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 192.168.10.128/26</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 192.168.10.32/26</div>
+                        </div>
+                    </div>
+
+                    <!-- Q19 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 19</span>
+                        <p class="font-semibold text-slate-900">Một mạng con sử dụng mặt nạ Subnet Mask là 255.255.240.0. Hỏi Prefix viết gọn của dải mạng này là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. /16</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. /20</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. /24</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. /28</div>
+                        </div>
+                    </div>
+
+                    <!-- Q20 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 20</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IP nào gán cho host dưới đây KHÔNG thuộc cùng phân đoạn mạng con với dải 192.168.1.16/28?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.1.17</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 192.168.1.20</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 192.168.1.30</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">D. 192.168.1.33</div>
+                        </div>
+                    </div>
+
+                    <!-- Q21 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 21</span>
+                        <p class="font-semibold text-slate-900">Không gian địa chỉ mạng IPv6 có cần thiết phải sử dụng kỹ thuật chia mạng con thường xuyên như dải IPv4 không? Vì sao?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Có, vì số lượng thiết bị IPv6 bị giới hạn nghiêm trọng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Ít cần thiết hơn nhờ không gian địa chỉ IPv6 rộng lớn khổng lồ</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Hoàn toàn không thể chia mạng con trên IPv6</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bắt buộc để tích hợp mã hóa cơ bản TLS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q22 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 22</span>
+                        <p class="font-semibold text-slate-900">Trong một dải mạng Class A mượn 8 bits để chia mạng con, mặt nạ Subnet Mask mới là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 255.0.0.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 255.255.0.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 255.255.255.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.128.0.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Q23 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 23</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IP nào dưới đây là địa chỉ Quảng bá (Broadcast Address) của dải mạng con 172.16.16.0/20?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 172.16.16.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 172.16.31.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 172.16.255.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 172.16.15.255</div>
+                        </div>
+                    </div>
+
+                    <!-- Q24 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 24</span>
+                        <p class="font-semibold text-slate-900">Cấu hình một máy trạm gán tĩnh IP: 192.168.10.63, Subnet Mask: 255.255.255.192. Tại sao máy này không kết nối được liên mạng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Vì dải IP này thuộc về vùng Loopback Address</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Vì đây là địa chỉ quảng bá trực tiếp của dải mạng con đầu tiên</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Vì IP này thuộc về dải Class A bị chặn trên internet</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Vì thiết bị switch học nhầm MAC Address</div>
+                        </div>
+                    </div>
+
+                    <!-- Q25 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 25</span>
+                        <p class="font-semibold text-slate-900">Với địa chỉ mạng gốc 192.168.100.0/24, người quản trị chia dải mạng con VLSM cho 1 phòng ban cần gán 12 máy trạm. Prefix tối ưu nhất là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. /27</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. /28</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. /29</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. /30</div>
+                        </div>
+                    </div>
+
+                    <!-- Q26 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 26</span>
+                        <p class="font-semibold text-slate-900">Khái niệm "Overlapping IP" trong thiết kế chia mạng con có ý nghĩa là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Hiện tượng chồng lấn hoặc chồng chéo phạm vi IP giữa các mạng con</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Quá trình nhân bản luồng dữ liệu của giao thức ARP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Kỹ thuật chuyển đổi từ dải IP Private sang dải IP Public</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Thiết lập dự phòng cổng ra Gateway mặc định</div>
+                        </div>
+                    </div>
+
+                    <!-- Q27 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 27</span>
+                        <p class="font-semibold text-slate-900">Một dải mạng con được ghi dưới dạng: 10.10.10.0/24. Số lượng host khả dụng tối đa có thể gán là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 256</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 254</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 126</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 510</div>
+                        </div>
+                    </div>
+
+                    <!-- Q28 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 28</span>
+                        <p class="font-semibold text-slate-900">Mặt nạ Subnet Mask thập phân nào dưới đây là biểu diễn của Prefix /22?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 255.255.252.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 255.255.252.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 255.255.254.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.255.248.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Q29 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 29</span>
+                        <p class="font-semibold text-slate-900">Khi một Router nhận được gói tin có địa chỉ IP đích, nó sử dụng thông số nào để tìm cổng ra trên bảng định tuyến?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Địa chỉ vật lý MAC đích</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Địa chỉ mạng (Network ID) bóc tách từ địa chỉ IP đích</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Địa chỉ cổng vật lý console nối laptop</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cấu trúc đóng gói VLAN dot1Q</div>
+                        </div>
+                    </div>
+
+                    <!-- Q30 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 30</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IPv6 Unicast nào dưới đây tương đương dải IP Private của IPv4, chỉ định tuyến nội bộ trong cơ quan và không thể truy cập internet?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">A. Global Unicast Address (GUA)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs mcq-correct">B. Unique Local Address</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">C. Link-Local Address</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">D. Loopback Address (::1)</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Scenario Problems Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">10 Bài Tập Tự Luận & Tình Huống Thiết Kế Hệ Thống</h2>
+                <div class="space-y-6">
+
+                    <!-- Prob 1 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 1: Chia dải mạng cố định FLSM cho lớp C</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một công ty sở hữu dải IP mạng gốc Lớp C là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.1.0/24</code>. Ban giám đốc yêu cầu người quản trị sử dụng phương pháp FLSM để phân chia dải mạng gốc này thành 4 mạng con có kích thước bằng nhau. Hãy:</p>
+                        <ul class="list-disc pl-6 text-sm mb-3 space-y-1">
+                            <li>Xác định số lượng bit mượn liên tiếp.</li>
+                            <li>Tính toán Subnet Mask dạng thập phân của các mạng con.</li>
+                            <li>Liệt kê địa chỉ mạng và dải IP khả dụng gán cho host của từng mạng con.</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Bước 1: Tính toán bit mượn và Subnet Mask</strong></p>
+                                <p class="text-slate-600">Yêu cầu chia thành 4 mạng con: <code class="font-mono bg-slate-50 px-1 border rounded">2^X &ge; 4 --> X = 2 bits</code>. Ta cần mượn 2 bits ở octet thứ 4 làm Subnet ID.</p>
+                                <p class="text-slate-600">Số bit HostID còn lại: <code class="font-mono bg-slate-50 px-1 border rounded">8 - 2 = 6 bits</code>. Số IP của mỗi mạng con là: <code class="font-mono bg-slate-50 px-1 border rounded">2^6 = 64</code>. Số host khả dụng: <code class="font-mono bg-slate-50 px-1 border rounded">64 - 2 = 62</code>.</p>
+                                <p class="text-slate-600">Subnet Mask mới: <code class="font-mono bg-slate-50 px-1 border rounded">11111111.11111111.11111111.11000000</code> tương đương <code class="font-mono bg-slate-50 px-1 border rounded">255.255.255.192</code> (Prefix /26).</p>
+                                <p><strong>Bước 2: Liệt kê chi tiết 4 mạng con (bước nhảy Magic Number = 64):</strong></p>
+                                <ul class="list-disc pl-6 space-y-1 font-mono text-xs">
+                                    <li><strong>Mạng con 1:</strong> 192.168.1.0/26 | Dải IP host khả dụng: 192.168.1.1 - 192.168.1.62 | Broadcast: 192.168.1.63</li>
+                                    <li><strong>Mạng con 2:</strong> 192.168.1.64/26 | Dải IP host khả dụng: 192.168.1.65 - 192.168.1.126 | Broadcast: 192.168.1.127</li>
+                                    <li><strong>Mạng con 3:</strong> 192.168.1.128/26 | Dải IP host khả dụng: 192.168.1.129 - 192.168.1.190 | Broadcast: 192.168.1.191</li>
+                                    <li><strong>Mạng con 4:</strong> 192.168.1.192/26 | Dải IP host khả dụng: 192.168.1.193 - 192.168.1.254 | Broadcast: 192.168.1.255</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 2 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 2: Thiết kế mạng lớp B mượn số bit lớn</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Cho địa chỉ mạng gốc Lớp B là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">172.16.0.0/16</code>. Hãy chia mạng con FLSM với số bit mượn liên tiếp là <strong>6 bits</strong>. Xác định:</p>
+                        <ul class="list-disc pl-6 text-sm mb-3 space-y-1">
+                            <li>Tổng số lượng mạng con tạo được.</li>
+                            <li>Số lượng IP khả dụng của mỗi mạng con để gán cho các máy trạm.</li>
+                            <li>Subnet Mask mới dạng thập phân.</li>
+                            <li>Địa chỉ mạng của 3 mạng con đầu tiên.</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <ul class="list-disc pl-6 space-y-1.5">
+                                    <li>Mạng gốc ban đầu có NetID (N) = 16 bits, HostID (H) = 16 bits. Số bit mượn để chia X = 6 bits (mượn tại octet thứ 3).</li>
+                                    <li><strong>Số lượng mạng con:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">2^6 = 64</code> subnets.</li>
+                                    <li><strong>Số bit HostID còn lại:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">16 - 6 = 10</code> bits.</li>
+                                    <li><strong>Số IP khả dụng gán cho host:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">2^10 - 2 = 1024 - 2 = 1022</code> IPs.</li>
+                                    <li><strong>Subnet Mask mới:</strong> Do mượn 6 bit ở octet 3, chuỗi nhị phân octet 3 là <code class="font-mono">11111100</code> (bằng 252). Vậy Subnet Mask mới là <code class="font-mono text-emerald-700 bg-slate-50 px-1 rounded">255.255.252.0</code> (Prefix /22).</li>
+                                    <li><strong>Bước nhảy Magic Number ở octet 3:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">256 - 252 = 4</code>. Các mạng con sẽ lũy tiến cách đều nhau 4 đơn vị ở octet thứ 3:
+                                        <ul class="list-disc pl-6 space-y-0.5 font-mono text-xs mt-1">
+                                            <li>Mạng con 1: 172.16.0.0/22 (Dải IP host: 172.16.0.1 - 172.16.3.254 | Broadcast: 172.16.3.255)</li>
+                                            <li>Mạng con 2: 172.16.4.0/22 (Dải IP host: 172.16.4.1 - 172.16.7.254 | Broadcast: 172.16.7.255)</li>
+                                            <li>Mạng con 3: 172.16.8.0/22 (Dải IP host: 172.16.8.1 - 172.16.11.254 | Broadcast: 172.16.11.255)</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 3 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 3: Cấu hình dải IP VLSM cho 3 phòng ban doanh nghiệp</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một doanh nghiệp được cấp dải mạng Class C là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.10.0/24</code>. Người quản trị cần chia dải IP này theo phương pháp VLSM để đáp ứng nhu cầu thực tế sau:</p>
+                        <ul class="list-disc pl-6 text-sm mb-3 space-y-1">
+                            <li>Phòng Đào tạo: Cần gán IP cho 120 máy trạm.</li>
+                            <li>Phòng Tổ chức Hành chính: Cần gán IP cho 60 máy trạm.</li>
+                            <li>Ban Giám hiệu: Cần gán IP cho 10 máy trạm.</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-3">
+                                <p>Áp dụng nguyên tắc vàng của VLSM: Sắp xếp các phòng ban theo thứ tự quy mô giảm dần để phân chia:</p>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 mb-0.5">1. Phòng Đào tạo (120 hosts - Lớn nhất):</h5>
+                                    <p class="text-slate-600">Cần: 120 + 2 = 122 IP. Lũy thừa của 2 tối thiểu: <code class="font-mono">2^7 = 128 &ge; 122</code>. Bit host cần giữ là 7, suy ra prefix mới là: <code class="font-mono">32 - 7 = 25</code> (Subnet Mask: <code class="font-mono">255.255.255.128</code>).</p>
+                                    <p class="font-mono text-xs text-indigo-800 pl-4 font-semibold">--> Mạng con Đào tạo: 192.168.10.0/25 | Dải IP khả dụng: 192.168.10.1 - 192.168.10.126 | Broadcast: 192.168.10.127</p>
+                                </div>
+                                <hr class="border-slate-100">
+                                <div>
+                                    <h5 class="font-bold text-slate-900 mb-0.5">2. Phòng Tổ chức Hành chính (60 hosts - Lớn thứ hai):</h5>
+                                    <p class="text-slate-600">Địa chỉ mạng bắt đầu: <code class="font-mono">192.168.10.127 + 1 = 192.168.10.128</code>.</p>
+                                    <p class="text-slate-600">Cần: 60 + 2 = 62 IP. Lũy thừa của 2 tối thiểu: <code class="font-mono">2^6 = 64 &ge; 62</code>. Bit host cần giữ là 6, suy ra prefix mới là: <code class="font-mono">32 - 6 = 26</code> (Subnet Mask: <code class="font-mono">255.255.255.192</code>).</p>
+                                    <p class="font-mono text-xs text-indigo-800 pl-4 font-semibold">--> Mạng con Hành chính: 192.168.10.128/26 | Dải IP khả dụng: 192.168.10.129 - 192.168.10.190 | Broadcast: 192.168.10.191</p>
+                                </div>
+                                <hr class="border-slate-100">
+                                <div>
+                                    <h5 class="font-bold text-slate-900 mb-0.5">3. Ban Giám hiệu (10 hosts - Nhỏ nhất):</h5>
+                                    <p class="text-slate-600">Địa chỉ mạng bắt đầu: <code class="font-mono">192.168.10.191 + 1 = 192.168.10.192</code>.</p>
+                                    <p class="text-slate-600">Cần: 10 + 2 = 12 IP. Lũy thừa của 2 tối thiểu: <code class="font-mono">2^4 = 16 &ge; 12</code>. Bit host cần giữ là 4, suy ra prefix mới là: <code class="font-mono">32 - 4 = 28</code> (Subnet Mask: <code class="font-mono">255.255.255.240</code>).</p>
+                                    <p class="font-mono text-xs text-indigo-800 pl-4 font-semibold">--> Mạng con Ban Giám hiệu: 192.168.10.192/28 | Dải IP khả dụng: 192.168.10.193 - 192.168.10.206 | Broadcast: 192.168.10.207</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 4 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 4: Thiết kế dải IP tích hợp đường WAN cho 4 phòng ban</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một công ty có dải mạng gốc <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.100.0/24</code>. Họ cần chia dải IP này cho 3 phòng ban và 1 đường kết nối WAN point-to-point nối giữa Router của công ty với Router của nhà mạng ISP:</p>
+                        <ul class="list-disc pl-6 text-sm mb-3 space-y-1">
+                            <li>Phòng Marketing: Cần gán IP cho 50 máy trạm.</li>
+                            <li>Phòng Dự án: Cần gán IP cho 30 máy trạm.</li>
+                            <li>Phòng Kế toán: Cần gán IP cho 20 máy trạm.</li>
+                            <li>Đường truyền WAN Point-to-Point nối 2 Router: Cần gán IP cho 2 cổng kết nối.</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-3 font-mono text-xs text-slate-700">
+                                <p class="font-sans text-sm">Thứ tự sắp xếp quy mô giảm dần: Marketing (50) -> Dự án (30) -> Kế toán (20) -> Link WAN (2).</p>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 font-sans text-sm">1. Phòng Marketing (50 hosts):</h5>
+                                    <p>Cần 52 IP --> Block size = 64 (Prefix /26). dải IP:</p>
+                                    <p class="text-indigo-800 font-semibold pl-4">Network ID: 192.168.100.0/26 | IP host: 192.168.100.1 - 192.168.100.62 | Broadcast: 192.168.100.63</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 font-sans text-sm">2. Phòng Dự án (30 hosts):</h5>
+                                    <p>Địa chỉ mạng bắt đầu: 192.168.100.64. Cần 32 IP --> Block size = 32 (Prefix /27). dải IP:</p>
+                                    <p class="text-indigo-800 font-semibold pl-4">Network ID: 192.168.100.64/27 | IP host: 192.168.100.65 - 192.168.100.94 | Broadcast: 192.168.100.95</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 font-sans text-sm">3. Phòng Kế toán (20 hosts):</h5>
+                                    <p>Địa chỉ mạng bắt đầu: 192.168.100.96. Cần 22 IP --> Block size = 32 (Prefix /27). dải IP:</p>
+                                    <p class="text-indigo-800 font-semibold pl-4">Network ID: 192.168.100.96/27 | IP host: 192.168.100.97 - 192.168.100.126 | Broadcast: 192.168.100.127</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 font-sans text-sm">4. Link WAN Router-to-Router (2 hosts):</h5>
+                                    <p>Địa chỉ mạng bắt đầu: 192.168.100.128. Cần 2 + 2 = 4 IP --> Block size = 4 (Prefix /30). dải IP:</p>
+                                    <p class="text-indigo-800 font-semibold pl-4">Network ID: 192.168.100.128/30 | IP host: 192.168.100.129 - 192.168.100.130 | Broadcast: 192.168.100.131</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 5 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 5: Tình huống phát hiện sự cố gán sai địa chỉ IP con</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một kỹ thuật viên máy tính gán thủ công địa chỉ IP tĩnh <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.5.191</code> đi kèm Subnet Mask <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">255.255.255.192</code> cho máy trạm của một nhân viên mới. Ngay sau khi gán, máy tính này hoàn toàn không thể gửi hoặc nhận tín hiệu trong mạng cục bộ LAN. Hãy phân tích bản chất lỗi kỹ thuật và đưa ra giải pháp xử lý.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Phân tích chi tiết:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1 text-slate-600">
+                                    <li>Subnet Mask <code class="font-mono bg-slate-50 px-1 border rounded">255.255.255.192</code> tương đương Prefix <code class="font-mono bg-slate-50 px-1 border rounded">/26</code>. Kích thước khối (Block Size) của mỗi mạng con là <code class="font-mono">256 - 192 = 64</code>.</li>
+                                    <li>Các mạng con cách đều nhau 64 đơn vị: dải 1 (<code class="font-mono">.0/26</code>), dải 2 (<code class="font-mono">.64/26</code>), dải 3 (<code class="font-mono">.128/26</code>), dải 4 (<code class="font-mono">.192/26</code>).</li>
+                                    <li>Địa chỉ IP gán cho host là <code class="font-mono bg-slate-50 px-1 border rounded">192.168.5.191</code>. Địa chỉ này nằm trong dải mạng con thứ 3: <code class="font-mono bg-slate-50 px-1 border rounded">192.168.5.128/26</code>.</li>
+                                    <li>Địa chỉ Quảng bá (Broadcast) của dải mạng con thứ 3 này là: <code class="font-mono bg-slate-50 px-1 border rounded">128 + 64 - 1 = 191</code>.</li>
+                                    <li>Kỹ thuật viên đã gán nhầm <strong>Địa chỉ Quảng bá trực tiếp (Direct Broadcast ID)</strong> của mạng con này cho máy trạm. Hệ điều hành Windows/Linux sẽ chặn hoặc không cho phép giao tiếp bình thường vì gói tin hướng tới host này sẽ bị hiểu lầm là gói tin broadcast gửi cho toàn mạng.</li>
+                                </ul>
+                                <p class="font-semibold text-emerald-700">--> Giải pháp khắc phục: Gán lại một địa chỉ IP hợp lệ nằm trong dải khả dụng thực tế từ <code class="font-mono bg-emerald-50 text-emerald-800 px-1 border border-emerald-200">192.168.5.129</code> đến <code class="font-mono bg-emerald-50 text-emerald-800 px-1 border border-emerald-200">192.168.5.190</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 6 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 6: Tính toán số lượng bit mượn tối ưu trong thực tế doanh nghiệp</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một tòa nhà làm việc gồm 12 phòng ban độc lập. Mỗi phòng ban được thiết kế có tối đa 14 máy tính trạm sử dụng đồng thời. Người quản trị được cấp dải IP gốc là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.20.0/24</code>. Hãy tính toán số lượng bit mượn tối ưu nhất (X bits) để vừa đáp ứng đủ số lượng phòng ban, vừa gán đủ dải IP cho các máy trạm của mỗi phòng ban?</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-600">
+                                <p><strong>1. Đánh giá điều kiện về số lượng phòng ban (Mạng con):</strong></p>
+                                <p class="pl-4">Doanh nghiệp cần tối thiểu 12 mạng con: <code class="font-mono bg-slate-50 px-1 border rounded">2^X &ge; 12 --> X &ge; 4 bits</code> (mượn tối thiểu 4 bits, tạo được 16 subnets).</p>
+                                <p><strong>2. Đánh giá điều kiện về số lượng máy trạm trên mỗi phòng ban (Hosts):</strong></p>
+                                <p class="pl-4">Mỗi phòng ban cần tối đa 14 máy trạm: <code class="font-mono bg-slate-50 px-1 border rounded">2^(H-X) - 2 &ge; 14</code>. Với dải Class C gốc thì H = 8 bits. Thay thế: <code class="font-mono bg-slate-50 px-1 border rounded">2^(8-X) &ge; 16 --> 8 - X &ge; 4 --> X &le; 4 bits</code> (mượn tối đa 4 bits để giữ lại tối thiểu 4 bits phần HostID).</p>
+                                <p class="font-sans text-sm font-semibold text-emerald-700">--> Kết luận:</p>
+                                <p class="pl-4 text-emerald-800 font-semibold bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                    Số bit mượn tối ưu duy nhất là X = 4 bits.<br>
+                                    Khi đó, ta tạo được đúng 16 mạng con độc lập (đáp ứng thừa 12 phòng ban), mỗi mạng con có đúng 2^4 - 2 = 14 IP khả dụng (đáp ứng khít nhu cầu 14 hosts của phòng ban). Prefix dải mạng con mới là /28 (Subnet Mask: 255.255.255.240).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 7 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 7: Thiết kế phân dải mạng Class A mượn 8 bits</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Cho dải IP mạng gốc Lớp A là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">10.0.0.0/8</code>. Hãy thực hiện mượn 8 bits liên tiếp để chia dải mạng con cố định FLSM. Xác định thông số Subnet Mask mới, số lượng mạng con tối đa, dải IP khả dụng của mạng con đầu tiên (#1) và mạng con thứ hai (#2).</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <ul class="list-disc pl-6 space-y-1.5 text-slate-600">
+                                    <li>Mạng Class A gốc có NetID ban đầu N = 8 bits, HostID (H) = 24 bits. Số bit mượn X = 8 bits (mượn toàn bộ octet thứ 2).</li>
+                                    <li><strong>Subnet Mask mới:</strong> Do mượn toàn bộ octet 2 gộp vào phần NetID, Subnet Mask mới là <code class="font-mono text-indigo-800 bg-slate-50 px-1 rounded">255.255.0.0</code> (Prefix /16).</li>
+                                    <li><strong>Số lượng mạng con tối đa:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">2^8 = 256</code> subnets (cách nhau ở octet thứ 2).</li>
+                                    <li><strong>Số lượng IP khả dụng của mỗi mạng con:</strong> <code class="font-mono bg-slate-50 px-1 border rounded">2^(24-8) - 2 = 2^16 - 2 = 65,534</code> IP gán cho host.</li>
+                                    <li><strong>Thông số dải mạng con đầu tiên (STT #1):</strong>
+                                        <p class="font-mono text-xs pl-6 text-slate-800">Địa chỉ mạng: 10.0.0.0/16 | Dải IP host: 10.0.0.1 - 10.0.255.254 | Broadcast: 10.0.255.255</p>
+                                    </li>
+                                    <li><strong>Thông số dải mạng con thứ hai (STT #2):</strong>
+                                        <p class="font-mono text-xs pl-6 text-slate-800">Địa chỉ mạng: 10.1.0.0/16 | Dải IP host: 10.1.0.1 - 10.1.255.254 | Broadcast: 10.1.255.255</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 8 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 8: Khôi phục toàn bộ thông số mạng con từ một địa chỉ IP host cho trước</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một máy tính trong văn phòng làm việc nhận được địa chỉ IP gán tĩnh là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">172.16.50.100/22</code>. Từ thông số duy nhất này, hãy tính toán khôi phục lại toàn bộ thông tin dải mạng con chứa IP đó, bao gồm: Subnet Mask thập phân, địa chỉ mạng con (Network ID), địa chỉ quảng bá (Broadcast ID) và dải IP khả dụng để gán cho các host.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Bước 1: Phân tích Prefix và Subnet Mask</strong></p>
+                                <p class="text-slate-600">Prefix <code class="font-mono">/22</code> tương ứng Subnet Mask có 22 bit 1: <code class="font-mono">11111111.11111111.11111100.00000000</code>. Đổi sang thập phân: <code class="font-mono text-indigo-800 font-bold bg-slate-50 px-1 rounded">255.255.252.0</code>.</p>
+                                <p><strong>Bước 2: Tìm địa chỉ mạng con (Network ID)</strong></p>
+                                <p class="text-slate-600">Bước nhảy Magic Number ở octet 3: <code class="font-mono">256 - 252 = 4</code>. Các dải mạng con sẽ có giá trị octet 3 là bội số của 4: <code class="font-mono">0, 4, 8, 12, ... 44, 48, 52, ...</code></p>
+                                <p class="text-slate-600">IP host có octet 3 bằng 50. Số 50 nằm kẹp giữa dải bội số của 4 là 48 và 52. Vậy dải mạng con chứa IP này phải có Network ID bắt đầu từ: <code class="font-mono text-emerald-700 font-bold bg-slate-50 px-1 rounded">172.16.48.0/22</code>.</p>
+                                <p><strong>Bước 3: Xác định dải thông số hoàn chỉnh:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1 font-mono text-xs">
+                                    <li><strong>Địa chỉ mạng (Network ID):</strong> 172.16.48.0/22</li>
+                                    <li><strong>Subnet Mask thập phân:</strong> 255.255.252.0</li>
+                                    <li><strong>Địa chỉ quảng bá (Broadcast ID):</strong> 172.16.51.255 (vì octet 3 tiếp theo là 52, trừ đi 1 IP)</li>
+                                    <li><strong>Dải IP khả dụng gán cho các host:</strong> 172.16.48.1 đến 172.16.51.254</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 9 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 9: Thiết kế dải IP tối ưu cho liên kết WAN Point-to-Point</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Khi cấu hình liên kết mạng diện rộng WAN nối trực tiếp hai Router thông qua giao diện serial, tại sao người ta luôn khuyến nghị ưu tiên sử dụng mặt nạ Subnet Mask có Prefix là <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">/30</code> từ dải mạng gốc <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.200.0/24</code>? Hãy liệt kê chi tiết các thông số mạng của dải mạng con đầu tiên chia theo chuẩn /30 này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Tại sao Prefix /30 là tối ưu nhất cho kết nối WAN Point-to-Point?</strong></p>
+                                <p class="text-slate-600">
+                                    Đường truyền WAN nối trực tiếp Router-to-Router chỉ có đúng 2 thiết bị giao tiếp ở 2 đầu cổng. Nếu ta sử dụng mặt nạ dải rộng hơn (như /24 có 254 IP hay /29 có 6 IP), các IP dư thừa còn lại sẽ không thể gán cho bất kỳ thiết bị nào khác, gây lãng phí tài nguyên IP cực kỳ lớn. Với <code class="font-mono">/30</code>, số bit host còn lại là 2 bits. Tổng số IP tạo được: <code class="font-mono">2^2 = 4</code> IP, số IP khả dụng thực tế gán cho host là <code class="font-mono text-emerald-700 font-bold bg-slate-50 px-1 rounded">4 - 2 = 2</code> IP gán khít cho 2 cổng Router, lãng phí IP bằng 0.
+                                </p>
+                                <p><strong>Thông số chi tiết dải mạng con đầu tiên (#1) chia theo chuẩn /30:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1 font-mono text-xs">
+                                    <li><strong>Địa chỉ mạng (Network ID):</strong> 192.168.200.0/30</li>
+                                    <li><strong>Subnet Mask thập phân:</strong> 255.255.255.252</li>
+                                    <li><strong>Dải IP khả dụng gán cho 2 Router:</strong> 192.168.200.1 (gán cổng Router 1) và 192.168.200.2 (gán cổng Router 2)</li>
+                                    <li><strong>Địa chỉ quảng bá (Broadcast ID):</strong> 192.168.200.3</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 10 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2 text-justify">Bài tập 10: Thiết kế mạng con VLSM đáp ứng mở rộng quy mô trong tương lai</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Phòng Kỹ thuật của công ty hiện tại có 25 máy tính trạm đang hoạt động. Dự báo quy mô nhân sự của phòng sẽ tăng trưởng 100% trong vòng 2 năm tới. Người quản trị mạng cần lựa chọn phân bổ dải mạng con VLSM tối ưu nhất từ dải IP mạng gốc <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200 rounded">192.168.0.0/24</code> để đáp ứng nhu cầu mở rộng quy mô này. Hãy xác định dải mạng con thích hợp.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Phân tích nhu cầu thực tế kết hợp dự báo phát triển:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1 text-slate-600">
+                                    <li>Số lượng máy tính hiện tại: 25 hosts.</li>
+                                    <li>Số lượng dự báo tăng trưởng 100% sau 2 năm: <code class="font-mono">25 x 2 = 50 hosts</code>.</li>
+                                    <li>Để thiết kế dải mạng con bền vững bền bỉ hoạt động lâu dài, người quản trị bắt buộc phải lấy con số quy mô dự báo tương lai làm mốc tính toán (50 hosts).</li>
+                                    <li>Cần tối thiểu: 50 + 2 = 52 IP.</li>
+                                    <li>Lũy thừa nhỏ nhất của 2 thỏa mãn điều kiện: <code class="font-mono bg-slate-50 px-1 border rounded">2^6 = 64 &ge; 52</code>. Số bit host giữ lại là 6 bits, suy ra Prefix tối ưu mới là <code class="font-mono bg-slate-50 px-1 border rounded">32 - 6 = 26</code> (Subnet Mask: <code class="font-mono">255.255.255.192</code>).</li>
+                                    <li>Nếu ta tính toán theo quy mô hiện tại (25 hosts + 2 = 27, chọn block 32, Prefix /27), dải mạng con sẽ bị quá tải hoàn toàn khi nhân sự phòng ban tăng lên sau này, dẫn đến phải đổi dải IP thủ công rất phức tạp.</li>
+                                </ul>
+                                <p class="font-semibold text-emerald-700">--> Thiết kế dải IP mạng con Kỹ thuật tối ưu nhất:</p>
+                                <p class="font-mono text-xs pl-6 text-slate-800">Địa chỉ mạng: 192.168.0.0/26 | Subnet Mask: 255.255.255.192 | Dải IP host khả dụng gán gán: 192.168.0.1 - 192.168.0.62 | Broadcast: 192.168.0.63</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-1">&copy; 2026 Học liệu điện tử thông minh. Trường Đại học Văn Hiến.</p>
+            <p>Biên soạn kỹ thuật bởi Giảng viên Khoa Công nghệ thông tin.</p>
+        </div>
+    </footer>
+
+    <!-- Tab switcher & teacher lock script -->
+    <script>
+        function switchTab(tabId) {
+            const theoryTab = document.getElementById('tab-theory');
+            const practiceTab = document.getElementById('tab-practice');
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractice = document.getElementById('btn-practice');
+
+            if (tabId === 'theory') {
+                theoryTab.classList.remove('hidden');
+                practiceTab.classList.add('hidden');
+                btnTheory.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            } else {
+                theoryTab.classList.add('hidden');
+                practiceTab.classList.remove('hidden');
+                btnTheory.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('teacher-password').value;
+            if (passInput === 'VHU@INT4401') {
+                // Reveal hidden solutions
+                const hiddenElements = document.querySelectorAll('.teacher-only');
+                hiddenElements.forEach(el => {
+                    el.classList.remove('hidden');
+                });
+                
+                // Highlight correct MCQ answers
+                const correctMcqs = document.querySelectorAll('.mcq-correct');
+                correctMcqs.forEach(el => {
+                    el.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'font-semibold');
+                    el.classList.remove('border-slate-200');
+                    el.innerHTML += ' <span class="ml-2 text-xs bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Đúng</span>';
+                });
+
+                alert('🔑 KHÓA GIẢNG VIÊN ĐÃ ĐƯỢC GIẢI MÃ THÀNH CÔNG! Đã mở rộng lời giải tự luận chi tiết và tô xanh đáp án trắc nghiệm đúng.');
+            } else {
+                alert('❌ Sai mật khẩu bảo mật học phần! Vui lòng kiểm tra lại đề cương chi tiết môn học.');
+            }
+        }
+    </script>
+</body>
+</html>
