@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu Điện tử: Chương 6 - Xây dựng Mạng WAN và Các Dịch vụ Mạng Cốt lõi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <!-- Icon -->
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-blue-300 uppercase">Trường Đại học Văn Hiến - Khoa CNTT</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">CHƯƠNG 6: XÂY DỰNG MẠNG WAN VÀ CÁC DỊCH VỤ MẠNG CỐT LÕI</h1>
+                        <p class="text-sm text-slate-300 mt-1">Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ)</p>
+                    </div>
+                </div>
+                <!-- Floating Teacher lock inside header -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-xs font-semibold text-blue-300 mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        MỞ KHÓA GÓC GIẢNG VIÊN (PASSWORD: VHU@INT4401)
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." class="px-3 py-1.5 text-slate-800 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-44">
+                        <button onclick="checkPassword()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded font-bold text-sm transition">Giải Mã</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="switchTab('theory')" id="btn-theory" class="border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>I. PHẦN LÝ THUYẾT CHI TIẾT</span>
+                </button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>II. CÂU HỎI & BÀI TẬP THỰC HÀNH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Tab 1: THEORY -->
+        <div id="tab-theory" class="space-y-12">
+            
+            <!-- Intro Card -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">Tóm tắt nội dung học tập Chương 6</h2>
+                <p class="text-slate-600 leading-relaxed text-justify mb-4">
+                    Mạng diện rộng (WAN) và các Dịch vụ mạng cốt lõi đóng vai trò là "mạch máu" và "hệ thống vận tải" toàn diện điều phối dòng thông tin trên toàn cầu. Chương này trang bị kiến thức chuyên sâu từ hạ tầng kết nối WAN (định tuyến tĩnh, định tuyến động OSPF/RIPv2, giải pháp Leased Line, VPN, SD-WAN) đến nguyên lý vận hành của 6 dịch vụ mạng thiết yếu giúp Internet hoạt động mượt mà bao gồm: <strong>DNS</strong> (Phân giải tên miền), <strong>DHCP</strong> (Cấp IP tự động), <strong>HTTP/HTTPS</strong> (Dịch vụ Web), <strong>FTP/SFTP</strong> (Truyền tập tin), <strong>Email</strong> (Thư điện tử với SMTP/POP3/IMAP/MIME) và <strong>Cloud Storage</strong> (Lưu trữ đám mây).
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-blue-600 text-xl font-bold">01</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Xây dựng Mạng WAN</h4>
+                            <p class="text-xs text-slate-500 mt-1">Làm chủ kiến trúc kết nối WAN, cấu hình định tuyến tĩnh và động RIPv2/OSPF trên Router.</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-indigo-600 text-xl font-bold">02</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Dịch vụ Cấp phát & Định danh</h4>
+                            <p class="text-xs text-slate-500 mt-1">Hiểu rõ cơ chế truy vấn phân cấp DNS và tiến trình cấp phát IP động 4 bước D.O.R.A.</p>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-purple-600 text-xl font-bold">03</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Dịch vụ Ứng dụng & Lưu trữ</h4>
+                            <p class="text-xs text-slate-500 mt-1">Vận hành dịch vụ Web bảo mật, truyền file FTP/SFTP, cấu trúc gửi nhận Email và lưu trữ Cloud.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6.1. Kiến trúc và Thiết bị mạng WAN -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.1. Kiến Trúc và Thiết Bị Mạng WAN</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Mạng diện rộng WAN (Wide Area Network)</strong> bao phủ phạm vi địa lý rộng lớn từ các quốc gia, châu lục cho đến quy mô toàn cầu. Mạng WAN kết nối các mạng LAN độc lập và mạng MAN (đô thị) ở xa nhau lại thành một hệ thống liên mạng duy nhất. Trách nhiệm quản lý và vận hành đường truyền WAN thuộc về các nhà cung cấp dịch vụ Internet (ISP).
+                    </p>
+                    <p><strong>Cơ cấu phân tầng của mạng WAN:</strong> Mạng WAN chủ yếu hoạt động ở 3 lớp dưới cùng của mô hình tham chiếu OSI:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Tầng Vật lý (Physical Layer):</strong> Xử lý truyền dẫn dòng bit thô qua các môi trường truyền dẫn đường dài như cáp quang biển, vệ tinh, sóng vi ba hoặc đường cáp số chuyên dụng.</li>
+                        <li><strong>Tầng Liên kết dữ liệu (Data Link Layer):</strong> Đóng khung dữ liệu, kiểm soát lỗi và kiểm soát luồng trên đường truyền diện rộng bằng các giao thức như PPP (Point-to-Point Protocol), Frame Relay, hoặc HDLC.</li>
+                        <li><strong>Tầng Mạng (Network Layer):</strong> Thực hiện định tuyến gói tin (Packets) xuyên qua các mạng trung gian khác nhau thông qua địa chỉ IP nguồn và đích.</li>
+                    </ul>
+                    <p><strong>Các cấu trúc liên kết mạng WAN vật lý phổ biến:</strong></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="font-bold text-slate-900">A. Point-to-Point (Điểm - Điểm)</span>
+                            <p class="text-sm text-slate-500 mt-1">Kết nối trực tiếp duy nhất giữa hai điểm mạng qua một đường truyền riêng biệt, an toàn, ổn định cao nhưng chi phí lớn và không có tính dự phòng nếu đường truyền đứt gãy.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="font-bold text-slate-900">B. Hub and Spoke (Trung tâm - Chi nhánh)</span>
+                            <p class="text-sm text-slate-500 mt-1">Mọi chi nhánh (Spokes) kết nối trực tiếp về một điểm đầu mối trung tâm (Hub). Lưu lượng giữa các chi nhánh bắt buộc phải trung chuyển qua Hub. Tiết kiệm cổng kết nối nhưng Hub dễ trở thành điểm nghẽn cổ chai.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="font-bold text-slate-900">C. Mesh WAN (Mạng lưới diện rộng)</span>
+                            <p class="text-sm text-slate-500 mt-1">Mỗi địa điểm kết nối trực tiếp với nhiều địa điểm khác (Full mesh hoặc Partial mesh). Tạo ra mạng lưới có tính dự phòng cực kỳ cao, tự động điều hướng khi có đường truyền lỗi nhưng lắp đặt phức tạp và chi phí khổng lồ.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="font-bold text-slate-900">D. Hybrid WAN (Mô hình lai)</span>
+                            <p class="text-sm text-slate-500 mt-1">Kết hợp linh hoạt các cấu trúc trên tùy thuộc vào yêu cầu bảo mật, băng thông và ngân sách tài chính thực tế của từng chi nhánh doanh nghiệp.</p>
+                        </div>
+                    </div>
+                    <p><strong>Các thiết bị kết nối WAN chuyên dụng:</strong></p>
+                    <ul class="list-disc pl-6 space-y-1">
+                        <li><strong>Router (Bộ định tuyến):</strong> Thiết bị quan trọng nhất của WAN, hoạt động ở tầng 3 để đọc địa chỉ IP đích và đưa ra quyết định chuyển tiếp gói tin ra cổng vật lý thích hợp dựa trên bảng định tuyến.</li>
+                        <li><strong>Modem:</strong> Thực hiện điều chế (Modulation) và giải điều chế (Demodulation) tín hiệu số của máy tính sang tín hiệu tương tự (Analog) truyền qua hạ tầng viễn thông bưu điện, đường điện thoại và ngược lại.</li>
+                        <li><strong>CSU/DSU (Channel Service Unit/Data Service Unit):</strong> Thiết bị chuyển đổi giao diện logic cho các đường truyền số diện rộng tốc độ cao (như T1, T3).</li>
+                        <li><strong>Multiplexer (Bộ dồn kênh):</strong> Kết hợp nhiều luồng dữ liệu truyền thông nhỏ, độc lập thành một tín hiệu duy nhất để truyền qua đường truyền tốc độ cao nhằm tối ưu băng thông vật lý.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 6.2. Cấu hình định tuyến Router -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.2. Cấu Hình Định Tuyến cơ bản trên Router</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Định tuyến là quá trình Router tìm và lựa chọn đường đi tối ưu nhất cho gói tin di chuyển giữa các mạng LAN khác nhau. Có hai kiểu định tuyến chính:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                        <div class="p-5 bg-blue-50/50 rounded-xl border border-blue-100">
+                            <h4 class="font-bold text-blue-900 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                1. Định tuyến Tĩnh (Static Route)
+                            </h4>
+                            <p class="text-sm text-slate-600 mt-2">
+                                Người quản trị mạng trực tiếp cấu hình chỉ đường đi cố định cho Router. Thích hợp cho các mô hình mạng nhỏ, đơn giản hoặc mạng dạng "Stub" (chỉ có duy nhất một cổng đi ra ngoài). 
+                            </p>
+                            <p class="text-sm font-semibold text-indigo-900 mt-3">Cú pháp cấu hình (Cisco IOS CLI):</p>
+                            <code class="block bg-slate-900 text-slate-200 p-3 rounded-lg text-xs font-mono mt-1 leading-relaxed">
+                                Router(config)# ip route [Địa_chỉ_mạng_đích] [Subnet_Mask] [IP_Next_Hop_hoặc_Interface_đầu_ra]
+                            </code>
+                            <p class="text-xs text-slate-500 mt-2">Ví dụ: <code class="font-mono bg-white px-1 py-0.5 rounded border border-slate-200">ip route 192.168.2.0 255.255.255.0 10.0.0.2</code> (Chỉ đường cho R1 đi đến LAN 2 thông qua cổng IP kế tiếp của R2 là 10.0.0.2).</p>
+                        </div>
+                        <div class="p-5 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                            <h4 class="font-bold text-indigo-900 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                2. Định tuyến Động (Dynamic Route)
+                            </h4>
+                            <p class="text-sm text-slate-600 mt-2">
+                                Các Router tự động trao đổi thông tin bảng định tuyến thông qua các thuật toán chuyên dụng để tính toán đường đi ngắn nhất, tự động điều hướng gói tin tránh đường nghẽn hoặc sập liên kết vật lý.
+                            </p>
+                            <ul class="list-disc pl-5 text-xs text-slate-500 mt-2 space-y-1">
+                                <li><strong>RIP/RIPv2:</strong> Giao thức định tuyến dạng Vector khoảng cách (Distance Vector), sử dụng số bước nhảy (Hop Count - tối đa 15 hops) để chọn đường. RIPv2 hỗ trợ chia mạng con không chuẩn (VLSM/subnets).</li>
+                                <li><strong>OSPF:</strong> Giao thức định tuyến dạng Trạng thái liên kết (Link-State) sử dụng thuật toán Dijkstra tìm đường đi ngắn nhất (SPF). Hỗ trợ chia phân vùng mạng (Areas) để quản trị các hệ thống mạng doanh nghiệp siêu lớn, thích ứng nhanh, chống lặp vòng lặp.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="font-semibold text-slate-900">Ví dụ cấu hình Định tuyến động RIPv2 trên Router Cisco (R1 kết nối trực tiếp mạng 10.0.0.0/24 và LAN 192.168.1.0/24):</p>
+                    <code class="block bg-slate-900 text-slate-200 p-4 rounded-lg text-xs font-mono leading-relaxed">
+                        R1(config)# router rip<br>
+                        R1(config-router)# version 2<br>
+                        R1(config-router)# network 10.0.0.0<br>
+                        R1(config-router)# network 192.168.1.0<br>
+                        R1(config-router)# no auto-summary<br>
+                        R1(config-router)# end<br>
+                        R1# show ip route
+                    </code>
+                    <p class="font-semibold text-slate-900 mt-4">Ví dụ cấu hình Định tuyến động OSPF vùng đơn (Single Area 0) trên Router Cisco:</p>
+                    <code class="block bg-slate-900 text-slate-200 p-4 rounded-lg text-xs font-mono leading-relaxed">
+                        R1(config)# router ospf 1<br>
+                        R1(config-router)# network 10.0.0.0 0.0.0.255 area 0<br>
+                        R1(config-router)# network 192.168.1.0 0.0.0.255 area 0<br>
+                        R1(config-router)# end<br>
+                        R1# show ip route
+                    </code>
+                    <p class="text-xs text-slate-500 italic mt-2">Lưu ý: <code class="font-mono bg-slate-100 px-1 py-0.5 border rounded border-slate-200">0.0.0.255</code> là Wildcard Mask (phép toán đảo bit ngược của Subnet Mask 255.255.255.0) dùng trong định cấu hình OSPF.</p>
+                </div>
+            </section>
+
+            <!-- 6.3. Giải pháp kết nối LAN-WAN -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.3. Các Giải Pháp Kết Nối LAN-WAN & Internet</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Để đưa toàn bộ hệ thống mạng LAN nội bộ của doanh nghiệp kết nối thông suốt ra Internet và liên kết với các chi nhánh toàn cầu, các doanh nghiệp thường sử dụng 3 giải pháp công nghệ chính sau:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-4">
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-blue-800 bg-blue-100 rounded mb-2">Dedicated Leased Line</span>
+                            <p class="text-sm font-semibold text-slate-900">Đường truyền Thuê riêng</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Là kết nối vật lý số chuyên dụng, thuê riêng biệt từ ISP kết nối điểm-đối-điểm giữa hai văn phòng. Đảm bảo băng thông cố định, tính ổn định và bảo mật tối đa, hoàn toàn không bị tranh chấp lưu lượng. Tuy nhiên chi phí lắp đặt và cước thuê bao hàng tháng cực kỳ đắt đỏ.
+                            </p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-indigo-800 bg-indigo-100 rounded mb-2">WAN VPN</span>
+                            <p class="text-sm font-semibold text-slate-900">Mạng riêng ảo diện rộng</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Tận dụng môi trường Internet công cộng giá rẻ để thiết lập "đường hầm" (Tunneling) mã hóa dữ liệu an toàn từ nguồn đến đích (giao thức IPSec, OpenVPN, WireGuard). Gồm hai loại chính: <strong>Remote Access VPN</strong> (cho nhân viên làm việc từ xa kết nối vào LAN công ty) và <strong>Site-to-Site VPN</strong> (liên kết hai văn phòng LAN ở xa).
+                            </p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-purple-800 bg-purple-100 rounded mb-2">SD-WAN</span>
+                            <p class="text-sm font-semibold text-slate-900">Software-Defined WAN</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Giải pháp mạng diện rộng định nghĩa bằng phần mềm thế hệ mới. Cho phép quản trị viên quản lý, tự động phân phối và điều hướng lưu lượng dữ liệu thông minh qua nhiều đường truyền khác nhau (MPLS, Leased Line, 4G/5G, Internet băng thông rộng). Giúp tối ưu hóa độ trễ, tăng hiệu suất ứng dụng đám mây và giảm cước vận hành.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6.4. DNS -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.4. DNS - Dịch Vụ Phân Giải Tên Miền</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>DNS (Domain Name System)</strong> hoạt động ở tầng ứng dụng, đóng vai trò như một "danh bạ điện thoại của Internet". Nhiệm vụ cốt lõi của DNS là ánh xạ, chuyển đổi các tên miền bằng ký tự chữ dễ nhớ (ví dụ: <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-indigo-700">vhu.edu.vn</code>) thành địa chỉ IP logic nhị phân tương ứng (ví dụ: <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-indigo-700">45.123.96.88</code>) để các thiết bị phần cứng mạng có thể đọc hiểu và chuyển tiếp gói tin đến đúng đích.
+                    </p>
+                    <p><strong>Cơ chế truy vấn phân cấp của hệ thống DNS:</strong> Không một máy chủ đơn lẻ nào lưu trữ toàn bộ tên miền toàn cầu. DNS được tổ chức theo cấu trúc hình cây phân cấp:</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li>Khi người dùng nhập tên miền, máy tính sẽ gửi truy vấn đến <strong>DNS Resolver</strong> (máy chủ DNS cục bộ của nhà mạng ISP hoặc DNS công cộng như 8.8.8.8 của Google).</li>
+                        <li>Nếu Resolver không có cache lưu sẵn, nó sẽ hỏi máy chủ gốc <strong>Root DNS Server</strong> (được biểu thị bằng dấu chấm cuối cùng của tên miền phân cấp). Root Server chỉ đường cho Resolver tìm đến TLD Server.</li>
+                        <li>Resolver tiếp tục gửi truy vấn đến máy chủ tên miền cao cấp nhất <strong>TLD DNS Server (Top-Level Domain)</strong> chịu trách nhiệm quản trị các đuôi mở rộng như <code class="font-mono">.com, .org, .net, .vn</code>. TLD Server chỉ đường đến máy chủ được ủy quyền.</li>
+                        <li>Resolver gửi truy vấn cuối cùng đến máy chủ tên miền có thẩm quyền quyết định <strong>Authoritative DNS Server</strong> của chính tên miền đó (ví dụ máy chủ quản lý dải IP của Đại học Văn Hiến) để lấy địa chỉ IP chính xác trả về cho máy tính khách.</li>
+                    </ol>
+                    <p><strong>Các bản ghi DNS cơ bản (DNS Resource Records) trong cấu hình hệ thống:</strong></p>
+                    <div class="overflow-x-auto my-4 border border-slate-200 rounded-xl">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-900 uppercase">Tên Bản ghi</th>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-900 uppercase">Vai trò Kỹ thuật</th>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-900 uppercase">Ví dụ thực tế</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-indigo-700 font-mono">A Record</td>
+                                    <td class="px-6 py-4 text-slate-600">Ánh xạ tên miền (Host Name) trực tiếp sang địa chỉ IPv4 32-bit.</td>
+                                    <td class="px-6 py-4 font-mono text-xs">vhu.edu.vn &rarr; 45.123.96.88</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-indigo-700 font-mono">AAAA Record</td>
+                                    <td class="px-6 py-4 text-slate-600">Ánh xạ tên miền sang địa chỉ thế hệ mới IPv6 128-bit.</td>
+                                    <td class="px-6 py-4 font-mono text-xs">google.com &rarr; 2404:6800:4005:80e::200e</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-indigo-700 font-mono">CNAME Record</td>
+                                    <td class="px-6 py-4 text-slate-600">Bản ghi bí danh (Canonical Name), ánh xạ tên miền phụ về tên miền gốc chính.</td>
+                                    <td class="px-6 py-4 font-mono text-xs">www.anphatcorp.com &rarr; anphatcorp.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-indigo-700 font-mono">MX Record</td>
+                                    <td class="px-6 py-4 text-slate-600">Bản ghi chỉ định máy chủ Mail (Mail Exchange) chịu trách nhiệm gửi nhận thư điện tử cho tên miền, đi kèm chỉ số độ ưu tiên (Priority).</td>
+                                    <td class="px-6 py-4 font-mono text-xs">anphatcorp.com &rarr; mail.anphatcorp.com (Priority = 10)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6.5. DHCP -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.5. DHCP - Dịch Vụ Cấp Phát Địa Chỉ IP Động</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>DHCP (Dynamic Host Configuration Protocol)</strong> hoạt động ở tầng ứng dụng, giúp tự động hóa hoàn toàn quá trình cấp phát cấu hình địa chỉ IP, Subnet Mask, Default Gateway và DNS Server cho các thiết bị đầu cuối khi chúng gia nhập vào mạng, loại bỏ sai sót cấu hình thủ công bằng tay (lỗi gõ nhầm IP hoặc trùng lặp IP gây lỗi mất kết nối).
+                    </p>
+                    <p><strong>Tiến trình hoạt động 4 bước D.O.R.A (Diễn ra qua sóng truyền broadcast/unicast):</strong></p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                            <span class="block text-amber-800 font-extrabold text-lg">1. D - Discover</span>
+                            <span class="block text-xs font-semibold text-slate-500 uppercase mt-1">Gửi bởi Client (Broadcast)</span>
+                            <p class="text-xs text-slate-600 mt-2">Khi bật máy, Client gửi tín hiệu quảng bá DHCPDISCOVER để dò tìm xem có máy chủ DHCP Server nào đang hoạt động trong mạng nội bộ LAN hay không.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <span class="block text-blue-800 font-extrabold text-lg">2. O - Offer</span>
+                            <span class="block text-xs font-semibold text-slate-500 uppercase mt-1">Gửi bởi Server (Unicast)</span>
+                            <p class="text-xs text-slate-600 mt-2">Mỗi máy chủ DHCP nhận được gói tin Discover sẽ phản hồi lại bằng một gói tin DHCPOFFER, đề nghị cấp một địa chỉ IP nhàn rỗi trong kho kèm theo cấu hình mạng cho Client.</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
+                            <span class="block text-purple-800 font-extrabold text-lg">3. R - Request</span>
+                            <span class="block text-xs font-semibold text-slate-500 uppercase mt-1">Gửi bởi Client (Broadcast)</span>
+                            <p class="text-xs text-slate-600 mt-2">Client nhận gói tin Offer (thường lấy cái gửi đến sớm nhất), phản hồi lại bằng gói tin DHCPREQUEST dạng quảng bá để chính thức yêu cầu sử dụng IP đó từ máy chủ.</p>
+                        </div>
+                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <span class="block text-emerald-800 font-extrabold text-lg">4. A - Acknowledge</span>
+                            <span class="block text-xs font-semibold text-slate-500 uppercase mt-1">Gửi bởi Server (Unicast)</span>
+                            <p class="text-xs text-slate-600 mt-2">Máy chủ được chọn sẽ gửi lại gói tin DHCPACK xác nhận chính thức cho thuê địa chỉ IP này. Lúc này quá trình cấp phát kết thúc, Client bắt đầu liên lạc.</p>
+                        </div>
+                    </div>
+                    <p><strong>Các khái niệm then chốt trong quản trị và cấu hình DHCP Server:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Scope (Phạm vi cấp phát):</strong> Là dải địa chỉ IP liên tục mà DHCP Server được quyền tự động cấp phát cho thiết bị khách (ví dụ: `192.168.1.100` đến `192.168.1.200`).</li>
+                        <li><strong>Lease Time (Thời gian cho thuê IP):</strong> Khoảng thời gian cụ thể thiết bị khách được gán quyền sử dụng IP đó. Khi hết 50% thời gian thuê, Client sẽ tự động gửi yêu cầu xin gia hạn thuê lên Server. (Đặt ngắn cho quán cà phê công cộng, đặt dài cho văn phòng làm việc cố định).</li>
+                        <li><strong>Exclusion Range (Dải loại trừ):</strong> Phân khúc IP nằm bên trong Scope nhưng được quản trị viên thiết lập cấm máy chủ DHCP phát tự động. Dải IP loại trừ này được bảo vệ dùng để gán tĩnh bằng tay cho các máy chủ Server, máy in mạng mạng LAN, Router cửa ngõ.</li>
+                        <li><strong>Reservation (Dành riêng / Đóng đinh IP):</strong> Tính năng liên kết tĩnh một địa chỉ IP cố định cho một địa chỉ MAC vật lý của Card mạng. Mỗi lần thiết bị đó kết nối, máy chủ DHCP sẽ tự động nhận diện MAC và phát đúng một địa chỉ IP duy nhất đó.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 6.6. Dịch vụ Web (HTTP/HTTPS) -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.6. Dịch Vụ Web (HTTP & HTTPS)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>HTTP (Hypertext Transfer Protocol)</strong> là giao thức truyền tải siêu văn bản hoạt động trên mô hình Client-Server. Máy khách (trình duyệt Web) gửi yêu cầu (HTTP Request) lên máy chủ Web và máy chủ xử lý trả về nội dung trang web (HTTP Response) qua cổng mặc định 80.
+                    </p>
+                    <p><strong>Tính chất phi trạng thái (Stateless):</strong> Giao thức HTTP hoàn toàn không lưu trữ thông tin trạng thái hoạt động của những phiên yêu cầu trước đó. Để giải quyết vấn đề phi trạng thái này (như tính năng ghi nhớ giỏ hàng, đăng nhập tài khoản mua sắm), các nhà phát triển tích hợp hai kỹ thuật là <strong>Cookies</strong> (lưu trữ tệp nhỏ ở trình duyệt máy khách) và <strong>Sessions</strong> (lưu trữ bối cảnh hoạt động trên máy chủ Web).</p>
+                    <p><strong>Các phương thức yêu cầu HTTP (HTTP Methods) phổ biến:</strong></p>
+                    <ul class="list-disc pl-6 space-y-1">
+                        <li><strong>GET:</strong> Yêu cầu lấy và truy xuất tài nguyên từ máy chủ hiển thị lên trang màn hình (phương thức phổ biến nhất).</li>
+                        <li><strong>POST:</strong> Gửi dữ liệu từ máy khách lên máy chủ để tạo mới một tài nguyên (ví dụ: gửi biểu mẫu đăng ký thành viên).</li>
+                        <li><strong>PUT:</strong> Cập nhật hoặc ghi đè sửa đổi hoàn toàn dữ liệu của một tài nguyên hiện có trên máy chủ.</li>
+                        <li><strong>DELETE:</strong> Yêu cầu máy chủ tiến hành xóa bỏ một tài nguyên chỉ định trên máy chủ.</li>
+                    </ul>
+                    <p><strong>Các mã phản hồi trạng thái HTTP (HTTP Status Codes) cốt lõi:</strong></p>
+                    <ul class="list-disc pl-6 space-y-1">
+                        <li><strong>Nhóm 2xx (Thành công):</strong> Tiêu biểu có mã <code class="font-mono text-emerald-800 bg-emerald-50 px-1 border">200 OK</code> (Yêu cầu đã được xử lý hoàn hảo thành công).</li>
+                        <li><strong>Nhóm 3xx (Chuyển hướng):</strong> Tiêu biểu có mã <code class="font-mono text-indigo-800 bg-indigo-50 px-1 border">301 Moved Permanently</code> (Tài nguyên đã bị di dời vĩnh viễn sang liên kết mới).</li>
+                        <li><strong>Nhóm 4xx (Lỗi từ phía máy khách Client):</strong> Tiêu biểu có mã <code class="font-mono text-amber-800 bg-amber-50 px-1 border">403 Forbidden</code> (Bị từ chối quyền truy cập) và <code class="font-mono text-amber-800 bg-amber-50 px-1 border">404 Not Found</code> (Không tìm thấy tài nguyên chỉ định trên máy chủ).</li>
+                        <li><strong>Nhóm 5xx (Lỗi từ phía máy chủ Server):</strong> Tiêu biểu có mã <code class="font-mono text-red-800 bg-red-50 px-1 border">500 Internal Server Error</code> (Máy chủ gặp sự cố lỗi phần mềm hệ thống) và <code class="font-mono text-red-800 bg-red-50 px-1 border">503 Service Unavailable</code> (Dịch vụ quá tải hoặc đang bảo trì).</li>
+                    </ul>
+                    <p><strong>Sự nâng cấp vượt bậc sang HTTPS (HTTP Secure):</strong></p>
+                    <p>
+                        Giao thức HTTP truyền dữ liệu dưới dạng văn bản thô (Plain Text), rất dễ bị tin tặc nghe lén và bẻ khóa lấy thông tin nhạy cảm. Do đó, <strong>HTTPS</strong> ra đời tích hợp thêm lớp bảo mật <strong>SSL/TLS (Secure Sockets Layer/Transport Layer Security)</strong> chạy trên cổng mặc định 443. Lớp SSL/TLS thực thi 3 nhiệm vụ sống còn: 
+                        1. <strong>Mã hóa dữ liệu</strong> chống nghe lén dọc đường truyền; 
+                        2. <strong>Xác thực máy chủ</strong> bằng Chứng chỉ số bảo mật (SSL Certificate) chống trang web giả mạo; 
+                        3. <strong>Bảo vệ toàn vẹn dữ liệu</strong> không bị chỉnh sửa trên đường đi.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 6.7. FTP -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.7. FTP - Dịch Vụ Truyền Tập Tin</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>FTP (File Transfer Protocol)</strong> là giao thức truyền thống điều phối hoạt động sao chép, tải lên (upload) và tải xuống (download) tệp tin giữa máy khách và máy chủ. Đặc trưng lớn nhất của FTP là hoạt động đồng thời trên **hai kênh kết nối TCP độc lập**:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Kênh điều khiển (Control Connection - Port mặc định 21):</strong> Chuyên dùng để gửi các câu lệnh đăng nhập tài khoản, đổi tên, xóa file, duyệt thư mục. Kênh này luôn duy trì trong suốt thời gian Client làm việc.</li>
+                        <li><strong>Kênh truyền dữ liệu (Data Connection):</strong> Chỉ được mở ra khi có hành động truyền tải file thực tế diễn ra và đóng lại ngay khi truyền xong.</li>
+                    </ul>
+                    <p><strong>Hai chế độ hoạt động chính của FTP (Xử lý vấn đề tường lửa mạng):</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Chế độ Chủ động (Active Mode - Sử dụng Port dữ liệu 20):</strong> Máy khách chủ động gửi cổng IP mở của mình cho Server. Sau đó máy chủ FTP Server sẽ trực tiếp thực hiện kết nối ngược từ cổng 20 về cổng của máy khách. Cách này rất dễ bị tường lửa phía máy khách chặn vì hành vi kết nối từ ngoài vào.</li>
+                        <li><strong>Chế độ Thụ động (Passive Mode):</strong> Máy chủ FTP Server sẽ mở một cổng ngẫu nhiên và gửi thông báo cho Client. Máy khách sẽ tự động khởi tạo kết nối dữ liệu ra ngoài cổng đó của Server. Cách này vượt qua tường lửa và bộ dịch NAT của Router dễ dàng nên được khuyến nghị sử dụng mặc định.</li>
+                    </ul>
+                    <p>
+                        <strong>Giải pháp FTP Bảo mật an toàn:</strong> Do FTP gốc truyền mật khẩu và tệp không mã hóa nên trong thực tế, các doanh nghiệp bắt buộc nâng cấp sử dụng <strong>SFTP (SSH File Transfer Protocol)</strong>. SFTP chạy truyền tải tích hợp toàn bộ dữ liệu điều khiển và tệp qua môi trường mã hóa cực mạnh của giao thức bảo mật SSH duy nhất trên cổng mặc định 22.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 6.8. Email -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.8. Dịch Vụ Thư Điện Tử (Email)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Hệ thống Thư điện tử (Email) vận hành trên môi trường mạng diện rộng thông qua sự phối hợp chặt chẽ của 3 thực thể logic nền tảng:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>MUA (Mail User Agent):</strong> Phần mềm soạn thảo và đọc email trực tiếp của người dùng đầu cuối (ví dụ: Outlook, Thunderbird, Gmail App).</li>
+                        <li><strong>MTA (Mail Transfer Agent):</strong> Máy chủ đóng vai trò bưu cục bưu điện trung chuyển, chuyển tiếp email giữa các máy chủ thư điện tử (ví dụ: Postfix, Exchange Server).</li>
+                        <li><strong>MDA (Mail Delivery Agent):</strong> Máy chủ lưu trữ email thực tế vào hộp thư và phân phối chúng cho người dùng (ví dụ: Dovecot).</li>
+                    </ul>
+                    <p><strong>Ba giao thức Email cốt lõi bắt buộc phải thuộc lòng:</strong></p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-4">
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-blue-800 bg-blue-100 rounded mb-2">SMTP</span>
+                            <p class="text-sm font-semibold text-slate-900">Simple Mail Transfer Protocol</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Giao thức chuyên dùng để <strong>đẩy (Push) gửi thư đi</strong> từ Client lên Mail Server hoặc trung chuyển thư giữa các Mail Server với nhau. Hoạt động trên cổng mặc định 25 (không bảo mật), cổng 465 (SMTP bảo mật mã hóa SSL) hoặc cổng 587 (STARTTLS).
+                            </p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-indigo-800 bg-indigo-100 rounded mb-2">POP3</span>
+                            <p class="text-sm font-semibold text-slate-900">Post Office Protocol version 3</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Giao thức dùng để <strong>lấy tải (Pull) email về máy cá nhân</strong> để đọc ngoại tuyến (Offline). Theo mặc định cơ chế hoạt động, toàn bộ email sau khi tải về sẽ bị xóa sạch hoàn toàn trên Mail Server, không hỗ trợ quản lý đồng bộ dữ liệu đa thiết bị. Cổng mặc định: 110 hoặc 995 (mã hóa).
+                            </p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-purple-800 bg-purple-100 rounded mb-2">IMAP</span>
+                            <p class="text-sm font-semibold text-slate-900">Internet Message Access Protocol</p>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Giao thức hiện đại dùng để <strong>đồng bộ hóa và quản lý email trực tiếp trên Mail Server</strong>. Email vẫn lưu trữ an toàn trên máy chủ đám mây, cho phép người dùng đồng bộ trạng thái đọc/chưa đọc, tạo thư mục giữa nhiều thiết bị khác nhau (PC, Web, Di động). Cổng mặc định: 143 hoặc 993 (mã hóa).
+                            </p>
+                        </div>
+                    </div>
+                    <p>
+                        <strong>Mở rộng định dạng tệp bằng MIME (Multipurpose Internet Mail Extensions):</strong> Ban đầu, giao thức gửi thư SMTP chỉ xử lý được tệp tin văn bản sử dụng bảng mã ký tự ASCII 7-bit truyền thống. Giao thức mở rộng <strong>MIME</strong> ra đời thiết lập thêm cấu trúc tiêu đề Header mới, cho phép email có khả năng gửi đính kèm đa phương tiện nhị phân phức tạp như tệp ảnh (JPEG, PNG), âm thanh, video, ứng dụng và định dạng hiển thị phong phú bằng HTML.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 6.9. Dịch vụ Lưu trữ đám mây -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">6.9. Dịch Vụ Lưu Trữ Đám Mây (Cloud Storage)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Dịch vụ lưu trữ đám mây là mô hình cho phép người dùng cá nhân hoặc doanh nghiệp sao lưu, lưu trữ dữ liệu trên hệ thống máy chủ vật lý phân tán từ xa của nhà cung cấp, truy cập thuận tiện ở bất kỳ đâu qua môi trường Internet. Hệ thống đám mây sử dụng công nghệ ảo hóa (Virtualization) và phân tán nhân bản (Redundancy) để sao chép dữ liệu ra nhiều bản sao lưu vật lý khác nhau, bảo vệ toàn vẹn thông tin chống lỗi phần cứng máy chủ.
+                    </p>
+                    <p><strong>Ba loại hình kiến trúc lưu trữ đám mây cốt lõi của doanh nghiệp:</strong></p>
+                    <ul class="list-disc pl-6 space-y-3">
+                        <li><strong>Lưu trữ đối tượng (Object Storage):</strong> Dữ liệu được đóng gói thành các đối tượng độc lập, chứa dữ liệu thô, các thẻ mô tả metadata phong phú và một mã định danh ID duy nhất trên thế giới. Dễ dàng mở rộng quy mô lưu trữ phi cấu trúc vô hạn, chi phí rẻ, truy cập thông qua mã lệnh API RESTful (ví dụ: Amazon S3, Google Cloud Storage).</li>
+                        <li><strong>Lưu trữ tệp tin (File Storage):</strong> Tổ chức dữ liệu theo mô hình cấu trúc hình cây phân cấp quen thuộc gồm các thư mục lồng thư mục, tập tin. Hỗ trợ tốt các giao thức chia sẻ file mạng truyền thống như SMB/CIFS (cho Windows) và NFS (cho Linux) gán trực tiếp vào các máy ảo (ví dụ: Azure Files, Amazon EFS).</li>
+                        <li><strong>Lưu trữ khối (Block Storage):</strong> Dữ liệu được cắt nhỏ thành các khối (Blocks) có kích thước cố định như cấu trúc của một ổ đĩa cứng vật lý thô ảo. Mang lại hiệu năng đọc ghi dữ liệu siêu cao, độ trễ tối thiểu, chuyên dùng để làm ổ đĩa hệ điều hành cho máy ảo VPS hoặc cài đặt các hệ thống cơ sở dữ liệu lớn (ví dụ: Amazon EBS, Google Persistent Disk).</li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Tab 2: PRACTICE -->
+        <div id="tab-practice" class="space-y-12 hidden">
+            
+            <!-- MCQ Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">Phần 1: 30 Câu hỏi Trắc nghiệm Kiểm tra Kiến thức nhanh</h2>
+                <div class="space-y-8">
+                    
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 1</span>
+                        <p class="font-semibold text-slate-900">Thiết bị định tuyến Router hoạt động chính xác ở lớp (tầng) nào của mô hình tham chiếu OSI?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tầng vật lý (Physical)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tầng liên kết dữ liệu (Data Link)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Tầng mạng (Network Layer)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tầng giao vận (Transport)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 2</span>
+                        <p class="font-semibold text-slate-900">Kiến trúc liên kết mạng WAN vật lý nào mang lại tính dự phòng và khả năng chống chịu sự cố kết nối cao nhất?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Point-to-Point (Điểm - Điểm)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Hub and Spoke (Trung tâm - Chi nhánh)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Mesh WAN (Mạng lưới diện rộng)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. STAR Topology</div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 3</span>
+                        <p class="font-semibold text-slate-900">Đâu là đặc trưng cơ bản nhất của giao thức định tuyến động OSPF?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Chỉ dựa trên số bước nhảy Hop Count để tìm đường ngắn nhất</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Là giao thức định tuyến Trạng thái liên kết Link-State sử dụng thuật toán Dijkstra</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Chỉ hoạt động với các địa chỉ IP thuộc phân lớp chuẩn A, B, C</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Không hỗ trợ phân chia vùng Areas để quản trị mạng lớn</div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 4</span>
+                        <p class="font-semibold text-slate-900">Giao thức định tuyến nào bị giới hạn khoảng cách tối đa chỉ được hoạt động đến 15 bước nhảy (Hop)?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. RIP / RIPv2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. OSPF</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. BGP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. EIGRP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 5</span>
+                        <p class="font-semibold text-slate-900">Cú pháp viết lệnh CLI nào dưới đây cấu hình định tuyến tĩnh hợp lệ trên thiết bị Cisco Router?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. ip network 192.168.2.0 255.255.255.0 10.0.0.2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. ip route 192.168.2.0 255.255.255.0 10.0.0.2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. route static 192.168.2.0 255.255.255.0 10.0.0.2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. router rip version 2</div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 6</span>
+                        <p class="font-semibold text-slate-900">Giải pháp kết nối LAN-WAN nào mang lại băng thông chuyên dụng, độ tin cậy và tính riêng tư cao nhất, không bị chia sẻ đường truyền?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. WAN VPN Remote Access</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Dedicated Leased Line (Đường truyền thuê riêng)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. SD-WAN qua Internet công cộng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Broadband ADSL</div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 7</span>
+                        <p class="font-semibold text-slate-900">Để tiết kiệm chi phí xây dựng đường truyền thuê riêng đắt đỏ, doanh nghiệp thường chọn giải pháp nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Bắt buộc lắp đặt Switch Layer 3 ở tất cả chi nhánh</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Sử dụng hoàn toàn mạng không dây Wi-Fi ngoài trời</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Triển khai đường hầm bảo mật WAN VPN qua Internet</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Lắp đặt thêm kìm bấm cáp mạng và modem tương tự</div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 8</span>
+                        <p class="font-semibold text-slate-900">Giao thức phân giải tên miền DNS hoạt động ở tầng nào của mô hình mạng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tầng mạng (Network)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tầng liên kết dữ liệu (Data Link)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tầng giao vận (Transport)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">D. Tầng ứng dụng (Application)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 9</span>
+                        <p class="font-semibold text-slate-900">Bản ghi DNS nào chịu trách nhiệm định hướng và ánh xạ tên miền phụ trực tiếp về tên miền gốc chính?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Bản ghi A (A Record)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Bản ghi CNAME (CNAME Record)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Bản ghi MX (MX Record)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bản ghi AAAA (AAAA Record)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 10</span>
+                        <p class="font-semibold text-slate-900">Để một hệ thống Email nhận thư điện tử gửi đến từ bên ngoài, bản ghi DNS nào là bắt buộc cấu hình?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Bản ghi CNAME</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Bản ghi MX</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Bản ghi A</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bản ghi NS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 11</span>
+                        <p class="font-semibold text-slate-900">Trong truy vấn phân cấp DNS, máy chủ nào có thẩm quyền chính xác cuối cùng để trả địa chỉ IP thực của trang web?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Root DNS Server</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. TLD DNS Server (.com)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Authoritative DNS Server</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Local DNS Resolver</div>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 12</span>
+                        <p class="font-semibold text-slate-900">Khi một máy tính khách Client bắt đầu kết nối vào mạng, bước đầu tiên trong tiến trình DHCP D.O.R.A là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Discover (Gửi quảng bá broadcast từ Client tìm Server)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Offer (Đề xuất IP từ Server cho Client)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Request (Yêu cầu IP được chọn từ Client)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Acknowledge (Xác nhận cấp phát hoàn tất từ Server)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q13 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 13</span>
+                        <p class="font-semibold text-slate-900">Trong tiến trình DHCP D.O.R.A, những bước nào diễn ra dưới dạng phát tin quảng bá (Broadcast)?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Toàn bộ 4 bước Discover, Offer, Request, Acknowledge</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Bước Discover và bước Request</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Bước Offer và bước Acknowledge</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Chỉ có bước đầu tiên Discover</div>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 14</span>
+                        <p class="font-semibold text-slate-900">Ý nghĩa kỹ thuật của "Exclusion Range" trong cấu hình dải cấp phát DHCP Server là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Là tổng không gian số IP được phép cho các máy khách thuê sử dụng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Dải IP loại trừ cấm DHCP phát tự động, dùng để gán tĩnh thủ công</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Thời hạn thời gian gán IP tối đa cho các Client trước khi thu hồi</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tính năng "gói chết" vĩnh viễn IP với địa chỉ MAC của card mạng</div>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 15</span>
+                        <p class="font-semibold text-slate-900">Tính năng gán tĩnh và cố định một địa chỉ IP cố định dựa vào địa chỉ MAC của thiết bị có tên gọi là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Scope</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Lease Time</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Reservation</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Port Forwarding</div>
+                        </div>
+                    </div>
+
+                    <!-- Q16 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 16</span>
+                        <p class="font-semibold text-slate-900">Đặc tính kỹ thuật quan trọng nhất thể hiện bản chất hoạt động của dịch vụ Web HTTP là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Phi trạng thái (Stateless)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Hướng kết nối tin cậy tuyệt đối</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Chỉ xử lý truyền dẫn dòng dữ liệu dạng nhị phân đóng gói</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tự động mã hóa tệp tin truyền đi</div>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 17</span>
+                        <p class="font-semibold text-slate-900">Phương pháp nào được các nhà lập trình web sử dụng phổ biến nhất để giúp máy chủ Web theo dõi và nhận diện trạng thái của người dùng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Gửi gói tin ping kéo dài liên tục</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Sử dụng cơ chế Cookies và Sessions</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cấu hình dải IP Private lớp C</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Khai báo thêm bản ghi CNAME trên DNS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 18</span>
+                        <p class="font-semibold text-slate-900">Phương thức HTTP (HTTP Method) nào được trình duyệt máy khách sử dụng mặc định khi người dùng tải trang web về?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. GET</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. POST</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. PUT</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. DELETE</div>
+                        </div>
+                    </div>
+
+                    <!-- Q19 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 19</span>
+                        <p class="font-semibold text-slate-900">Trong các mã phản hồi trạng thái HTTP dưới đây, mã lỗi nào nổi tiếng chỉ định "Không tìm thấy tài nguyên trên máy chủ"?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">A. 200 OK</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">B. 301 Moved Permanently</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs mcq-correct">C. 404 Not Found</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">D. 500 Internal Server Error</div>
+                        </div>
+                    </div>
+
+                    <!-- Q20 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 20</span>
+                        <p class="font-semibold text-slate-900">Cơ chế bảo mật SSL/TLS được tích hợp trong HTTPS mang lại nhiệm vụ nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Chỉ giúp nén tệp tin nhỏ lại để truyền nhanh hơn</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Đồng bộ hóa địa chỉ MAC vật lý của các card mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Mã hóa dữ liệu, xác thực máy chủ và đảm bảo tính toàn vẹn dữ liệu</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tự động định tuyến các cổng serial của các router</div>
+                        </div>
+                    </div>
+
+                    <!-- Q21 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 21</span>
+                        <p class="font-semibold text-slate-900">Dịch vụ truyền tập tin truyền thống FTP hoạt động trên cổng mặc định nào cho "Kênh điều khiển (Control Connection)"?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Cổng 20</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Cổng 21</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cổng 22</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cổng 80</div>
+                        </div>
+                    </div>
+
+                    <!-- Q22 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 22</span>
+                        <p class="font-semibold text-slate-900">Chế độ hoạt động FTP nào cho phép máy khách chủ động mở kết nối dữ liệu ra ngoài, dễ dàng đi xuyên qua Router NAT và Tường lửa?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Active Mode (Chủ động)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Passive Mode (Thụ động)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Stream Mode (Luồng dữ liệu)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Block Mode (Phân khối)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q23 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 23</span>
+                        <p class="font-semibold text-slate-900">SFTP sử dụng cơ chế bảo mật của giao thức nào để truyền dữ liệu và mật khẩu được mã hóa an toàn tuyệt đối?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. SSL/TLS lớp bảo mật của HTTP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. SSH (Secure Shell) chạy cổng 22</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. IP Sec của hệ thống mạng WAN</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Giao thức RIPv2 phân đoạn mạng</div>
+                        </div>
+                    </div>
+
+                    <!-- Q24 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 24</span>
+                        <p class="font-semibold text-slate-900">Thành phần bưu cục nào chịu trách nhiệm trung chuyển, chuyển tiếp thư điện tử (Email) giữa các máy chủ thư điện tử?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. MUA (Mail User Agent)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. MTA (Mail Transfer Agent)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. MDA (Mail Delivery Agent)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. DHCP Server</div>
+                        </div>
+                    </div>
+
+                    <!-- Q25 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 25</span>
+                        <p class="font-semibold text-slate-900">Giao thức thư điện tử nào chịu trách nhiệm truyền tải đẩy (Push) gửi thư từ máy khách lên Mail Server?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. SMTP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. POP3</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. IMAP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. MIME</div>
+                        </div>
+                    </div>
+
+                    <!-- Q26 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 26</span>
+                        <p class="font-semibold text-slate-900">Cơ chế tải email về máy tính cá nhân và mặc định xóa sạch hoàn toàn bản gốc trên Mail Server thuộc về giao thức nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. IMAP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. POP3</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. SMTP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. MIME</div>
+                        </div>
+                    </div>
+
+                    <!-- Q27 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 27</span>
+                        <p class="font-semibold text-slate-900">Giao thức IMAP cho phép đồng bộ hóa dữ liệu hoạt động trên cổng mặc định (Plain Text) là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 110</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 143</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 993</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 25</div>
+                        </div>
+                    </div>
+
+                    <!-- Q28 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 28</span>
+                        <p class="font-semibold text-slate-900">Chuẩn mở rộng định dạng email MIME được tích hợp vào SMTP với mục đích gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Mã hóa nội dung tệp tin gửi đi</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tự động nén dung lượng thư cho nhỏ lại</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Hỗ trợ đính kèm tệp nhị phân đa phương tiện (ảnh, audio, HTML) ngoài mã ASCII</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Đóng gói gộp các tầng OSI lại thành TCP/IP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q29 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 29</span>
+                        <p class="font-semibold text-slate-900">Loại hình lưu trữ đám mây nào hoạt động như một ổ đĩa cứng vật lý ảo thô, mang lại hiệu năng tối đa cho cài đặt Cơ sở dữ liệu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Object Storage (Lưu trữ đối tượng)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. File Storage (Lưu trữ tệp tin)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Block Storage (Lưu trữ khối)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Database Storage</div>
+                        </div>
+                    </div>
+
+                    <!-- Q30 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 30</span>
+                        <p class="font-semibold text-slate-900">Trong dải mã lỗi phản hồi HTTP, nhóm mã lỗi nào đại diện cho "Lỗi xảy ra từ phía hệ thống máy chủ (Web Server)"?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">A. Nhóm 2xx</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">B. Nhóm 3xx</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">C. Nhóm 4xx</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs mcq-correct">D. Nhóm 5xx</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Practice Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">Phần 2: 10 Bài tập Tình huống Thực tế & Giải trình chi tiết</h2>
+                <div class="space-y-6">
+                    
+                    <!-- Prob 1 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 1: Tính toán viết lệnh cấu hình Định tuyến tĩnh (Static Route)</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một doanh nghiệp sử dụng 2 Router R1 và R2 kết nối hai văn phòng LAN ở xa. Văn phòng 1 sử dụng mạng <code class="font-mono">192.168.1.0/24</code> kết nối vào cổng <code class="font-mono">G0/1</code> của R1. Văn phòng 2 sử dụng mạng <code class="font-mono">192.168.2.0/24</code> kết nối vào cổng <code class="font-mono">G0/2</code> của R2. Hai Router kết nối trực tiếp với nhau qua cổng <code class="font-mono">G0/0</code> sử dụng mạng trung gian là <code class="font-mono">10.10.10.0/30</code> (Trong đó IP cổng G0/0 của R1 là <code class="font-mono">10.10.10.1</code>, của R2 là <code class="font-mono">10.10.10.2</code>). Hãy viết các dòng lệnh CLI trên R1 và R2 để định tuyến tĩnh giúp hai văn phòng kết nối thông suốt.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Để định tuyến tĩnh cho phép gói tin di chuyển mượt mà khứ hồi từ mạng LAN 1 sang mạng LAN 2, ta tiến hành cấu hình chỉ đường trên hai Router:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Tại Router R1 (Cần tìm đường sang LAN 2):</strong> Địa chỉ đích là <code class="font-mono">192.168.2.0/24</code>, cổng IP đi vào Router R2 kế tiếp là <code class="font-mono">10.10.10.2</code>.</li>
+                                    <li><strong>Tại Router R2 (Cần tìm đường sang LAN 1):</strong> Địa chỉ đích là <code class="font-mono">192.168.1.0/24</code>, cổng IP đi vào Router R1 kế tiếp là <code class="font-mono">10.10.10.1</code>.</li>
+                                </ul>
+                                <p class="font-semibold mt-2">Dòng lệnh cấu hình trên Router R1:</p>
+                                <code class="block bg-slate-900 text-slate-200 p-2 rounded font-mono text-xs">
+                                    R1(config)# ip route 192.168.2.0 255.255.255.0 10.10.10.2
+                                </code>
+                                <p class="font-semibold mt-2">Dòng lệnh cấu hình trên Router R2:</p>
+                                <code class="block bg-slate-900 text-slate-200 p-2 rounded font-mono text-xs">
+                                    R2(config)# ip route 192.168.1.0 255.255.255.0 10.10.10.1
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 2 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 2: Tính toán gán thiết lập cấu hình Định tuyến động OSPF</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Vẫn dựa trên sơ đồ kết nối của Bài tập 1. Người quản trị mạng muốn thay thế Định tuyến tĩnh bằng Định tuyến động OSPF vùng đơn (Area 0). Hãy viết các dòng lệnh Cisco IOS CLI chi tiết cấu hình khởi chạy OSPF trên hai Router R1 và R2.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Để thiết lập OSPF, ta phải quảng bá dải mạng kết nối trực tiếp vào mỗi Router. Chú ý tính toán chính xác Wildcard Mask:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Mạng <code class="font-mono">/24</code> (Subnet Mask: <code class="font-mono">255.255.255.0</code>) &rarr; Wildcard Mask là <code class="font-mono">0.0.0.255</code>.</li>
+                                    <li>Mạng <code class="font-mono">/30</code> (Subnet Mask: <code class="font-mono">255.255.255.252</code>) &rarr; Wildcard Mask là <code class="font-mono">0.0.0.3</code>.</li>
+                                </ul>
+                                <p class="font-semibold mt-2">Dòng lệnh cấu hình OSPF trên Router R1:</p>
+                                <code class="block bg-slate-900 text-slate-200 p-3 rounded font-mono text-xs leading-relaxed">
+                                    R1(config)# router ospf 1<br>
+                                    R1(config-router)# network 192.168.1.0 0.0.0.255 area 0<br>
+                                    R1(config-router)# network 10.10.10.0 0.0.0.3 area 0
+                                </code>
+                                <p class="font-semibold mt-2">Dòng lệnh cấu hình OSPF trên Router R2:</p>
+                                <code class="block bg-slate-900 text-slate-200 p-3 rounded font-mono text-xs leading-relaxed">
+                                    R2(config)# router ospf 1<br>
+                                    R2(config-router)# network 192.168.2.0 0.0.0.255 area 0<br>
+                                    R2(config-router)# network 10.10.10.0 0.0.0.3 area 0
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 3 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 3: Cấu hình Thiết lập các bản ghi phân giải hệ thống DNS</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một công ty CNTT mới thành lập thương hiệu "VHU Tech", muốn triển khai 3 dịch vụ cơ bản gán cho tên miền <code class="font-mono">vhutech.edu.vn</code>: Trang web chính trỏ về IPv4 máy chủ Web Public là <code class="font-mono">103.20.143.50</code>, trang web hỗ trợ IPv6 là <code class="font-mono">2404:6800:4005::50</code>, máy chủ Mail Server chạy tại IP <code class="font-mono">103.20.143.60</code> (máy chủ mail lấy tên miền là <code class="font-mono">mail.vhutech.edu.vn</code>, độ ưu tiên Priority gán bằng 10), và ánh xạ tên miền phụ <code class="font-mono">www.vhutech.edu.vn</code> trỏ về tên gốc chính. Hãy viết chi tiết các bản ghi DNS tương ứng.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Bộ bản ghi cấu hình DNS chuẩn xác cho hệ thống bao gồm:</p>
+                                <div class="overflow-x-auto border rounded border-slate-200">
+                                    <table class="min-w-full divide-y divide-slate-200 font-mono text-xs">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left">Tên miền (Name)</th>
+                                                <th class="px-4 py-2 text-left">Loại bản ghi (Type)</th>
+                                                <th class="px-4 py-2 text-left">Giá trị đích (Value/RDATA)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-200">
+                                            <tr>
+                                                <td class="px-4 py-2">vhutech.edu.vn</td>
+                                                <td class="px-4 py-2">A</td>
+                                                <td class="px-4 py-2">103.20.143.50</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2">vhutech.edu.vn</td>
+                                                <td class="px-4 py-2">AAAA</td>
+                                                <td class="px-4 py-2">2404:6800:4005::50</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2">mail.vhutech.edu.vn</td>
+                                                <td class="px-4 py-2">A</td>
+                                                <td class="px-4 py-2">103.20.143.60</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2">vhutech.edu.vn</td>
+                                                <td class="px-4 py-2">MX</td>
+                                                <td class="px-4 py-2">10 mail.vhutech.edu.vn</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2">www.vhutech.edu.vn</td>
+                                                <td class="px-4 py-2">CNAME</td>
+                                                <td class="px-4 py-2">vhutech.edu.vn</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 4 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 4: Phân tích Quy trình thiết kế Pool cấp phát IP động DHCP</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Thiết kế sơ đồ phân bổ IP động của một văn phòng sử dải dải mạng Private <code class="font-mono">192.168.10.0/24</code>. Văn phòng có Router cổng Gateway gán IP tĩnh là <code class="font-mono">192.168.10.1</code>, DNS Server nội bộ gán IP tĩnh <code class="font-mono">192.168.10.2</code>, máy in văn phòng gán IP tĩnh là <code class="font-mono">192.168.10.10</code>. Hãy thiết lập thông số DHCP Scope, dải Exclusion Range và dải IP khả dụng cấp tự động cấp phát cho các máy trạm người dùng.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Thiết kế hệ thống phân dải IP DHCP tối ưu:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Địa chỉ mạng (Network ID):</strong> <code class="font-mono">192.168.10.0</code>, Subnet Mask: <code class="font-mono">255.255.255.0</code>.</li>
+                                    <li><strong>Dải IP Exclusion Range (Dải loại trừ):</strong> <code class="font-mono">192.168.10.1</code> đến <code class="font-mono">192.168.10.20</code> (Khoanh vùng dành riêng bảo vệ cho các cổng Gateway, DNS, Servers và máy in).</li>
+                                    <li><strong>Dải IP DHCP Pool gán tự động khả dụng:</strong> <code class="font-mono">192.168.10.21</code> đến <code class="font-mono">192.168.10.254</code> (Hỗ trợ cấp phát tự động mượt mà tối đa cho 234 thiết bị khách).</li>
+                                    <li><strong>Các tham số Option phát kèm:</strong> Gateway: <code class="font-mono">192.168.10.1</code>, DNS Server: <code class="font-mono">192.168.10.2</code>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 5 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 5: Chẩn đoán lỗi xung đột địa chỉ IP trong mạng LAN-WAN</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Tại một văn phòng, có hai máy tính PC1 gán IP tĩnh là <code class="font-mono">192.168.1.50/24</code>, và PC2 nhận IP động. Tuy nhiên, PC2 đôi khi báo lỗi "IP Address Conflict" và cả hai máy đều bị mất kết nối mạng chập chờn. Hãy chẩn đoán nguyên nhân và đưa ra giải pháp xử lý.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p><strong>Chẩn đoán nguyên nhân:</strong></p>
+                                <p>Sự cố xảy ra do máy chủ DHCP Server gán tự động cấp phát IP <code class="font-mono">192.168.1.50</code> cho máy PC2 vì địa chỉ này nằm trong dải Scope phát tự động nhưng chưa được gán loại trừ (Exclusion). Khi máy PC1 (gán tĩnh bằng tay) bật lên, hai Card mạng cùng phát tín hiệu tranh chấp địa chỉ IP <code class="font-mono">192.168.1.50</code> gây ra hiện tượng xung đột và rớt gói tin hàng loạt.</p>
+                                <p><strong>Giải pháp khắc phục:</strong></p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li>Trên DHCP Server, cấu hình thêm dải <code class="font-mono">192.168.1.50</code> vào danh sách **Exclusion Range (Dải loại trừ)** để máy chủ không tự động phát IP này nữa.</li>
+                                    <li>Hoặc cấu hình tính năng **DHCP Reservation** gắn cố định IP <code class="font-mono">192.168.1.50</code> cho địa chỉ MAC của PC1 và chuyển cấu hình Card mạng PC1 sang chế độ nhận IP động.</li>
+                                    <li>Trên máy PC2, chạy lệnh <code class="font-mono bg-slate-100 px-1 border">ipconfig /release</code> và <code class="font-mono bg-slate-100 px-1 border">ipconfig /renew</code> để giải phóng và xin cấp lại IP mới hợp lệ.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 6 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 6: Phân tích cơ chế bắt tay 3 bước của Giao thức TCP</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Khi máy tính truy cập trang web HTTPS, giao thức TCP ở tầng Giao vận bắt buộc phải thực hiện tiến trình bắt tay 3 bước (Three-way Handshake) để thiết lập kênh kết nối an toàn. Hãy mô tả chi tiết tên gọi của 3 bước này kèm các cờ (Flags) điều khiển được kích hoạt trong Header phân đoạn.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Tiến trình thiết lập bắt tay 3 bước của TCP diễn ra như sau:</p>
+                                <ul class="list-disc pl-6 space-y-2">
+                                    <li><strong>Bước 1: Client gửi SYN (Synchronize).</strong> Máy khách khởi tạo kết nối bằng cách gửi một phân đoạn (Segment) có bật cờ <code class="font-mono text-indigo-700">SYN = 1</code>, đi kèm số thứ tự khởi đầu ngẫu nhiên (Sequence Number = X).</li>
+                                    <li><strong>Bước 2: Server phản hồi SYN-ACK.</strong> Máy chủ Web nhận được yêu cầu, gửi lại phân đoạn có bật cờ <code class="font-mono text-indigo-700">SYN = 1</code> và cờ <code class="font-mono text-indigo-700">ACK = 1</code>. Số thứ tự Sequence Number của Server là một số ngẫu nhiên Y, và số Acknowledgement Number gán bằng <code class="font-mono">X + 1</code> (xác nhận đã nhận SYN của khách).</li>
+                                    <li><strong>Bước 3: Client xác nhận ACK.</strong> Máy khách gửi lại phân đoạn cuối cùng có cờ <code class="font-mono text-indigo-700">ACK = 1</code>, số Sequence Number gán bằng <code class="font-mono">X + 1</code> và số Acknowledgement Number gán bằng <code class="font-mono">Y + 1</code>. Kênh truyền thông chính thức được thiết lập, sẵn sàng truyền dữ liệu web.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 7 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 7: Khắc phục sự cố Tường lửa chặn cổng dữ liệu Active FTP</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một nhân viên quản trị Web Server cấu hình dịch vụ truyền tệp tin FTP hoạt động ở chế độ Active FTP. Tuy nhiên, toàn bộ nhân viên truy cập FTP từ nhà (qua Router NAT) đều báo lỗi không thể liệt kê thư mục hoặc truyền dữ liệu dù đăng nhập tài khoản thành công. Hãy giải thích nguyên nhân và đề xuất giải pháp xử lý.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p><strong>Nguyên nhân kỹ thuật:</strong></p>
+                                <p>Ở chế độ Active FTP, kênh điều khiển được mở thành công trên cổng 21. Khi bắt đầu truyền file hoặc xem danh sách tệp, máy chủ FTP Server sẽ chủ động khởi tạo kết nối dữ liệu từ cổng vật lý 20 của nó ngược về cổng ngẫu nhiên của Client. Do nhân viên ở nhà sử dụng Router NAT và Tường lửa cá nhân, các hệ thống phòng thủ này mặc định coi kết nối từ ngoài vào này là cuộc tấn công nguy hiểm nên chặn hoàn toàn gói tin, khiến kênh dữ liệu không thể mở.</p>
+                                <p><strong>Giải pháp xử lý:</strong></p>
+                                <p>Chuyển cấu hình hoạt động trên FTP Server và ứng dụng khách (ví dụ: FileZilla) sang chế độ **Passive Mode (Thụ động)**. Ở chế độ này, mọi kết nối mở kênh dữ liệu đều do phía Client chủ động khởi tạo ra ngoài đến cổng ngẫu nhiên do Server đề xuất, dễ dàng đi xuyên qua Router NAT và Tường lửa của nhân viên tại nhà.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 8 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 8: Phân tích hoạt động gửi nhận thư của bộ giao thức Email</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một giảng viên dùng email <code class="font-mono text-indigo-700">giangvien@vhu.edu.vn</code> gửi một email đính kèm tệp PDF bài giảng cho sinh viên có địa chỉ <code class="font-mono text-indigo-700">sinhvien@gmail.com</code>. Hãy phân tích chi tiết vai trò của các giao thức SMTP, DNS, IMAP và các máy chủ tham gia xử lý gói thư dọc đường.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p>Tiến trình xử lý vận chuyển thư điện tử diễn ra qua các bước:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li>Giảng viên viết thư đính kèm tệp PDF (được giao thức **MIME** mã hóa sang dạng nhị phân 7-bit tương thích). Bấm gửi, ứng dụng mail sử dụng giao thức **SMTP** đẩy thư lên máy chủ thư điện tử của trường <code class="font-mono">smtp.vhu.edu.vn</code>.</li>
+                                    <li>Máy chủ Mail Server của trường đọc đuôi người nhận là <code class="font-mono">gmail.com</code>, thực hiện truy vấn DNS để tìm **bản ghi MX (MX Record)** của hệ thống Google Gmail.</li>
+                                    <li>DNS trả về địa chỉ IP của Mail Server Gmail (ví dụ: <code class="font-mono">gmail-smtp-in.l.google.com</code>).</li>
+                                    <li>Mail Server trường sử dụng giao thức **SMTP (qua cổng 25)** chuyển tiếp lá thư trực tiếp sang Mail Server của Google Gmail.</li>
+                                    <li>Google kiểm tra chống thư rác (Spam), xác thực rồi đẩy thư vào máy chủ lưu trữ (MDA) của tài khoản sinh viên.</li>
+                                    <li>Sinh viên mở điện thoại thông minh, ứng dụng Gmail (MUA) sử dụng giao thức **IMAP (qua cổng 993 bảo mật)** đồng bộ hóa và tải tệp tin về thiết bị để sinh viên học tập.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 9 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 9: Thiết kế hệ thống mạng WAN VPN Site-to-Site cho doanh nghiệp</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Trường Đại học Văn Hiến có cơ sở chính tại Quận Tân Phú và chi nhánh cơ sở mới tại Quận 12. Cả hai nơi đều có mạng LAN sử dụng dải IP Private riêng biệt (Tân Phú: <code class="font-mono">192.168.10.0/24</code>, Quận 12: <code class="font-mono">192.168.20.0/24</code>). Hãy đề xuất giải pháp kỹ thuật kết nối an toàn để cán bộ văn phòng hai cơ sở có thể dùng chung cơ sở dữ liệu nội bộ thông qua môi trường Internet.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p><strong>Giải pháp kỹ thuật tối ưu:</strong></p>
+                                <p>Triển khai giải pháp **Site-to-Site WAN VPN (Mạng riêng ảo điểm-đến-điểm)** kết nối trực tiếp hai cổng Router Edge của cơ sở Tân Phú và Quận 12.</p>
+                                <p><strong>Quy trình hoạt động bảo mật chi tiết:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Sử dụng giao thức bảo mật đường hầm mã hóa mạnh như **IPSec (Internet Protocol Security)** hoặc **WireGuard** cấu hình trực tiếp trên thiết bị Router Gateway của hai cơ sở.</li>
+                                    <li>Khi một cán bộ tại Tân Phú truy xuất cơ sở dữ liệu tại IP <code class="font-mono">192.168.20.50</code> (Quận 12), Router Tân Phú tự động nhận diện gói tin thuộc dải mạng đối tác, thực hiện mã hóa toàn bộ Payload, đóng gói Header IPSec an toàn và gửi đi qua môi trường Internet công cộng giá rẻ.</li>
+                                    <li>Router Quận 12 tiếp nhận gói tin, bóc tách giải mã dữ liệu thô gốc và chuyển tiếp mượt mà về máy chủ cơ sở dữ liệu. Toàn bộ tiến trình diễn ra khép kín, an toàn tuyệt đối chống nghe lén dữ liệu nội bộ.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 10 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 10: Xử lý sự cố rò rỉ địa chỉ IP Private ra môi trường WAN công cộng</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một lập trình viên cấu hình trang web trên máy tính trong LAN có dải IP <code class="font-mono text-indigo-700">192.168.1.150</code>. Người này cố gắng cấu hình định tuyến tĩnh trên Router nhà mạng để bạn bè ngoài Internet gõ trực tiếp IP đó truy cập trang web nhưng hoàn toàn thất bại. Hãy phân tích bản chất kỹ thuật và đề xuất giải pháp xử lý.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-slate-700">
+                                <p><strong>Bản chất lỗi kỹ thuật:</strong></p>
+                                <p>Địa chỉ IP <code class="font-mono">192.168.1.150</code> thuộc dải địa chỉ IP Private Lớp C được quy ước chỉ hoạt động, định tuyến nội bộ trong mạng LAN gia đình. Theo quy chuẩn kỹ thuật thiết lập mạng WAN toàn cầu, toàn bộ các thiết bị định tuyến Router cổng Edge của các nhà mạng ISP trên môi trường Internet đều được cấu hình mặc định hủy bỏ và chặn hoàn toàn (Drop/Block) tất cả các gói tin có IP nguồn hoặc đích thuộc dải IP Private để tránh xung đột trùng lặp không gian địa chỉ trên thế giới.</p>
+                                <p><strong>Giải pháp xử lý tiêu chuẩn:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Giải pháp NAT / Port Forwarding:</strong> Truy cập vào giao diện cấu hình của Router nhà mạng tại nhà, thiết lập quy tắc Port Forwarding chuyển tiếp cổng Web (cổng 80/443) từ IP Public ngoài cổng WAN (IP thuê trực tiếp từ nhà mạng) trỏ về đúng địa chỉ IP Private nội bộ <code class="font-mono">192.168.1.150</code>. Người bạn ngoài Internet sẽ truy cập thành công bằng cách nhập địa chỉ IP Public của đường truyền.</li>
+                                    <li><strong>Giải pháp Cloud:</strong> Triển khai đưa ứng dụng lên các máy chủ ảo VPS Cloud gán sẵn IP Public thực tế để xuất bản dịch vụ chuyên nghiệp.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <img src="https://logodix.com/logo/2115160.png" alt="VHU Logo" class="h-10 mx-auto mb-2 opacity-80" onerror="this.style.display='none'">
+            <p class="mb-1">&copy; 2026 Học liệu điện tử thông minh. Trường Đại học Văn Hiến.</p>
+            <p>Biên soạn kỹ thuật bởi Giảng viên Khoa Công nghệ thông tin.</p>
+        </div>
+    </footer>
+
+    <!-- Tab switcher & teacher lock script -->
+    <script>
+        function switchTab(tabId) {
+            const theoryTab = document.getElementById('tab-theory');
+            const practiceTab = document.getElementById('tab-practice');
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractice = document.getElementById('btn-practice');
+
+            if (tabId === 'theory') {
+                theoryTab.classList.remove('hidden');
+                practiceTab.classList.add('hidden');
+                btnTheory.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            } else {
+                theoryTab.classList.add('hidden');
+                practiceTab.classList.remove('hidden');
+                btnTheory.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('teacher-password').value;
+            if (passInput === 'VHU@INT4401') {
+                // Reveal hidden solutions
+                const hiddenElements = document.querySelectorAll('.teacher-only');
+                hiddenElements.forEach(el => {
+                    el.classList.remove('hidden');
+                });
+                
+                // Highlight correct MCQ answers
+                const correctMcqs = document.querySelectorAll('.mcq-correct');
+                correctMcqs.forEach(el => {
+                    el.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'font-semibold');
+                    el.classList.remove('border-slate-200');
+                    el.innerHTML += ' <span class="ml-2 text-xs bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Đúng</span>';
+                });
+
+                alert('🔑 KHÓA GIẢNG VIÊN ĐÃ ĐƯỢC GIẢI MÃ THÀNH CÔNG! Đã mở rộng lời giải tự luận chi tiết và tô xanh đáp án trắc nghiệm đúng.');
+            } else {
+                alert('❌ Sai mật khẩu bảo mật học phần! Vui lòng kiểm tra lại đề cương chi tiết môn học.');
+            }
+        }
+    </script>
+</body>
+</html>
