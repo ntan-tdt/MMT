@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu Điện tử: Chương 5 - Xây dựng Mạng LAN và Mạng LAN ảo (VLAN)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <!-- Icon -->
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-blue-300 uppercase">Trường Đại học Văn Hiến - Khoa CNTT</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">CHƯƠNG 5: XÂY DỰNG MẠNG LAN VÀ MẠNG LAN ẢO (VLAN)</h1>
+                        <p class="text-sm text-slate-300 mt-1">Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ)</p>
+                    </div>
+                </div>
+                <!-- Floating Teacher lock inside header -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-xs font-semibold text-blue-300 mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        MỞ KHÓA GÓC GIẢNG VIÊN (PASSWORD: VHU@INT4401)
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." class="px-3 py-1.5 text-slate-800 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-44">
+                        <button onclick="checkPassword()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded font-bold text-sm transition">Giải Mã</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="switchTab('theory')" id="btn-theory" class="border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>I. PHẦN LÝ THUYẾT CHI TIẾT</span>
+                </button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>II. CÂU HỎI & BÀI TẬP THỰC HÀNH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Tab 1: THEORY -->
+        <div id="tab-theory" class="space-y-12">
+            
+            <!-- Intro Card -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">Tóm tắt nội dung học tập Chương 5</h2>
+                <p class="text-slate-600 leading-relaxed text-justify mb-4">
+                    Mạng cục bộ (LAN - Local Area Network) là xương sống hạ tầng thông tin kết nối các thiết bị trong phạm vi địa lý hẹp như tòa nhà, văn phòng hay hộ gia đình. Chương này trang bị kiến thức toàn diện và kỹ năng thực hành cốt lõi để xây dựng một hệ thống mạng LAN hoàn chỉnh, từ việc hiểu rõ kiến trúc, thiết bị phần cứng, cách triển khai mạng LAN nối dây (Ethernet) và mạng LAN không dây (Wi-Fi), cho đến việc làm chủ các kỹ thuật nâng cao như phân đoạn mạng LAN ảo (VLAN), đường Trunk dùng chung, và định tuyến liên VLAN (Inter-VLAN Routing) để thiết lập một mạng LAN doanh nghiệp an toàn, hiệu suất cao và dễ dàng mở rộng.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-blue-600 text-xl font-bold">01</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Mạng LAN nối dây</h4>
+                            <p class="text-xs text-slate-500 mt-1">Lắp đặt Switch, đi dây cáp thẳng/chéo, cấu hình tham số IP tĩnh và kiểm thử kết nối.</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-indigo-600 text-xl font-bold">02</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Mạng LAN không dây</h4>
+                            <p class="text-xs text-slate-500 mt-1">Cấu hình SSID, bảo mật WPA2 Personal, quản trị Wireless Router và gán IP động qua DHCP.</p>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-purple-600 text-xl font-bold">03</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Phân đoạn VLAN</h4>
+                            <p class="text-xs text-slate-500 mt-1">Tạo/xóa VLAN, gán cổng Access, thu nhỏ miền quảng bá và tối ưu hóa hiệu năng.</p>
+                        </div>
+                    </div>
+                    <div class="bg-pink-50 border border-pink-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-pink-600 text-xl font-bold">04</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Trunking & Inter-VLAN</h4>
+                            <p class="text-xs text-slate-500 mt-1">Giao thức 802.1Q gán nhãn khung dữ liệu và cấu hình định tuyến Router-on-a-Stick.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5.1. Giới thiệu mạng LAN -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">5.1. Kiến Trúc và Thiết Bị Mạng LAN</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Mạng LAN (Local Area Network)</strong> hay mạng cục bộ là một hệ thống truyền thông tốc độ cao, được thiết kế để kết nối các thiết bị tính toán trong một phạm vi địa lý giới hạn như văn phòng, trường học, nhà máy hay hộ gia đình. Hiện nay, hầu hết các mạng LAN đều áp dụng <strong>kiến trúc hình sao (STAR Topology)</strong>, sử dụng thiết bị trung tâm thông minh là Switch để quản lý kết nối và điều phối dữ liệu một cách tối ưu.
+                    </p>
+                    <p><strong>Các ưu điểm chiến lược của mạng LAN hình sao sử dụng Switch:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Tốc độ truyền dữ liệu cực cao:</strong> Mạng LAN có dây cung cấp băng thông rộng lớn (thông thường từ 100 Mbps, 1 Gbps đến 10 Gbps) với độ trễ (latency) cực kỳ thấp và kết nối ổn định, ít bị ảnh hưởng bởi nhiễu sóng từ các yếu tố bên ngoài.</li>
+                        <li><strong>Dễ dàng quản lý và mở rộng:</strong> Kiến trúc hình sao cho phép dễ dàng thêm mới, di chuyển hoặc loại bỏ các máy trạm (client) mà không làm gián đoạn hay ảnh hưởng đến hoạt động của các thiết bị khác trong hệ thống mạng.</li>
+                        <li><strong>Kiểm soát lỗi và cô lập sự cố:</strong> Khi một đường cáp mạng kết nối từ Switch đến máy tính bị đứt hoặc lỗi, chỉ riêng thiết bị đó bị mất kết nối; toàn bộ phần còn lại của hệ thống mạng LAN vẫn hoạt động bình thường, giúp việc khắc phục sự cố nhanh chóng.</li>
+                        <li><strong>Dịch vụ và tính năng phong phú:</strong> Mạng LAN là nền tảng để triển khai các dịch vụ cốt lõi như chia sẻ tài liệu chung qua File Server, quản lý cơ sở dữ liệu tập trung, in ấn chung qua Network Printer, và chia sẻ đường truyền Internet chung, giúp tối ưu hóa chi phí đầu tư phần cứng cho doanh nghiệp.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 5.2. Mạng LAN nối dây (Wired LAN) -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">5.2. Mạng LAN Nối Dây (Wired LAN)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Mạng LAN nối dây (Wired LAN) sử dụng cáp truyền dẫn vật lý để kết nối các thiết bị. Trong môi trường doanh nghiệp đòi hỏi tính ổn định, hiệu năng vượt trội và bảo mật cao, mạng nối dây luôn là ưu tiên lựa chọn hàng đầu để kết nối các máy chủ, máy tính làm việc của nhân viên và các thiết bị ngoại vi cốt lõi.
+                    </p>
+                    <p><strong>Quy trình 4 bước chuẩn để triển khai vật lý mạng LAN nối dây:</strong></p>
+                    <ol class="list-decimal pl-6 space-y-3">
+                        <li>
+                            <strong>Lắp đặt thiết bị phần cứng vật lý:</strong> Xác định vị trí đặt thiết bị trung tâm Switch ở tủ Rack trung tâm và bố trí các máy trạm (Desktop, Laptop, Server) tại các bàn làm việc thích hợp.
+                        </li>
+                        <li>
+                            <strong>Kết nối cáp mạng theo quy tắc chuẩn:</strong> Tiến hành đi dây cáp xoắn đôi (UTP/STP) từ các cổng của Switch đến card mạng (NIC) của các máy trạm.
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 my-2 text-sm text-yellow-800 rounded-r-xl">
+                                <strong>Quy tắc đấu nối cáp tiêu chuẩn:</strong>
+                                <ul class="list-disc pl-5 mt-1 space-y-1">
+                                    <li><strong>Kết nối hai thiết bị khác loại (ví dụ PC với Switch, hoặc Router với Switch):</strong> Sử dụng <strong>Cáp thẳng (Straight-through Cable)</strong>. Hai đầu cáp được bấm theo cùng một tiêu chuẩn màu (cả hai đầu đều là chuẩn T-568A hoặc cả hai đầu đều là T-568B).</li>
+                                    <li><strong>Kết nối hai thiết bị cùng loại (ví dụ PC với PC, hoặc Switch với Switch):</strong> Sử dụng <strong>Cáp chéo (Crossover Cable)</strong>. Một đầu cáp bấm theo chuẩn màu T-568A và đầu còn lại bấm theo chuẩn màu T-568B.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>Cấu hình các tham số địa chỉ IP cho thiết bị:</strong> Để các máy tính có thể liên lạc với nhau, ta phải gán đầy đủ thông số địa chỉ IP cho card mạng (NIC). Bảng thông số gán bao gồm:
+                            <div class="overflow-x-auto mt-2">
+                                <table class="min-w-full text-xs text-left text-slate-500 border border-slate-200 rounded-lg">
+                                    <thead class="text-slate-700 uppercase bg-slate-100 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-2.5">Tham số</th>
+                                            <th class="px-4 py-2.5">Vai trò kỹ thuật</th>
+                                            <th class="px-4 py-2.5">Ví dụ cấu hình mẫu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200">
+                                        <tr>
+                                            <td class="px-4 py-2.5 font-semibold text-slate-900">Địa chỉ IP (IP Address)</td>
+                                            <td class="px-4 py-2.5">Định danh logic duy nhất cho thiết bị trong phân đoạn mạng.</td>
+                                            <td class="px-4 py-2.5 font-mono text-indigo-600">192.168.1.15</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-2.5 font-semibold text-slate-900">Subnet Mask</td>
+                                            <td class="px-4 py-2.5">Xác định ranh giới giữa phần mạng (NetID) và phần thiết bị (HostID).</td>
+                                            <td class="px-4 py-2.5 font-mono text-indigo-600">255.255.255.0 (/24)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-2.5 font-semibold text-slate-900">Default Gateway</td>
+                                            <td class="px-4 py-2.5">Địa chỉ cổng LAN của Router trung gian, làm cửa ngõ để máy trạm gửi gói tin ra ngoài mạng (Internet hoặc mạng khác).</td>
+                                            <td class="px-4 py-2.5 font-mono text-indigo-600">192.168.1.254</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-2.5 font-semibold text-slate-900">DNS Server</td>
+                                            <td class="px-4 py-2.5">Máy chủ dịch vụ phân giải tên miền chữ dễ nhớ thành địa chỉ IP số.</td>
+                                            <td class="px-4 py-2.5 font-mono text-indigo-600">8.8.8.8 (Google DNS)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>Kiểm thử cấu hình và tính thông suốt:</strong>
+                            <ul class="list-disc pl-6 mt-2 space-y-1 text-sm">
+                                <li><strong>Kiểm tra thông số cấu hình IP hiện tại:</strong> Mở CMD trên Windows gõ lệnh <code class="font-mono text-indigo-700 bg-slate-100 px-1 py-0.5 rounded">ipconfig /all</code>.</li>
+                                <li><strong>Kiểm tra kết nối vật lý & logic:</strong> Gõ lệnh <code class="font-mono text-indigo-700 bg-slate-100 px-1 py-0.5 rounded">ping [Địa_chỉ_IP_đích]</code> để đo thời gian phản hồi (Latency) và tỷ lệ mất gói (Packet Loss).</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- 5.3. Mạng LAN không dây (WLAN) -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">5.3. Mạng LAN Không Dây (Wireless LAN - WLAN)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Mạng LAN không dây (WLAN - Wireless LAN)</strong>, thường gọi là Wi-Fi, là giải pháp truyền thông cực kỳ linh hoạt hoạt động dựa trên tín hiệu sóng vô tuyến (RF - Radio Frequency) theo tiêu chuẩn kỹ thuật của tổ chức IEEE 802.11. WLAN cho phép các thiết bị di động (Smartphones, Tablets, Laptops) dễ dàng di chuyển và kết nối mạng mà không cần kéo dây cáp vật lý phức tạp.
+                    </p>
+                    <p><strong>Các thiết bị và khái niệm cốt lõi trong WLAN:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Wireless Access Point (WAP):</strong> Thiết bị trung tâm thu phát sóng vô tuyến, làm cầu nối chuyển đổi giữa môi trường không dây và hệ thống mạng có dây của doanh nghiệp.</li>
+                        <li><strong>SSID (Service Set Identifier):</strong> Tên định danh của mạng không dây giúp các thiết bị khách dò tìm và lựa chọn kết nối chính xác vào dải sóng mong muốn.</li>
+                        <li><strong>Wireless Client:</strong> Các thiết bị đầu cuối của người dùng có trang bị card mạng không dây (Wireless NIC) để tương tác gửi nhận dữ liệu với WAP.</li>
+                        <li><strong>Vùng phủ sóng cơ bản BSS (Basic Service Set):</strong> Khu vực phủ sóng chịu trách nhiệm bởi một WAP duy nhất. Khi muốn mở rộng vùng sóng cho văn phòng rộng lớn, ta bổ sung thêm các WAP để tạo thành vùng phủ sóng mở rộng <strong>ESS (Extended Service Set)</strong> cho phép người dùng chuyển vùng kết nối (Roaming) mượt mà mà không bị rớt mạng.</li>
+                    </ul>
+                    <p><strong>Hướng dẫn cấu hình an toàn thiết bị Wireless Router (Ví dụ dòng Cisco/Linksys phổ biến):</strong></p>
+                    <p>Các Wireless Router khi mới xuất xưởng hoặc sau khi reset vật lý sẽ trở về cấu hình mặc định (ví dụ IP mặc định: <code class="font-mono text-indigo-700 bg-slate-100 px-1">192.168.0.1</code> hoặc <code class="font-mono text-indigo-700 bg-slate-100 px-1">192.168.1.1</code>, tài khoản/mật khẩu quản trị mặc định: <code class="font-mono text-indigo-700 bg-slate-100 px-1">admin/admin</code>). Để cấu hình bảo mật nâng cao, ta tiến hành các bước:</p>
+                    <ul class="list-decimal pl-6 space-y-2">
+                        <li>Thay đổi địa chỉ IP của thiết bị Wireless Router để tích hợp đồng bộ vào dải IP mạng LAN doanh nghiệp và cấu hình dải cấp phát IP động (DHCP Pool).</li>
+                        <li><strong>Thay đổi mật khẩu quản trị mặc định của thiết bị:</strong> Vào mục <em>Administration</em> để đổi mật khẩu quản trị cũ nhằm ngăn chặn việc xâm nhập thay đổi cấu hình thiết bị trái phép.</li>
+                        <li><strong>Thiết lập tên Wi-Fi (SSID):</strong> Vào mục <em>Wireless -> Basic Wireless Settings</em> để đổi tên Wi-Fi hiển thị thân thiện, dễ nhận biết.</li>
+                        <li><strong>Cài đặt bảo mật mã hóa Wi-Fi:</strong> Vào mục <em>Wireless Security</em>, lựa chọn chế độ bảo mật an toàn <strong>WPA2 Personal (WPA2-PSK)</strong> với thuật toán mã hóa <strong>AES</strong>, sau đó thiết lập mật khẩu truy cập (Passphrase) có độ phức tạp cao (tối thiểu 8 ký tự bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 5.4. Cấu hình và kiểm thử -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">5.4. Cấu Hình và Kiểm Thử Hiệu Năng Mạng LAN</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Quá trình cấu hình và kiểm thử đảm bảo toàn bộ hệ thống mạng LAN (bao gồm cả nối dây và không dây) vận hành thông suốt, ổn định và bảo mật:
+                    </p>
+                    <p><strong>Cấu hình gán IP:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>IP động (DHCP):</strong> Để đơn giản hóa quản trị, các máy trạm của nhân viên được thiết lập chế độ nhận IP tự động (Obtain an IP address automatically). Khi đó, trong mạng bắt buộc phải có một <strong>DHCP Server</strong> hoạt động để thực hiện tiến trình 4 bước <strong>D.O.R.A</strong> tự động cấp phát IP và các thông số đi kèm.</li>
+                        <li><strong>IP tĩnh:</strong> Được bắt buộc áp dụng cho các thiết bị cung cấp dịch vụ chung như Máy chủ (Server), Máy in mạng (Network Printer), Thiết bị tường lửa hoặc cổng Router để đảm bảo địa chỉ kết nối luôn cố định, giúp các máy khách dễ dàng tìm thấy và truy cập dịch vụ ổn định.</li>
+                    </ul>
+                    <p><strong>Kiểm thử hiệu năng kết nối mạng LAN:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Kiểm tra tốc độ và thời gian phản hồi (Latency):</strong> Sử dụng lệnh ping để đo độ trễ. Thời gian trễ (thể hiện qua thông số <em>time</em> của kết quả ping) càng thấp thể hiện chất lượng kết nối và hiệu năng truyền dẫn vật lý của mạng càng tốt.</li>
+                        <li><strong>Kiểm tra độ trễ trung bình:</strong> So sánh kết quả Average giữa các máy để chẩn đoán nghẽn cục bộ.</li>
+                        <li><strong>Kiểm tra độ ổn định và tỷ lệ mất gói (Packet Loss):</strong> Thử nghiệm ping kéo dài trong thời gian lâu thông qua cú pháp <code class="font-mono text-indigo-700 bg-slate-100 px-1">ping -t [Địa_chỉ_IP]</code> để thu thập thông số thống kê mất gói. Một hệ thống mạng LAN đạt chuẩn chất lượng cao yêu cầu tỷ lệ mất gói phải xấp xỉ bằng 0%.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 5.5. Mạng LAN ảo (VLAN) -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">5.5. Mạng LAN ảo (Virtual LAN - VLAN)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Mạng LAN ảo (VLAN - Virtual LAN)</strong> là kỹ thuật phân chia một mạng LAN vật lý duy nhất thành nhiều mạng LAN logic độc lập ngay trên thiết bị Switch, mà không cần phải thay đổi cấu trúc đi dây cáp và lắp đặt thiết bị phần cứng ban đầu.
+                    </p>
+                    <p><strong>Tại sao doanh nghiệp bắt buộc phải chia VLAN?</strong></p>
+                    <p>Mặc định, một Switch vật lý là một <strong>miền quảng bá (Broadcast Domain)</strong> duy nhất. Khi một máy tính gửi một gói tin quảng bá (Broadcast), gói tin đó sẽ bị nhân bản và gửi đến toàn bộ các cổng khác của Switch. Khi quy mô mạng tăng lên hàng trăm máy tính, lượng lưu lượng quảng bá dư thừa sẽ xuất hiện dày đặc, gây ra hiện tượng <em>bão quảng bá (Broadcast Storm)</em>, làm tiêu tốn băng thông đường truyền và vắt kiệt tài nguyên xử lý CPU của các máy trạm đầu cuối. VLAN giải quyết triệt để vấn đề này bằng cách thu nhỏ miền quảng bá trong phạm vi của từng VLAN riêng biệt.</p>
+                    
+                    <p class="font-bold text-slate-900 mt-4">Các ưu điểm vượt trội của VLAN:</p>
+                    <ul class="list-disc pl-6 space-y-1.5">
+                        <li><strong>Tăng cường bảo mật thông tin:</strong> Cô lập dữ liệu nhạy cảm của các phòng ban. Ví dụ, máy tính phòng Nhân sự (VLAN 10) và phòng Đào tạo (VLAN 20) cắm chung một Switch nhưng không thể nhìn thấy dữ liệu của nhau, ngăn chặn các hành vi nghe lén hay quét IP tấn công nội bộ.</li>
+                        <li><strong>Tối ưu hóa hiệu năng:</strong> Thu nhỏ phạm vi miền quảng bá giúp giảm thiểu lưu lượng rác trên đường truyền, tăng tốc độ phản hồi tổng thể của hệ thống.</li>
+                        <li><strong>Linh hoạt trong quản trị:</strong> Dễ dàng di chuyển vị trí làm việc của nhân viên. Nhân viên phòng Kế toán chuyển bàn làm việc sang khu vực khác chỉ cần cắm cáp vào cổng Switch tương ứng được gán lại vào VLAN Kế toán mà không cần đi lại dây hay cấu hình lại máy tính.</li>
+                    </ul>
+
+                    <p class="font-bold text-slate-900 mt-6 text-lg">Cấu hình tạo và gán cổng Access cho VLAN (Cisco CLI):</p>
+                    <p>Mặc định, tất cả các cổng của Switch đều thuộc <strong>VLAN 1 (VLAN mặc định)</strong>. Ta tiến hành cấu hình phân chia cổng vật lý vào các VLAN logic theo nhu cầu thông qua cáp Console:</p>
+                    <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-1 shadow-inner">
+                        <p class="text-slate-500">// Bước 1: Tạo VLAN 10 và VLAN 20 trên Switch</p>
+                        <p>Switch# <span class="text-amber-300">configure terminal</span></p>
+                        <p>Switch(config)# <span class="text-amber-300">vlan 10</span></p>
+                        <p>Switch(config-vlan)# <span class="text-amber-300">name DUAN</span></p>
+                        <p>Switch(config-vlan)# <span class="text-amber-300">exit</span></p>
+                        <p>Switch(config)# <span class="text-amber-300">vlan 20</span></p>
+                        <p>Switch(config-vlan)# <span class="text-amber-300">name KYTHUAT</span></p>
+                        <p>Switch(config-vlan)# <span class="text-amber-300">exit</span></p>
+                        <p class="text-slate-500">// Bước 2: Đưa cổng vật lý f0/3, f0/4 vào VLAN 10 (Access Port)</p>
+                        <p>Switch(config)# <span class="text-amber-300">interface f0/3</span></p>
+                        <p>Switch(config-if)# <span class="text-amber-300">switchport mode access</span></p>
+                        <p>Switch(config-if)# <span class="text-amber-300">switchport access vlan 10</span></p>
+                        <p>Switch(config-if)# <span class="text-amber-300">exit</span></p>
+                        <p>Switch(config)# <span class="text-amber-300">interface f0/4</span></p>
+                        <p>Switch(config-if)# <span class="text-amber-300">switchport access vlan 10</span></p>
+                        <p>Switch(config-if)# <span class="text-amber-300">exit</span></p>
+                        <p class="text-slate-500">// Bước 3: Xem và kiểm tra bảng phân bổ VLAN hiện tại</p>
+                        <p>Switch# <span class="text-amber-300">show vlan</span></p>
+                    </div>
+
+                    <p class="font-bold text-slate-900 mt-6 text-lg">Kỹ thuật liên kết VLAN Trunking (IEEE 802.1Q):</p>
+                    <p>Khi mạng doanh nghiệp có quy mô lớn gồm nhiều tầng sử dụng nhiều Switch kết nối với nhau, một VLAN (ví dụ VLAN 10) có thể trải rộng trên nhiều Switch khác nhau. Đường kết nối trực tiếp giữa hai Switch được cấu hình làm <strong>đường Trunk (Trunk Line)</strong> – đường kết nối dùng chung cho tất cả các VLAN.</p>
+                    <p>Để Switch đích nhận biết gói tin đi qua đường Trunk thuộc về VLAN nào, Switch gửi sử dụng cơ chế đóng gói <strong>giao thức tiêu chuẩn IEEE 802.1Q (chuẩn dot1q)</strong> để thực hiện việc <strong>gán nhãn khung dữ liệu (Frame Tagging)</strong> bằng cách chèn thêm một nhãn tag chứa thông tin <em>VLAN ID</em> vào tiêu đề của Ethernet Frame gốc trước khi gửi qua đường Trunk. Khi nhận được, Switch đích sẽ bóc tách nhãn tag này và chuyển tiếp khung dữ liệu đến đúng cổng thuộc VLAN tương ứng.</p>
+                    <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-1 shadow-inner">
+                        <p class="text-slate-500">// Cấu hình cổng vật lý f0/24 kết nối giữa hai Switch làm cổng Trunk</p>
+                        <p>SW1# <span class="text-amber-300">configure terminal</span></p>
+                        <p>SW1(config)# <span class="text-amber-300">interface f0/24</span></p>
+                        <p>SW1(config-if)# <span class="text-amber-300">switchport mode trunk</span></p>
+                        <p>SW1(config-if)# <span class="text-amber-300">exit</span></p>
+                    </div>
+
+                    <p class="font-bold text-slate-900 mt-6 text-lg">Định tuyến giữa các VLAN (Inter-VLAN Routing):</p>
+                    <p>Mặc định, các VLAN được cô lập hoàn toàn ở Tầng 2, các máy tính ở các VLAN khác nhau không thể liên lạc được với nhau ngay cả khi cắm chung một Switch. Để kết nối thông suốt dữ liệu giữa các VLAN khác nhau, ta bắt buộc phải sử dụng thiết bị hoạt động ở Tầng 3 là Router (hoặc Switch Layer 3) để thực hiện định tuyến.</p>
+                    <p>Giải pháp tối ưu và phổ biến nhất là kỹ thuật <strong>"Router-on-a-Stick"</strong>: Sử dụng một cổng vật lý duy nhất của Router (ví dụ G0/0) kết nối vào cổng Trunk của Switch (ví dụ G0/1). Trên cổng vật lý duy nhất của Router, ta chia thành nhiều cổng phụ logic <strong>(Sub-interfaces)</strong> hoạt động độc lập tương ứng với từng VLAN, thực hiện đóng gói chuẩn dot1q và gán IP Gateway cho từng VLAN:</p>
+                    <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-1 shadow-inner">
+                        <p class="text-slate-500">// Cấu hình Sub-interfaces định tuyến Inter-VLAN trên Router</p>
+                        <p>Router# <span class="text-amber-300">configure terminal</span></p>
+                        <p>Router(config)# <span class="text-amber-300">interface g0/0</span></p>
+                        <p>Router(config-if)# <span class="text-amber-300">no shutdown</span> <span class="text-slate-500">// Bật nguồn cổng vật lý chính</span></p>
+                        <p>Router(config-if)# <span class="text-amber-300">exit</span></p>
+                        <p class="text-slate-500">// Cấu hình cổng phụ g0/0.10 làm Gateway cho VLAN 10 (IP: 192.168.10.100)</p>
+                        <p>Router(config)# <span class="text-amber-300">interface g0/0.10</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">encapsulation dot1Q 10</span> <span class="text-slate-500">// Đóng gói nhãn VLAN 10</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">ip address 192.168.10.100 255.255.255.0</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">exit</span></p>
+                        <p class="text-slate-500">// Cấu hình cổng phụ g0/0.20 làm Gateway cho VLAN 20 (IP: 192.168.20.100)</p>
+                        <p>Router(config)# <span class="text-amber-300">interface g0/0.20</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">encapsulation dot1Q 20</span> <span class="text-slate-500">// Đóng gói nhãn VLAN 20</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">ip address 192.168.20.100 255.255.255.0</span></p>
+                        <p>Router(config-subif)# <span class="text-amber-300">exit</span></p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Tab 2: PRACTICE -->
+        <div id="tab-practice" class="space-y-12 hidden">
+            
+            <!-- MCQ Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">A. 30 Câu hỏi trắc nghiệm khách quan</h3>
+                <div class="space-y-6">
+
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 1</span>
+                        <p class="font-semibold text-slate-900">Mạng LAN là viết tắt của cụm từ tiếng Anh nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Local Area Network</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Link Access Network</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Logical Area Node</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Long Area Network</div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 2</span>
+                        <p class="font-semibold text-slate-900">Thiết bị trung tâm đóng vai trò chuyển tiếp dữ liệu thông minh trong mạng LAN nối dây hiện đại là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Hub</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Switch</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Repeater</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Card mạng (NIC)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 3</span>
+                        <p class="font-semibold text-slate-900">Mô hình cấu trúc mạng (Topology) vật lý tiêu chuẩn được sử dụng rộng rãi nhất của mạng LAN hiện đại ngày nay là?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Hình sao (Star)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Hình tuyến (Bus)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Dạng vòng (Ring)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Dạng lưới (Mesh)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 4</span>
+                        <p class="font-semibold text-slate-900">Khoảng cách giới hạn truyền tín hiệu tối đa thông thường của cáp xoắn đôi đồng UTP kết nối giữa PC và Switch là bao nhiêu mét nếu không có thiết bị khuếch đại?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 50 mét</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 100 mét</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 150 mét</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 200 mét</div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 5</span>
+                        <p class="font-semibold text-slate-900">Để kết nối một máy tính PC trực tiếp với một cổng Switch trong mạng LAN, ta sử dụng loại cáp nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Cáp thẳng (Straight-through)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Cáp chéo (Crossover)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cáp đồng trục</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cáp Console</div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 6</span>
+                        <p class="font-semibold text-slate-900">Để kết nối trực tiếp hai Switch vật lý cùng loại lại với nhau qua cổng Ethernet thường, ta sử dụng loại cáp nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Cáp thẳng (Straight-through)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Cáp chéo (Crossover)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cáp điện lực</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cáp quang Multi-mode</div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 7</span>
+                        <p class="font-semibold text-slate-900">Thứ tự các màu dây: 1. Trắng Cam, 2. Cam, 3. Trắng Xanh lá, 4. Xanh dương, 5. Trắng Xanh dương, 6. Xanh lá, 7. Trắng Nâu, 8. Nâu là quy cách sắp xếp của tiêu chuẩn bấm cáp nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tiêu chuẩn T-568A</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tiêu chuẩn T-568B</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tiêu chuẩn RJ-11</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tiêu chuẩn IEEE 802.11</div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 8</span>
+                        <p class="font-semibold text-slate-900">Lệnh nào trên giao diện dòng lệnh của hệ điều hành Windows giúp người dùng kiểm tra thông tin địa chỉ IP, Subnet Mask và Default Gateway hiện tại?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. ping -t</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. nslookup</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. ipconfig /all</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. route print</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 9</span>
+                        <p class="font-semibold text-slate-900">Để kiểm tra sự thông suốt của đường kết nối logic và đo độ trễ Latency giữa hai máy tính trong mạng LAN, ta dùng công cụ/lệnh nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. ipconfig</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. host</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. traceroute</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">D. ping</div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 10</span>
+                        <p class="font-semibold text-slate-900">Khi gán địa chỉ IP tĩnh cho máy trạm, thông số nào đóng vai trò là địa chỉ cổng của Router kết nối Switch mạng nội bộ để chuyển tiếp dữ liệu ra ngoài Internet?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. DNS Server</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Subnet Mask</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Default Gateway</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Broadcast Address</div>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 11</span>
+                        <p class="font-semibold text-slate-900">SSID trong mạng không dây WLAN đại diện cho thông số nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Tên hiển thị định danh của mạng không dây</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Mật khẩu kết nối Wi-Fi</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Địa chỉ vật lý của Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Chuẩn tần số sóng của Wi-Fi</div>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 12</span>
+                        <p class="font-semibold text-slate-900">Thiết bị WAP (Wireless Access Point) có vai trò chính là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Phân giải tên miền thành IP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Thu nhận và phát sóng vô tuyến kết nối các thiết bị không dây vào mạng LAN có dây</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Lọc các cổng dịch vụ phần mềm</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bảo vệ ngăn chặn các cuộc tấn công DDoS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q13 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 13</span>
+                        <p class="font-semibold text-slate-900">Chế độ mã hóa bảo mật Wi-Fi nào sau đây được khuyến nghị sử dụng phổ biến và an toàn nhất hiện nay cho người dùng gia đình và văn phòng nhỏ?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. WEP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. SSID Broadcast</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. WPA2 Personal (với mã hóa AES)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. MAC Filtering</div>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 14</span>
+                        <p class="font-semibold text-slate-900">VLAN là viết tắt của cụm từ kỹ thuật nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Vector Local Area Network</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Virtual Local Area Network</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Variable Link Access Network</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Velocity Local Area Node</div>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 15</span>
+                        <p class="font-semibold text-slate-900">Lợi ích lớn nhất và quan trọng nhất của việc phân chia mạng LAN vật lý thành nhiều VLAN (LAN ảo) là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Làm tăng tốc độ của cáp truyền dẫn</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Giảm bớt số lượng thiết bị Switch cần thiết</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Thu nhỏ miền quảng bá (Broadcast Domain) và nâng cao bảo mật</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cho phép tự động cấp phát IP tĩnh nhanh hơn</div>
+                        </div>
+                    </div>
+
+                    <!-- Q16 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 16</span>
+                        <p class="font-semibold text-slate-900">Khi cấu hình VLAN trên Switch Cisco, các cổng kết nối đến thiết bị đầu cuối như PC, laptop của nhân viên được cấu hình ở chế độ hoạt động nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Access mode</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Trunk mode</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Dynamic Auto</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Encapsulation mode</div>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 17</span>
+                        <p class="font-semibold text-slate-900">Để truyền tải dữ liệu của nhiều VLAN khác nhau giữa hai Switch qua một liên kết vật lý duy nhất, cổng kết nối kết nối 2 Switch phải được cấu hình ở chế độ nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Access mode</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Trunk mode</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Simplex mode</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Active mode</div>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 18</span>
+                        <p class="font-semibold text-slate-900">Giao thức đóng gói tiêu chuẩn quốc tế dùng để gắn thẻ (tagging) phân biệt các gói tin của từng VLAN đi qua đường truyền Trunk là?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. ISL</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. IEEE 802.11ac</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. IEEE 802.1Q (dot1q)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Frame Relay</div>
+                        </div>
+                    </div>
+
+                    <!-- Q19 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 19</span>
+                        <p class="font-semibold text-slate-900">Switch Layer 2 thông thường hoạt động tại tầng nào trong mô hình OSI và đưa ra quyết định chuyển gói tin dựa trên địa chỉ nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tầng Vật lý, địa chỉ IP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tầng Liên kết dữ liệu, địa chỉ MAC</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tầng Mạng, địa chỉ IP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tầng Giao vận, số cổng Port</div>
+                        </div>
+                    </div>
+
+                    <!-- Q20 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 20</span>
+                        <p class="font-semibold text-slate-900">Khi một VLAN bị xóa khỏi Switch bằng câu lệnh CLI, các cổng vật lý đã được gán vào VLAN đó sẽ bị rơi vào trạng thái nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tự động quay trở về VLAN 1 và hoạt động bình thường</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Chuyển sang hoạt động như cổng Trunk</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tự động chuyển tiếp dữ liệu trực tiếp sang Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">D. Sẽ không hoạt động và không truyền được dữ liệu cho đến khi được cấu hình gán lại vào một VLAN hoạt động</div>
+                        </div>
+                    </div>
+
+                    <!-- Q21 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 21</span>
+                        <p class="font-semibold text-slate-900">Kỹ thuật định tuyến Inter-VLAN Routing nào cho phép kết nối một Router vào Switch qua duy nhất một cổng vật lý và chia cổng vật lý đó thành nhiều cổng phụ logic?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Router-on-a-Stick</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Multi-homed Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Static Route Link</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Switch Virtual Interface (SVI)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q22 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 22</span>
+                        <p class="font-semibold text-slate-900">Trong cấu hình "Router-on-a-Stick", lệnh nào trên cổng phụ (Sub-interface) của Router dùng để kích hoạt tính năng gán nhãn VLAN 10 theo chuẩn IEEE 802.1Q?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. switchport mode trunk</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. encapsulation dot1Q 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. vlan access 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ip address virtual 10</div>
+                        </div>
+                    </div>
+
+                    <!-- Q23 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 23</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IP cấu hình trên các Sub-interfaces (cổng phụ) của Router đóng vai trò gì đối với các máy trạm trong VLAN tương ứng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">A. Địa chỉ DNS Server</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">B. Địa chỉ IP Host của máy trạm</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs mcq-correct">C. Default Gateway</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">D. Địa chỉ Broadcast</div>
+                        </div>
+                    </div>
+
+                    <!-- Q24 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 24</span>
+                        <p class="font-semibold text-slate-900">Mặc định, tất cả các cổng của Switch Cisco khi vừa bóc hộp chưa được cấu hình sẽ thuộc về VLAN nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. VLAN 1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. VLAN 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. VLAN Mặc định 100</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Không thuộc VLAN nào</div>
+                        </div>
+                    </div>
+
+                    <!-- Q25 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 25</span>
+                        <p class="font-semibold text-slate-900">Mục đích thực sự của quá trình gán nhãn "Frame Tagging" trong kỹ thuật VLAN Trunking là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Mã hóa các gói dữ liệu bảo mật khi truyền qua mạng LAN</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Chèn thêm ID của VLAN vào khung dữ liệu để các Switch phân biệt luồng traffic giữa các VLAN khi đi qua đường Trunk dùng chung</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Giảm bớt số lượng bit nhị phân khi đóng gói gói tin IP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Chuyển đổi tín hiệu số thành tín hiệu tương tự</div>
+                        </div>
+                    </div>
+
+                    <!-- Q26 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 26</span>
+                        <p class="font-semibold text-slate-900">Thông số trễ trung bình "Average" trong thống kê của lệnh ping thể hiện điều gì về kết nối?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tốc độ tải dữ liệu tối đa của đường truyền</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Thời gian trễ phản hồi trung bình của gói tin qua lại giữa hai thiết bị</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tổng số lượng dữ liệu đã bị rò rỉ hoặc mất mát</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Số lượng thiết bị đang truy cập mạng</div>
+                        </div>
+                    </div>
+
+                    <!-- Q27 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 27</span>
+                        <p class="font-semibold text-slate-900">Để thực hiện kiểm tra độ ổn định và tỷ lệ mất gói tin (Packet Loss) của card mạng liên tục trong nhiều giờ, ta chạy lệnh ping với tham số nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. ping -l 65500</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. ping -a</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. ping -t</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ping -n 1</div>
+                        </div>
+                    </div>
+
+                    <!-- Q28 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 28</span>
+                        <p class="font-semibold text-slate-900">Sự khác biệt về miền xung đột (Collision Domain) trên một Switch hoạt động ở chế độ song công (Full Duplex) so với Hub là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Cả hai thiết bị đều chung một miền xung đột toàn mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Mỗi cổng trên Switch là một miền xung đột riêng độc lập, loại bỏ hoàn toàn khả năng xung đột</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Switch chia thành 3 miền xung đột, còn Hub chia làm 5</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Không có thiết bị nào có miền xung đột</div>
+                        </div>
+                    </div>
+
+                    <!-- Q29 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 29</span>
+                        <p class="font-semibold text-slate-900">Để thực hiện xóa cấu hình VLAN 10 trên dòng lệnh CLI của Switch Cisco, ta sử dụng câu lệnh nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. delete vlan 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. remove vlan 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. no vlan 10</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. clear vlan 10</div>
+                        </div>
+                    </div>
+
+                    <!-- Q30 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 30</span>
+                        <p class="font-semibold text-slate-900">Trong mạng LAN không dây, tính năng dịch vụ nào của Wireless Router tự động hóa quy trình phân phát địa chỉ IP cho các máy trạm di động?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. DHCP Server</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. DNS Client</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. NAT Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. SPI Firewall</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Scenario Problems Section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-6">B. 10 Bài tập tình huống và thực hành chuyên sâu</h3>
+                <div class="space-y-8">
+
+                    <!-- Prob 1 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 1: Thiết kế sơ đồ nối cáp mạng LAN văn phòng</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một doanh nghiệp nhỏ cần thiết kế sơ đồ nối cáp mạng LAN STAR cho văn phòng mới bao gồm các thiết bị phần cứng sau: 1 Router trung tâm, 2 Switch (SW1 và SW2), 1 máy chủ dữ liệu Server, 1 thiết bị phát sóng không dây WAP, và 3 Máy tính để bàn của nhân viên (PC1, PC2, PC3). Hãy xác định chính xác loại cáp mạng xoắn đôi đồng (Cáp thẳng - Straight-through hay Cáp chéo - Crossover) cho các kết nối sau:</p>
+                        <ul class="list-disc pl-6 text-sm mb-3 font-mono">
+                            <li>Kết nối từ Router sang Switch SW1.</li>
+                            <li>Kết nối từ Switch SW1 sang Switch SW2.</li>
+                            <li>Kết nối từ Switch SW1 sang Máy chủ Server.</li>
+                            <li>Kết nối từ Switch SW2 sang thiết bị WAP.</li>
+                            <li>Kết nối từ Switch SW2 sang 3 Máy tính để bàn PC.</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p>Áp dụng quy tắc đấu nối cáp tiêu chuẩn cho hệ thống mạng LAN: Các thiết bị cùng loại kết nối với nhau sử dụng cáp chéo; các thiết bị khác loại kết nối với nhau sử dụng cáp thẳng.</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Router sang Switch SW1:</strong> Sử dụng <strong>Cáp thẳng (Straight-through)</strong> (Do Router và Switch là hai thiết bị khác loại, cổng LAN của Router hoạt động ở Layer 3 và cổng Switch hoạt động ở Layer 2).</li>
+                                    <li><strong>Switch SW1 sang Switch SW2:</strong> Sử dụng <strong>Cáp chéo (Crossover)</strong> (Do hai Switch là hai thiết bị cùng loại hoạt động ở Layer 2).</li>
+                                    <li><strong>Switch SW1 sang Máy chủ Server:</strong> Sử dụng <strong>Cáp thẳng (Straight-through)</strong> (Khác loại thiết bị).</li>
+                                    <li><strong>Switch SW2 sang thiết bị WAP:</strong> Sử dụng <strong>Cáp thẳng (Straight-through)</strong> (Khác loại thiết bị).</li>
+                                    <li><strong>Switch SW2 sang 3 PC:</strong> Sử dụng <strong>Cáp thẳng (Straight-through)</strong> (Khác loại thiết bị).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 2 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 2: Khắc phục sự cố cấu hình sai Default Gateway</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Máy tính PC1 trong phòng kế toán được cấu hình địa chỉ IP tĩnh là <code class="font-mono text-indigo-700">192.168.1.15/24</code> kết nối vào Switch mạng LAN. Cổng LAN kết nối của Router trung tâm có địa chỉ IP là <code class="font-mono text-indigo-700">192.168.1.254/24</code>. Nhân viên sử dụng PC1 phản ánh rằng máy tính vẫn ping thấy và trao đổi file dữ liệu bình thường với toàn bộ các máy tính khác trong phòng kế toán, nhưng hoàn toàn không thể truy cập Internet. Khi chạy lệnh <code class="font-mono text-indigo-700">ipconfig /all</code>, bạn phát hiện Default Gateway trên card mạng của PC1 đang được cấu hình là <code class="font-mono text-indigo-700">192.168.1.1</code>. Hãy chỉ ra nguyên nhân kỹ thuật và cách xử lý sự cố này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p><strong>Phân tích nguyên nhân kỹ thuật:</strong></p>
+                                <p class="text-slate-600">
+                                    Default Gateway là địa chỉ logic cổng ra ngoài mạng của thiết bị Router cửa ngõ. Trong sơ đồ mạng này, cổng LAN của Router có địa chỉ chính xác là <code class="font-mono text-slate-800 bg-slate-100">192.168.1.254</code>. Tuy nhiên, PC1 lại cấu hình Default Gateway sai lệch thành <code class="font-mono text-slate-800 bg-slate-100">192.168.1.1</code> (đây có thể là IP của một thiết bị khác hoặc không tồn tại trong mạng). Do đó, các gói tin của PC1 gửi tới các máy cùng mạng LAN vẫn thành công vì Switch chỉ cần bóc MAC chuyển tiếp ở tầng 2, nhưng khi PC1 gửi gói tin ra Internet (mạng ngoài), nó chuyển hướng gói tin tới Gateway sai lầm là <code class="font-mono text-slate-800 bg-slate-100">192.168.1.1</code> và bị thất lạc, dẫn đến mất kết nối Internet.
+                                </p>
+                                <p><strong>Giải pháp khắc phục:</strong></p>
+                                <p class="text-slate-600">
+                                    Truy cập vào cấu hình card mạng (NIC properties - TCP/IPv4) trên PC1, thay đổi địa chỉ Default Gateway tĩnh từ <code class="font-mono text-slate-800 bg-slate-100">192.168.1.1</code> thành địa chỉ chính xác là <code class="font-mono text-slate-800 bg-slate-100">192.168.1.254</code>. Kiểm tra lại kết nối ra ngoài Internet bằng lệnh ping đến một trang web công cộng.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 3 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 3: Chẩn đoán lỗi không thể liên lạc giữa các VLAN</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Trên một Switch trung tâm vật lý, quản trị viên tạo 2 VLAN logic là: VLAN 10 (phòng Dự án) và VLAN 20 (phòng Kỹ thuật). Máy tính PC1 được gán vào cổng f0/3 (đã cấu hình thuộc VLAN 10) và Máy tính PC2 được gán vào cổng f0/1 (đã cấu hình thuộc VLAN 20). Cả hai máy tính đều được đặt địa chỉ IP tĩnh chung dải mạng lớp C là: PC1 gán <code class="font-mono text-indigo-700">192.168.1.10/24</code> và PC2 gán <code class="font-mono text-indigo-700">192.168.1.20/24</code>. Khi tiến hành kiểm tra ping kết nối, PC1 không thể liên lạc được với PC2. Sinh viên thắc mắc tại sao hai máy tính cùng dải IP, cùng cắm chung một Switch vật lý nhưng lại không thể ping thấy nhau? Hãy giải thích bản chất kỹ thuật.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p><strong>Giải thích bản chất kỹ thuật:</strong></p>
+                                <p class="text-slate-600">
+                                    VLAN (Virtual LAN) phân chia một Switch vật lý thành nhiều Switch logic hoàn toàn độc lập ở Tầng 2. Mỗi VLAN tạo ra một miền quảng bá (Broadcast Domain) và miền kết nối riêng biệt. Mặc định, các thiết bị thuộc các VLAN khác nhau không thể trao đổi trực tiếp tín hiệu Tầng 2 với nhau, dù chúng có cấu hình chung một dải địa chỉ IP logic đi chăng nữa. Để hai thiết bị thuộc hai VLAN này có thể trao đổi dữ liệu, bắt buộc phải đi qua một thiết bị định tuyến ở Tầng 3 như Router (kỹ thuật Router-on-a-Stick) hoặc Switch Layer 3 (cấu hình cổng SVI). Việc cấu hình chung dải IP <code class="font-mono text-slate-800 bg-slate-100">192.168.1.0/24</code> cho cả hai VLAN khác nhau còn là một lỗi thiết kế địa chỉ IP sai lầm (gây xung đột định tuyến ở Layer 3), do mỗi VLAN logic bắt buộc phải đại diện cho một dải địa chỉ mạng riêng biệt (ví dụ VLAN 10 là `192.168.10.0/24` và VLAN 20 là `192.168.20.0/24`).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 4 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 4: Cấu hình VLAN Access và VLAN Trunking trên Switch</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Sơ đồ mạng văn phòng gồm hai Switch SW1 và SW2 kết nối trực tiếp với nhau qua hai cổng vật lý f0/24. Máy tính PC1 kết nối vào cổng f0/5 trên SW1 (yêu cầu thuộc VLAN 10) và Máy tính PC2 kết nối vào cổng f0/6 trên SW2 (yêu cầu thuộc VLAN 10). Hãy viết các câu lệnh cấu hình dòng lệnh CLI chi tiết trên cả hai Switch SW1 và SW2 để tạo VLAN 10, gán các cổng vật lý vào VLAN tương ứng ở chế độ Access và thiết lập liên kết Trunking dùng chung dot1q trên cổng f0/24 kết nối giữa hai Switch.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 font-mono text-xs text-justify bg-slate-900 text-slate-200 p-4 rounded-xl">
+                                <p class="text-slate-500"># CẤU HÌNH TRÊN SWITCH 1 (SW1):</p>
+                                <p>SW1> enable</p>
+                                <p>SW1# configure terminal</p>
+                                <p>SW1(config)# vlan 10</p>
+                                <p>SW1(config-vlan)# name KETOAN</p>
+                                <p>SW1(config-vlan)# exit</p>
+                                <p>SW1(config)# interface f0/5</p>
+                                <p>SW1(config-if)# switchport mode access</p>
+                                <p>SW1(config-if)# switchport access vlan 10</p>
+                                <p>SW1(config-if)# exit</p>
+                                <p>SW1(config)# interface f0/24</p>
+                                <p>SW1(config-if)# switchport mode trunk</p>
+                                <p>SW1(config-if)# exit</p>
+                                <p>SW1# copy running-config startup-config</p>
+                                <br>
+                                <p class="text-slate-500"># CẤU HÌNH TRÊN SWITCH 2 (SW2):</p>
+                                <p>SW2> enable</p>
+                                <p>SW2# configure terminal</p>
+                                <p>SW2(config)# vlan 10</p>
+                                <p>SW2(config-vlan)# name KETOAN</p>
+                                <p>SW2(config-vlan)# exit</p>
+                                <p>SW2(config)# interface f0/6</p>
+                                <p>SW2(config-if)# switchport mode access</p>
+                                <p>SW2(config-if)# switchport access vlan 10</p>
+                                <p>SW2(config-if)# exit</p>
+                                <p>SW2(config)# interface f0/24</p>
+                                <p>SW2(config-if)# switchport mode trunk</p>
+                                <p>SW2(config-if)# exit</p>
+                                <p>SW2# copy running-config startup-config</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 5 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 5: Cấu hình Inter-VLAN Routing (Router-on-a-Stick)</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Doanh nghiệp muốn thiết lập định tuyến Inter-VLAN giữa 2 phân đoạn mạng cô lập: VLAN 10 (mạng Kinh doanh, dải IP: <code class="font-mono text-indigo-700">192.168.10.0/24</code>) và VLAN 20 (mạng Nhân sự, dải IP: <code class="font-mono text-indigo-700">192.168.20.0/24</code>). Sơ đồ sử dụng một Router R1 kết nối cổng G0/0 trực tiếp vào cổng G0/1 của Switch SW1 (đường kết nối này đã cấu hình mode Trunk trên Switch). Hãy viết chi tiết dòng lệnh CLI cấu hình trên Router R1 để thực hiện định tuyến Inter-VLAN bằng kỹ thuật Router-on-a-Stick, gán địa chỉ IP Gateway cho VLAN 10 là <code class="font-mono text-indigo-700">192.168.10.100</code> và VLAN 20 là <code class="font-mono text-indigo-700">192.168.20.100</code>.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 font-mono text-xs text-justify bg-slate-900 text-slate-200 p-4 rounded-xl">
+                                <p class="text-slate-500"># Khởi động và kích hoạt cổng vật lý chính của Router</p>
+                                <p>Router> enable</p>
+                                <p>Router# configure terminal</p>
+                                <p>Router(config)# interface g0/0</p>
+                                <p>Router(config-if)# no shutdown</p>
+                                <p>Router(config-if)# exit</p>
+                                <br>
+                                <p class="text-slate-500"># Tạo và cấu hình cổng phụ logic sub-interface cho VLAN 10</p>
+                                <p>Router(config)# interface g0/0.10</p>
+                                <p>Router(config-subif)# encapsulation dot1Q 10</p>
+                                <p>Router(config-subif)# ip address 192.168.10.100 255.255.255.0</p>
+                                <p>Router(config-subif)# no shutdown</p>
+                                <p>Router(config-subif)# exit</p>
+                                <br>
+                                <p class="text-slate-500"># Tạo và cấu hình cổng phụ logic sub-interface cho VLAN 20</p>
+                                <p>Router(config)# interface g0/0.20</p>
+                                <p>Router(config-subif)# encapsulation dot1Q 20</p>
+                                <p>Router(config-subif)# ip address 192.168.20.100 255.255.255.0</p>
+                                <p>Router(config-subif)# no shutdown</p>
+                                <p>Router(config-subif)# exit</p>
+                                <p>Router# show ip interface brief</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 6 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 6: Xử lý sự cố sau khi xóa VLAN trên Switch</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Nhân viên quản trị hệ thống thực hiện dọn dẹp cấu hình và tiến hành xóa VLAN 30 (phòng Đào tạo) trên Switch bằng lệnh CLI <code class="font-mono text-indigo-700">no vlan 30</code>. Máy tính PC1 đang cắm trực tiếp vào cổng vật lý f0/15 của Switch (trước đó cổng f0/15 đã được gán Access thuộc VLAN 30) đột ngột bị mất hoàn toàn kết nối mạng. Hãy giải thích trạng thái của cổng f0/15 sau khi xóa VLAN và viết câu lệnh CLI để đưa cổng f0/15 trở lại hoạt động bình thường trên VLAN 1 mặc định.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p><strong>Giải thích trạng thái cổng vật lý f0/15:</strong></p>
+                                <p class="text-slate-600">
+                                    Khi một VLAN bị xóa khỏi cấu trúc cấu hình của Switch, toàn bộ các cổng vật lý của Switch được cấu hình ở chế độ Access gán vào VLAN đó (như cổng f0/15 thuộc VLAN 30) sẽ bị rơi vào trạng thái <strong>"Inactive" (không hoạt động)</strong>. Cổng vật lý này sẽ không được tự động trả về VLAN 1 mặc định, dẫn đến thiết bị PC1 cắm trên đó bị mất kết nối mạng hoàn toàn.
+                                </p>
+                                <p><strong>Dòng lệnh khôi phục cấu hình cổng f0/15 về VLAN 1 mặc định:</strong></p>
+                                <div class="bg-slate-900 text-slate-200 font-mono text-xs p-4 rounded-xl space-y-1">
+                                    <p>Switch# configure terminal</p>
+                                    <p>Switch(config)# interface f0/15</p>
+                                    <p>Switch(config-if)# switchport access vlan 1</p>
+                                    <p>Switch(config-if)# exit</p>
+                                    <p>Switch# show vlan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 7 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 7: Phân tích hiệu năng mạng qua chỉ số lệnh Ping</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một sinh viên thực hiện kiểm thử mạng LAN bằng lệnh ping từ PC1 đến File Server nội bộ và thu được thống kê kết quả sau: <code class="font-mono text-indigo-700">Packets: Sent = 100, Received = 95, Lost = 5 (5% loss), Minimum = 1ms, Maximum = 120ms, Average = 45ms</code>. Hãy phân tích các chỉ số trên để đánh giá độ ổn định và đề xuất các nguyên nhân có thể gây ra hiện tượng mất gói tin và độ trễ cao bất thường này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p><strong>Phân tích các thông số kiểm thử:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1.5">
+                                    <li><strong>Tỷ lệ mất gói (Packet Loss = 5%):</strong> Cho thấy kết nối mạng LAN không ổn định. Có 5 gói tin dữ liệu bị thất lạc trong quá trình truyền nhận. Trong mạng LAN có dây tiêu chuẩn chất lượng cao, tỷ lệ mất gói bắt buộc phải bằng 0%.</li>
+                                    <li><strong>Thời gian phản hồi (Min = 1ms, Max = 120ms, Average = 45ms):</strong> Độ trễ trung bình 45ms là khá cao đối với môi trường nội bộ LAN (thông thường chỉ dưới 5ms). Sự chênh lệch quá lớn giữa Min (1ms) và Max (120ms) cho thấy hiện tượng biến động độ trễ (Jitter) nghiêm trọng, gây ảnh hưởng xấu đến các dịch vụ thời gian thực như VoIP hay truyền video trực tiếp.</li>
+                                </ul>
+                                <p><strong>Các nguyên nhân kỹ thuật phổ biến:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Cáp mạng xoắn đôi bị lỏng đầu bấm RJ-45, bị gập gãy cơ học, hoặc bị đi dây quá gần các nguồn gây nhiễu điện từ trường mạnh (đường dây điện lực cao thế, động cơ điện).</li>
+                                    <li>Thiết bị trung tâm Switch đang bị quá tải lưu lượng xử lý do có hiện tượng nghẽn mạng hoặc bão quảng bá (Broadcast Storm) trong mạng LAN.</li>
+                                    <li>Nếu truyền dẫn qua Wi-Fi, có thể do thiết bị khách ở quá xa WAP, bị che chắn bởi tường bê tông dày hoặc bị can nhiễu tần số (sử dụng chung kênh truyền Wi-Fi với các nhà lân cận).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 8 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 8: Tích hợp mạng LAN không dây (WLAN) bảo mật</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một quán cà phê tích hợp mạng WLAN cho khách hàng sử dụng chung hạ tầng mạng LAN có dây của doanh nghiệp. Thiết bị phát sóng Wi-Fi (Wireless Router) kết nối trực tiếp vào một cổng của Switch trung tâm. Doanh nghiệp lo ngại việc khách hàng truy cập Wi-Fi công cộng có thể dò tìm IP và tấn công xâm nhập vào các máy chủ dữ liệu nội bộ đang cắm trên Switch. Hãy đề xuất 3 giải pháp kỹ thuật cụ thể để tăng cường bảo mật cô lập trong tình huống này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p>Để bảo vệ an toàn cho hệ thống máy chủ nội bộ doanh nghiệp, ta triển khai các giải pháp bảo mật phối hợp sau:</p>
+                                <ol class="list-decimal pl-6 space-y-2">
+                                    <li>
+                                        <strong>Phân đoạn mạng logic bằng VLAN (Network Segmentation):</strong> 
+                                        Cấu hình tạo một VLAN riêng biệt trên Switch (ví dụ VLAN 50 dành riêng cho Khách). Gán cổng kết nối từ Switch sang Wireless Router vào VLAN 50 này để cô lập hoàn toàn luồng dữ liệu quảng bá và kết nối của khách hàng khỏi VLAN nội bộ của doanh nghiệp (ví dụ VLAN 10).
+                                    </li>
+                                    <li>
+                                        <strong>Cấu hình quy tắc kiểm soát truy cập (Access Control List - ACL):</strong> 
+                                        Thiết lập quy tắc tường lửa (Firewall Rules) hoặc danh sách ACL trên Router định tuyến/Switch Layer 3 để chặn toàn bộ các gói tin có IP nguồn thuộc VLAN Khách (VLAN 50) cố gắng khởi tạo kết nối đến dải IP đích của các máy chủ nội bộ thuộc VLAN doanh nghiệp. Chỉ cho phép VLAN Khách truy cập ra ngoài Internet.
+                                    </li>
+                                    <li>
+                                        <strong>Kích hoạt tính năng AP Isolation trên Wireless Router:</strong> 
+                                        Bật tính năng cô lập máy trạm không dây (Access Point Isolation / Client Isolation) trên giao diện quản trị của Wireless Router. Tính năng này ngăn chặn hoàn toàn các máy khách không dây Wi-Fi (Smartphones, Laptops của khách) dò tìm, ping hoặc liên lạc trực tiếp được với nhau, giảm thiểu rủi ro lây lan mã độc và tấn công Man-in-the-Middle trong quán.
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 9 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 9: Thiết kế địa chỉ IP VLSM cho hệ thống Inter-VLAN</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một doanh nghiệp được cấp dải mạng gốc lớp C là <code class="font-mono text-indigo-700">192.168.5.0/24</code>. Doanh nghiệp muốn chia dải mạng này thành 2 VLAN độc lập phục vụ cho: VLAN 10 (phòng Kỹ thuật, yêu cầu tối đa 120 hosts) và VLAN 20 (phòng Hành chính, yêu cầu tối đa 50 hosts). Hãy áp dụng phương pháp chia mạng con linh hoạt VLSM để tính toán phân bổ dải IP tối ưu nhất, xác định rõ: Subnet Mask dạng thập phân, địa chỉ mạng con, dải IP khả dụng cho máy trạm và địa chỉ IP Gateway (IP gán cho cổng phụ sub-interface của Router) tương ứng với từng VLAN.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p>Áp dụng nguyên tắc chia mạng con linh hoạt VLSM: Thực hiện tính toán và cấp phát cho mạng con có quy mô host yêu cầu lớn nhất trước.</p>
+                                
+                                <p class="font-bold mt-2">1. Chia cho VLAN 10 (phòng Kỹ thuật - 120 hosts):</p>
+                                <ul class="list-disc pl-6">
+                                    <li>Quy mô khối IP phù hợp nhất: Cần khối có kích thước lũy thừa cơ số 2 là 128 IP (do \(2^7 = 128 > 120 + 2\)). Số bit làm HostID còn lại là 7 bit, mượn 1 bit để chia mạng con.</li>
+                                    <li>Mặt nạ mạng mới: <code class="font-mono bg-slate-100 text-slate-800 px-1">/25</code> (tương ứng thập phân: <code class="font-mono">255.255.255.128</code>).</li>
+                                    <li><strong>Địa chỉ mạng con VLAN 10:</strong> <strong class="text-indigo-700">192.168.5.0/25</strong></li>
+                                    <li>Dải IP khả dụng gán cho Host: <code class="font-mono">192.168.5.1</code> đến <code class="font-mono">192.168.5.126</code>.</li>
+                                    <li>Địa chỉ Quảng bá (Broadcast): <code class="font-mono">192.168.5.127</code>.</li>
+                                    <li><strong>Địa chỉ IP Gateway (gán cổng Router sub-interface):</strong> Sử dụng địa chỉ IP khả dụng cuối cùng trong dải là <strong class="text-indigo-700">192.168.5.126</strong>.</li>
+                                </ul>
+
+                                <p class="font-bold mt-2">2. Chia cho VLAN 20 (phòng Hành chính - 50 hosts):</p>
+                                <ul class="list-disc pl-6">
+                                    <li>Dải IP gốc còn lại bắt đầu từ: <code class="font-mono">192.168.5.128</code>.</li>
+                                    <li>Quy mô khối IP phù hợp nhất: Cần khối có kích thước lũy thừa cơ số 2 là 64 IP (do \(2^6 = 64 > 50 + 2\)). Số bit làm HostID còn lại là 6 bit, mượn 2 bit để chia mạng con.</li>
+                                    <li>Mặt nạ mạng mới: <code class="font-mono bg-slate-100 text-slate-800 px-1">/26</code> (tương ứng thập phân: <code class="font-mono">255.255.255.192</code>).</li>
+                                    <li><strong>Địa chỉ mạng con VLAN 20:</strong> <strong class="text-indigo-700">192.168.5.128/26</strong></li>
+                                    <li>Dải IP khả dụng gán cho Host: <code class="font-mono">192.168.5.129</code> đến <code class="font-mono">192.168.5.190</code>.</li>
+                                    <li>Địa chỉ Quảng bá (Broadcast): <code class="font-mono">192.168.5.191</code>.</li>
+                                    <li><strong>Địa chỉ IP Gateway (gán cổng Router sub-interface):</strong> Sử dụng địa chỉ IP khả dụng cuối cùng trong dải là <strong class="text-indigo-700">192.168.5.190</strong>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 10 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 10: Khắc phục sự cố lặp vòng (Looping) trong mạng LAN</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một nhân viên văn phòng vô tình cắm cả hai đầu của một sợi dây cáp mạng thẳng RJ-45 vào hai cổng vật lý khác nhau (ví dụ cổng f0/5 và f0/6) trên cùng một thiết bị Switch của công ty. Ngay lập tức, toàn bộ các máy tính kết nối vào Switch này đều bị mất kết nối mạng hoàn toàn. Đèn LED chỉ báo tín hiệu trên tất cả các cổng của Switch liên tục nhấp nháy đồng loạt với tần suất cực kỳ cao. Hãy giải thích hiện tượng lỗi kỹ thuật gì đang xảy ra trong mạng và giải pháp xử lý triệt để sự cố này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2 text-justify">
+                                <p><strong>Giải thích hiện tượng kỹ thuật:</strong></p>
+                                <p class="text-slate-600">
+                                    Hiện tượng này được gọi là <strong>Lặp vòng vật lý (Physical Layer Loop)</strong> dẫn đến việc tạo ra một cơn <strong>Bão quảng bá (Broadcast Storm)</strong> ở Tầng 2. Khi một gói tin quảng bá (Broadcast Frame) được gửi vào Switch, nó sẽ đi vào cổng f0/5, được Switch nhân bản và phát đi tất cả các cổng bao gồm f0/6. Gói tin từ f0/6 lại đi ngược qua sợi cáp lặp vào f0/5, tạo thành một vòng lặp vô hạn tuần hoàn liên tục. Do Switch Layer 2 không có trường TTL (Time To Live) trong Ethernet Header để tự động hủy gói tin chạy lâu như gói tin IP ở Layer 3, các khung dữ liệu quảng bá này sẽ được nhân bản lũy tiến theo cấp số nhân trong tích tắc, làm nghẽn băng thông hoàn toàn và vắt kiệt 100% CPU của Switch, khiến Switch bị đơ cứng và toàn bộ mạng LAN bị tê liệt.
+                                </p>
+                                <p><strong>Giải pháp khắc phục và phòng ngừa:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Giải pháp khẩn cấp trước mắt:</strong> Tiến hành rút ngay sợi cáp mạng đang cắm lặp vòng vào hai cổng f0/5 và f0/6 ra khỏi Switch để ngắt đứt vòng lặp vật lý.</li>
+                                    <li><strong>Giải pháp phòng ngừa triệt để:</strong> Kích hoạt giao thức chống lặp vòng <strong>STP (Spanning Tree Protocol - tiêu chuẩn IEEE 802.1D hoặc Rapid STP 802.1w)</strong> trên Switch. Giao thức STP sẽ tự động phát hiện các vòng lặp logic và tạm thời khóa (Block/Disable) cổng phụ gây lặp để bảo vệ mạng luôn hoạt động thông suốt an toàn, kể cả khi có người dùng vô ý cắm nhầm dây cáp mạng.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-1">&copy; 2026 Học liệu điện tử thông minh. Trường Đại học Văn Hiến.</p>
+            <p>Biên soạn kỹ thuật bởi Giảng viên Khoa Công nghệ thông tin.</p>
+        </div>
+    </footer>
+
+    <!-- Tab switcher & teacher lock script -->
+    <script>
+        function switchTab(tabId) {
+            const theoryTab = document.getElementById('tab-theory');
+            const practiceTab = document.getElementById('tab-practice');
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractice = document.getElementById('btn-practice');
+
+            if (tabId === 'theory') {
+                theoryTab.classList.remove('hidden');
+                practiceTab.classList.add('hidden');
+                btnTheory.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            } else {
+                theoryTab.classList.add('hidden');
+                practiceTab.classList.remove('hidden');
+                btnTheory.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('teacher-password').value;
+            if (passInput === 'VHU@INT4401') {
+                // Reveal hidden solutions
+                const hiddenElements = document.querySelectorAll('.teacher-only');
+                hiddenElements.forEach(el => {
+                    el.classList.remove('hidden');
+                });
+                
+                // Highlight correct MCQ answers
+                const correctMcqs = document.querySelectorAll('.mcq-correct');
+                correctMcqs.forEach(el => {
+                    el.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'font-semibold');
+                    el.classList.remove('border-slate-200');
+                    el.innerHTML += ' <span class="ml-2 text-xs bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Đúng</span>';
+                });
+
+                alert('🔑 KHÓA GIẢNG VIÊN ĐÃ ĐƯỢC GIẢI MÃ THÀNH CÔNG! Đã mở rộng lời giải tự luận chi tiết và tô xanh đáp án trắc nghiệm đúng.');
+            } else {
+                alert('❌ Sai mật khẩu bảo mật học phần! Vui lòng kiểm tra lại đề cương chi tiết môn học.');
+            }
+        }
+    </script>
+</body>
+</html>
