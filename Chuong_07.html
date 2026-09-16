@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu Điện tử: Chương 7 - Bảo mật Mạng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-slate-900 to-slate-850 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <!-- Icon -->
+                        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-red-400 uppercase">Trường Đại học Văn Hiến - Khoa CNTT</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">CHƯƠNG 7: BẢO MẬT MẠNG</h1>
+                        <p class="text-sm text-slate-300 mt-1">Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ)</p>
+                    </div>
+                </div>
+                <!-- Floating Teacher lock inside header -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-xs font-semibold text-red-400 mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        MỞ KHÓA GÓC GIẢNG VIÊN (PASSWORD: VHU@INT4401)
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." class="px-3 py-1.5 text-slate-800 rounded text-sm focus:outline-none focus:ring-2 focus:ring-red-500 w-44">
+                        <button onclick="checkPassword()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded font-bold text-sm transition">Giải Mã</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="switchTab('theory')" id="btn-theory" class="border-b-2 border-red-600 text-red-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>I. PHẦN LÝ THUYẾT CHI TIẾT</span>
+                </button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>II. CÂU HỎI & BÀI TẬP THỰC HÀNH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Tab 1: THEORY -->
+        <div id="tab-theory" class="space-y-12">
+            
+            <!-- Intro Card -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-red-600 pl-4 mb-4">Tóm tắt nội dung học tập Chương 7</h2>
+                <p class="text-slate-600 leading-relaxed text-justify mb-4">
+                    Bước vào kỷ nguyên số kết nối không ngừng nghỉ, bảo mật mạng đã trở thành mạch máu sống còn đối với sự tồn vong và phát triển vững mạnh của mọi doanh nghiệp cũng như tổ chức. Chương 7 trang bị những kiến thức cốt lõi và chuyên sâu nhất về an toàn thông tin, bắt đầu từ nền móng lý thuyết của Tam giác bảo mật CIA, phân tích các nguy cơ, lỗ hổng và hình thức tấn công mạng phổ biến, từ đó làm quen với các công cụ phòng thủ tối tân như Tường lửa (Firewall), Mạng riêng ảo (VPN), hệ thống phát hiện/ngăn chặn xâm nhập (IDS/IPS) cũng như quy trình quản lý rủi ro và ứng phó xử lý sự cố an ninh mạng chuyên nghiệp.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-red-600 text-xl font-bold">01</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Mục tiêu CIA & Nguy cơ</h4>
+                            <p class="text-xs text-slate-500 mt-1">Nắm vững các khía cạnh bảo mật cốt lõi, lừa đảo Phishing, Ransomware và DoS/DDoS.</p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-amber-600 text-xl font-bold">02</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Tường lửa & VPN</h4>
+                            <p class="text-xs text-slate-500 mt-1">Lọc gói tin, kiểm tra trạng thái thông minh, thiết lập đường hầm mã hóa dữ liệu an toàn.</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-slate-600 text-xl font-bold">03</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Ứng phó sự cố & Zero Trust</h4>
+                            <p class="text-xs text-slate-500 mt-1">Quy trình 6 bước ứng cứu, cô lập thảm họa mạng và xu hướng an ninh tương lai.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7.1. Tổng quan về bảo mật mạng -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-slate-800 pl-4 mb-4">7.1. Tổng Quan về Bảo Mật Mạng & Tam Giác CIA</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Bảo mật mạng (Network Security)</strong> là một lĩnh vực chuyên sâu của an ninh thông tin, bao gồm một tập hợp toàn diện các công nghệ, chính sách, quy trình và thực tiễn được thiết kế nhằm bảo vệ tính bí mật, toàn vẹn và sẵn sàng của mạng máy tính cũng như dữ liệu được truyền tải và lưu trữ trên đó. Nó không chỉ đơn thuần là cài đặt một phần mềm diệt virus mà là một chiến lược phòng thủ đa lớp để ngăn chặn, phát hiện, phân tích và phản ứng trước các hiểm họa an ninh.
+                    </p>
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 my-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center">
+                            <span class="p-1.5 bg-red-100 text-red-700 rounded-md mr-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </span>
+                            Mô hình Tam Giác Bảo Mật CIA (CIA Triad)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                <span class="text-xs font-bold text-red-600 tracking-wider uppercase">Khía cạnh 1</span>
+                                <h4 class="font-bold text-slate-900 mt-1 mb-2">Tính Bảo Mật (Confidentiality)</h4>
+                                <p class="text-sm text-slate-500">Đảm bảo ngăn chặn việc tiết lộ thông tin cho các cá nhân hoặc hệ thống không được ủy quyền. "Chỉ những người được phép mới được nhìn thấy dữ liệu".</p>
+                                <span class="block text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded mt-3 font-semibold w-fit">Giải pháp: Mã hóa dữ liệu, ACL, Phân quyền</span>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                <span class="text-xs font-bold text-amber-600 tracking-wider uppercase">Khía cạnh 2</span>
+                                <h4 class="font-bold text-slate-900 mt-1 mb-2">Tính Toàn Vẹn (Integrity)</h4>
+                                <p class="text-sm text-slate-500">Bảo vệ thông tin khỏi bị sửa đổi, ghi đè hoặc xóa trái phép dọc đường truyền tải. Dữ liệu nhận được ở đích phải chính xác tuyệt đối như ban đầu.</p>
+                                <span class="block text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded mt-3 font-semibold w-fit">Giải pháp: Hàm băm SHA-256, Chữ ký số</span>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                <span class="text-xs font-bold text-slate-600 tracking-wider uppercase">Khía cạnh 3</span>
+                                <h4 class="font-bold text-slate-900 mt-1 mb-2">Tính Sẵn Sàng (Availability)</h4>
+                                <p class="text-sm text-slate-500">Đảm bảo hệ thống, ứng dụng, dịch vụ mạng luôn sẵn sàng phục vụ người dùng hợp lệ kết nối truy cập bất cứ lúc nào họ cần sử dụng.</p>
+                                <span class="block text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded mt-3 font-semibold w-fit">Giải pháp: Dự phòng Redundancy, Cân bằng tải</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p><strong>Các khía cạnh bảo mật mở rộng:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Xác thực (Authentication):</strong> Quá trình xác minh danh tính thực tế của một chủ thể truy cập. Xác thực đa yếu tố (MFA) đang trở thành tiêu chuẩn vàng thông qua 3 nhân tố: Thứ bạn biết (mật khẩu), Thứ bạn có (OTP trên điện thoại, khóa token) và Thứ thuộc về bản thân bạn (vân tay, khuôn mặt).</li>
+                        <li><strong>Ủy quyền (Authorization):</strong> Quyết định quyền hạn truy cập của chủ thể sau khi đã xác thực danh tính. Tuân thủ nghiêm ngặt <em>Nguyên tắc đặc quyền tối thiểu (Principle of Least Privilege)</em> - chỉ cấp phát đúng những quyền hạn tối thiểu thiết yếu để hoàn thành công việc.</li>
+                        <li><strong>Chống thoái thác (Non-repudiation):</strong> Cung cấp bằng chứng số không thể chối cãi rằng một chủ thể đã thực hiện một giao dịch hoặc gửi một thông điệp đi, thường được triển khai bằng công nghệ Chữ ký số.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 7.2. Các nguy cơ và hình thức tấn công mạng phổ biến -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-red-600 pl-4 mb-4">7.2. Các Nguy Cơ & Hình Thức Tấn Công Mạng Phổ Biến</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Để xây dựng một giải pháp phòng thủ vững chắc, người quản trị mạng bắt buộc phải thấu hiểu phương thức tấn công của tin tặc. Các cuộc tấn công thường nhắm vào ba mắt xích trọng yếu: Con người, Công nghệ và Quy trình.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h4 class="font-bold text-slate-900 mb-2 flex items-center">
+                                <span class="w-2.5 h-2.5 bg-red-500 rounded-full mr-2"></span>
+                                Tấn công nhắm vào Con người & Mật khẩu
+                            </h4>
+                            <ul class="space-y-3 text-sm mt-3">
+                                <li><strong>Lừa đảo Phishing (Giả mạo):</strong> Kẻ xấu giả mạo thành ngân hàng, mạng xã hội gửi các email khẩn cấp chứa liên kết độc hại, dụ người dùng truy cập trang web giả mạo để tự dâng hiến thông tin tài khoản, mật khẩu.</li>
+                                <li><strong>Tấn công mật khẩu (Password Attacks):</strong> Dò mật khẩu Brute Force (thử mọi ký tự tự động), Dictionary Attack (tấn công từ điển thử các mật khẩu thông dụng) hoặc Keylogging để ghi lại mọi lượt bấm phím của nạn nhân.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h4 class="font-bold text-slate-900 mb-2 flex items-center">
+                                <span class="w-2.5 h-2.5 bg-amber-500 rounded-full mr-2"></span>
+                                Tấn công nhắm vào Hệ thống & Thiết bị
+                            </h4>
+                            <ul class="space-y-3 text-sm mt-3">
+                                <li><strong>Mã độc hại (Malware):</strong> Bao gồm Ransomware (mã độc tống tiền mã hóa dữ liệu đòi Bitcoin), Spyware (phần mềm gián điệp chạy ngầm thu thập dữ liệu) và Trojan Horse (ngựa thành Troa ẩn nấp dưới dạng phần mềm hữu ích).</li>
+                                <li><strong>Tấn công từ chối dịch vụ DoS/DDoS:</strong> Huy động mạng lưới máy tính ma (botnet) gửi hàng triệu yêu cầu rác quá tải đồng thời vào một máy chủ Web, làm sập hệ thống khiến khách hàng thật không thể truy cập.</li>
+                                <li><strong>Người đứng giữa (Man-in-the-Middle - MitM) & Evil Twin:</strong> Thiết lập một điểm Wi-Fi giả mạo trùng tên SSID của quán cà phê, sân bay để nghe lén và đánh cắp toàn bộ luồng lưu lượng dữ liệu truyền qua không được mã hóa.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7.3. Các công nghệ và giải pháp bảo mật -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-slate-800 pl-4 mb-4">7.3. Các Công Nghệ & Giải Pháp Phòng Thủ Nhiều Lớp</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Một hệ thống bảo mật an toàn tuyệt đối không bao giờ dựa vào một thiết bị đơn lẻ mà phải được thiết kế theo mô hình phòng thủ đa lớp (Defense-in-Depth):
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-900 mb-2">1. Giám sát & Phát hiện</h4>
+                            <p class="text-xs text-slate-500"><strong>IDS (Hệ thống phát hiện xâm nhập):</strong> Giám sát lưu lượng, đối chiếu signature (mẫu đã biết) hoặc phát hiện hành vi bất thường (anomaly-based) để cảnh báo. <strong>IPS:</strong> Ngăn chặn chủ động hành vi độc hại khẩn cấp.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-900 mb-2">2. Cách ly & Phân đoạn</h4>
+                            <p class="text-xs text-slate-500"><strong>Phân đoạn mạng (Network Segmentation):</strong> Chia nhỏ mạng vật lý LAN thành các vùng VLAN cô lập. Giúp khống chế và khoanh vùng thảm họa dịch bệnh (như tách biệt mạng camera hay dữ liệu bệnh án nhạy cảm khỏi mạng Wi-Fi chung).</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-900 mb-2">3. Bảo vệ Thiết bị & Dữ liệu</h4>
+                            <p class="text-xs text-slate-500"><strong>EDR:</strong> Phát hiện mối đe dọa trực tiếp trên thiết bị đầu cuối. <strong>DLP (Phòng chống thất thoát dữ liệu):</strong> Tự động quét và chặn các hành vi gửi thông tin nhạy cảm (như số thẻ tín dụng) ra ngoài email của tổ chức.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7.4. Tường lửa -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-red-600 pl-4 mb-4">7.4. Tường Lửa (Firewall) - Người Gác Cổng Thông Minh</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Tường lửa (Firewall)</strong> là một hệ thống phần cứng hoặc phần mềm (hoặc kết hợp cả hai) hoạt động như một rào chắn an toàn ngăn cách giữa mạng nội bộ đáng tin cậy bên trong và mạng công cộng không tin cậy bên ngoài Internet. Nó lọc lưu lượng dữ liệu dựa trên bộ quy tắc rules đã định nghĩa từ trước.
+                    </p>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 my-4 space-y-3">
+                        <h4 class="font-bold text-slate-900">Hai cơ chế lọc chính của Tường lửa:</h4>
+                        <p class="text-sm"><strong>Lọc gói tin truyền thống (Packet Filtering):</strong> Chỉ kiểm tra phần tiêu đề phong bì (header) bên ngoài bao gồm địa chỉ IP nguồn/đích, Port, giao thức truyền dẫn, hoàn toàn không bóc phong bì kiểm tra nội dung dữ liệu bên trong. Có ưu điểm xử lý cực nhanh nhưng kém an toàn trước các cuộc tấn công tinh vi.</p>
+                        <p class="text-sm"><strong>Kiểm tra trạng thái thông minh (Stateful Inspection):</strong> Không chỉ xem phong bì mà còn theo dõi và ghi nhớ bối cảnh kết nối. Nó ghi nhớ gói tin khởi tạo kết nối (ví dụ: yêu cầu gửi đi từ trong LAN) để đối chiếu gói tin phản hồi ngược về, chặn đứng toàn bộ các gói tin phản hồi "mạo danh tự phát" từ bên ngoài quét vào mạng.</p>
+                    </div>
+                    <p><strong>Phân loại theo quy mô triển khai:</strong></p>
+                    <ul class="list-disc pl-6 space-y-1 text-sm">
+                        <li><strong>Tường lửa cá nhân (Personal Firewall):</strong> Cài đặt trực tiếp trên hệ điều hành của host (ví dụ: Windows Defender Firewall, macOS Firewall), hoạt động như vệ sĩ riêng cho máy tính khi sử dụng mạng Wi-Fi công cộng.</li>
+                        <li><strong>Tường lửa mạng (Network Firewall):</strong> Thiết bị phần cứng chuyên dụng đặt tại cửa ngõ liên kết toàn mạng (như pfSense, Fortinet, Cisco), bảo vệ toàn bộ các thiết bị IoT, Smart TV vốn không có khả năng tự vệ cao.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 7.5. Mạng riêng ảo -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-slate-800 pl-4 mb-4">7.5. Mạng Riêng Ảo (VPN) - Thiết Lập Kênh Mã Hóa An Toàn</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>VPN (Virtual Private Network)</strong> là công nghệ thiết lập một "đường hầm ảo" mã hóa toàn bộ luồng lưu lượng truyền qua môi trường Internet công cộng đầy rủi ro. VPN bảo vệ dữ liệu khỏi việc bị nghe lén, giả mạo danh tính, đồng thời ẩn địa chỉ IP thật của người dùng và gán địa chỉ IP của máy chủ VPN.
+                    </p>
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-3">Các giao thức VPN phổ biến trong thực tế:</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                                <thead class="bg-slate-100 font-bold text-slate-700">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left">Giao thức</th>
+                                        <th class="px-4 py-2 text-left">Hiệu suất</th>
+                                        <th class="px-4 py-2 text-left">Bảo mật</th>
+                                        <th class="px-4 py-2 text-left">Đặc điểm nổi bật</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold text-indigo-700">WireGuard</td>
+                                        <td class="px-4 py-3 text-emerald-600 font-semibold">Cực kỳ cao</td>
+                                        <td class="px-4 py-3 text-emerald-600 font-semibold">Mạnh</td>
+                                        <td class="px-4 py-3 text-slate-500">Giao thức thế hệ mới, cấu trúc gọn nhẹ, mã nguồn ít dòng, nhanh hơn đáng kể so với OpenVPN và IPsec.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold text-indigo-700">OpenVPN</td>
+                                        <td class="px-4 py-3 text-slate-600 font-semibold">Trung bình</td>
+                                        <td class="px-4 py-3 text-emerald-600 font-semibold">Mạnh</td>
+                                        <td class="px-4 py-3 text-slate-500">Mã nguồn mở phổ biến, độ tương thích đa nền tảng tuyệt đối, khả năng vượt tường lửa rất tốt.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold text-indigo-700">IPsec</td>
+                                        <td class="px-4 py-3 text-indigo-600 font-semibold">Cao</td>
+                                        <td class="px-4 py-3 text-emerald-600 font-semibold">Mạnh</td>
+                                        <td class="px-4 py-3 text-slate-500">Rất phổ biến trong mạng VPN doanh nghiệp (Site-to-Site), độ bảo mật cao nhưng cấu hình tham số rất phức tạp.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p><strong>Phân loại mô hình VPN doanh nghiệp:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2 text-sm">
+                        <li><strong>VPN Remote Access:</strong> Cho phép nhân viên làm việc từ xa (Work from home) tạo kết nối mã hóa an toàn đi xuyên qua Internet để đăng nhập vào tài nguyên mạng LAN nội bộ của công ty.</li>
+                        <li><strong>VPN Site-to-Site:</strong> Kết nối bảo mật cố định giữa các chi nhánh xa xôi của công ty thành một dải mạng thống nhất, thay thế cho giải pháp thuê đường truyền riêng Leased Line vô cùng đắt đỏ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 7.6. Quy trình quản lý rủi ro và ứng phó sự cố mạng -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-red-600 pl-4 mb-4">7.6. Quy Trình Quản Lý Rủi Ro & Ứng Phó Sự Cố Mạng (NIST)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Một hệ thống bảo mật toàn diện không chỉ tập trung phòng ngừa mà phải luôn sẵn sàng kịch bản khi thảm họa tấn công mạng thực sự xảy ra. Quy trình ứng phó sự cố mạng theo tiêu chuẩn quốc tế bao gồm 6 giai đoạn:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm my-6">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 1: Đánh giá & Ngừa</span>
+                            <p class="text-xs text-slate-500 mt-1">Lập danh sách tài sản, quét tìm các điểm yếu, lỗ hổng bảo mật, định kỳ nâng cao nhận thức an toàn cho nhân viên.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 2: Ngăn ngừa bảo vệ</span>
+                            <p class="text-xs text-slate-500 mt-1">Sử dụng tường lửa, VPN để phân đoạn mạng, vá lỗi bảo mật liên tục.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 3: Phát hiện sự cố</span>
+                            <p class="text-xs text-slate-500 mt-1">Giám sát liên tục qua SIEM, cảnh báo EDR để phát hiện nhanh các hoạt động bất thường.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 4: Ứng phó sự cố (Cô lập)</span>
+                            <p class="text-xs text-slate-500 mt-1">Hành động khẩn cấp ngắt kết nối mạng các host bị lây nhiễm (ransomware, virus) nhằm tránh lây lan cục bộ.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 5: Khôi phục hoạt động</span>
+                            <p class="text-xs text-slate-500 mt-1">Tiến hành quét sạch mã độc, phục hồi hệ thống từ bản sao lưu (backup) an toàn.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <span class="font-extrabold text-red-600">Bước 6: Rút kinh nghiệm</span>
+                            <p class="text-xs text-slate-500 mt-1">Tổng kết toàn diện vụ việc, bổ sung quy tắc bảo mật mới tránh lặp lại thảm họa tương tự.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7.7. Xu hướng tương lai của bảo mật mạng -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-slate-800 pl-4 mb-4">7.7. Xu Hướng Bảo Mật Tương Lai - Kiến Trúc Zero Trust</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Mô hình bảo mật tường bao truyền thống "Tin tưởng tuyệt đối bên trong, chặn đứng bên ngoài" đã hoàn toàn sụp đổ khi tin tặc có thể luồn sâu vào mạng LAN nội bộ qua thiết bị cá nhân hoặc lừa đảo. Xu thế tương lai dịch chuyển hoàn toàn sang kiến trúc <strong>Zero Trust ("Không tin tưởng bất kỳ ai, luôn luôn xác minh")</strong>.
+                    </p>
+                    <p><strong>3 Nguyên Tắc Cốt Lõi của Zero Trust:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Xác minh mọi truy cập liên tục:</strong> Cho dù thiết bị nằm trong hay ngoài mạng LAN đều phải xác thực đa yếu tố, xác minh tính toàn vẹn của thiết bị trước khi cho phép liên lạc.</li>
+                        <li><strong>Nguyên tắc đặc quyền tối thiểu:</strong> Chỉ cấp quyền hạn vừa đủ cho công việc cụ thể và thu hồi ngay khi hoàn thành nhiệm vụ.</li>
+                        <li><strong>Phân đoạn vi mô (Micro-segmentation):</strong> Chia nhỏ mạng thành các phân đoạn logic cực nhỏ để khoanh vùng lây lan tối đa nếu có một vùng bị tin tặc chiếm quyền điều khiển.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 7.8. Case study thực tế -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-red-600 pl-4 mb-4">7.8. Case Study Thực Tế: Bảo Mật Camera Thông Minh (IoT)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Trong kỷ nguyên Internet vạn vật (IoT), <strong>Camera thông minh (IP Camera)</strong> là một trong các thiết bị nhạy cảm và dễ bị tấn công nhất. Nhiều vụ việc camera hộ gia đình, nhà xưởng bị xem trộm hoặc bị chiếm quyền điều khiển biến thành mạng botnet Mirai khổng lồ để tấn công DDoS đã gióng lên hồi chuông cảnh báo.
+                    </p>
+                    <div class="bg-red-50 p-6 rounded-xl border border-red-100 my-4 space-y-2">
+                        <h4 class="font-bold text-red-950 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            Tại sao IP Camera dễ bị hack tấn công?
+                        </h4>
+                        <ul class="list-disc pl-6 text-sm text-red-900 space-y-1">
+                            <li><strong>Mật khẩu mặc định yếu:</strong> Người dùng lười đổi thông tin đăng nhập mặc định của nhà sản xuất (như admin/admin, user/user).</li>
+                            <li><strong>Firmware lỗi thời:</strong> Nhà sản xuất giá rẻ không cập nhật vá lỗi bảo mật phần sụn, mở sẵn cổng Telnet, FTP đầy rủi ro.</li>
+                            <li><strong>Mở cổng UPnP trực tiếp:</strong> Tính năng cắm là chạy UPnP tự động mở cổng trên router để xem từ xa, vô tình phơi bày thiết bị trực tiếp ra ngoài Internet cho tin tặc quét lỗ hổng.</li>
+                        </ul>
+                    </div>
+                    <p><strong>Biện pháp khắc phục tiêu chuẩn:</strong></p>
+                    <ul class="list-disc pl-6 space-y-1 text-sm">
+                        <li>Thay đổi mật khẩu đăng nhập quản trị sang dạng cực mạnh ngay khi cấu hình lắp đặt.</li>
+                        <li><strong>Vô hiệu hóa tính năng UPnP trên Router</strong> để chặn việc mở cổng tự động ra Internet.</li>
+                        <li><strong>Sử dụng VLAN cô lập camera:</strong> Đưa toàn bộ IP Camera vào một VLAN riêng biệt trên Switch để tránh lây nhiễm mã độc sang máy tính chứa dữ liệu trong LAN.</li>
+                        <li>Bắt buộc kết nối VPN Remote Access khi người dùng muốn giám sát camera từ xa thay vì cấu hình NAT trực tiếp cổng camera ra ngoài.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Tab 2: PRACTICE -->
+        <div id="tab-practice" class="space-y-12 hidden">
+            
+            <!-- Section 1: 30 MCQs -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Hệ thống 30 Câu hỏi Trắc nghiệm khách quan</h2>
+                        <p class="text-xs text-slate-500 mt-1">Bao quát toàn diện các khái niệm, cơ chế hoạt động, thiết bị và giải pháp Bảo mật mạng.</p>
+                    </div>
+                    <span class="inline-block mt-2 sm:mt-0 px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">30 Câu hỏi</span>
+                </div>
+
+                <div id="mcq-container" class="space-y-8">
+                    <!-- Generation of MCQs will be inserted here via script or plain HTML. We will write all 30 here as plain HTML to guarantee responsiveness -->
+                    
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 1</span>
+                        <p class="font-semibold text-slate-900">Mục tiêu nào trong tam giác bảo mật CIA đảm bảo dữ liệu chỉ được xem bởi những cá nhân có thẩm quyền?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Tính Bảo mật (Confidentiality)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tính Toàn vẹn (Integrity)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tính Sẵn sàng (Availability)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tính Xác thực (Authentication)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 2</span>
+                        <p class="font-semibold text-slate-900">Giải pháp công nghệ nào thường dùng để bảo vệ "Tính Toàn vẹn (Integrity)" của dữ liệu khi truyền tải qua mạng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tường lửa (Firewall)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Mạng riêng ảo (VPN)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Hàm băm (Hashing SHA-256) và Chữ ký số</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Hệ thống định tuyến Router</div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 3</span>
+                        <p class="font-semibold text-slate-900">Đâu KHÔNG phải là một trong ba nhân tố xác thực cơ bản của hệ thống xác thực đa yếu tố (MFA)?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Thứ bạn biết (mật khẩu, mã PIN)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Thứ bạn có (điện thoại nhận OTP, khóa token)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Thứ là bản thân bạn (vân tay, khuôn mặt)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">D. Thứ bạn mong muốn sở hữu</div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 4</span>
+                        <p class="font-semibold text-slate-900">Nguyên tắc "Đặc quyền tối thiểu (Least Privilege)" thuộc về khía cạnh nào trong an toàn thông tin?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tính sẵn sàng (Availability)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Ủy quyền truy cập (Authorization)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Hàm băm toàn vẹn</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Phòng chống DDoS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 5</span>
+                        <p class="font-semibold text-slate-900">Kiểu lừa đảo tâm lý nào dụ dỗ người dùng bấm vào các liên kết giả mạo ngân hàng để đánh cắp mật khẩu đăng nhập?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Tấn công Giả mạo (Phishing)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Mã độc Ransomware</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tấn công Brute Force</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tấn công DDoS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 6</span>
+                        <p class="font-semibold text-slate-900">Loại mã độc hại nào sau đây thực hiện mã hóa toàn bộ dữ liệu máy tính của nạn nhân để đòi tiền chuộc giải mã?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Spyware (Gián điệp)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Ransomware (Mã độc tống tiền)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Trojan Horse</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Keylogger</div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 7</span>
+                        <p class="font-semibold text-slate-900">Cuộc tấn công DoS/DDoS nhắm trực tiếp vào mục tiêu nào trong tam giác bảo mật CIA?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tính Bảo mật (Confidentiality)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tính Toàn vẹn (Integrity)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Tính Sẵn sàng (Availability)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Chống thoái thác (Non-repudiation)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 8</span>
+                        <p class="font-semibold text-slate-900">Khi hacker tạo ra một điểm Wi-Fi giả mạo trùng tên SSID của quán cà phê để chặn bắt lưu lượng mạng, hình thức này gọi là:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Mạng Wi-Fi giả mạo (Evil Twin)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tấn công DDoS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tấn công Brute Force</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tấn công Từ điển (Dictionary Attack)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 9</span>
+                        <p class="font-semibold text-slate-900">Tấn công mật khẩu bằng phương thức Brute Force (Dò mật khẩu) hoạt động dựa trên nguyên lý nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Sử dụng phần mềm tự động thử mọi tổ hợp ký tự có thể cho đến khi đúng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Chỉ thử các từ khóa có trong từ điển tiếng Anh</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Thiết lập Wi-Fi giả mạo dụ người dùng nhập vào</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Ghi ngầm âm thanh bàn phím</div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 10</span>
+                        <p class="font-semibold text-slate-900">Thiết bị bảo mật nào gác cổng và kiểm soát lưu lượng ra vào giữa mạng nội bộ và Internet?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Switch Layer 2</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Access Point</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Tường lửa (Firewall)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Repeater</div>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 11</span>
+                        <p class="font-semibold text-slate-900">Cơ chế hoạt động "Kiểm tra trạng thái (Stateful Inspection)" của Tường lửa ưu việt hơn lọc gói tin cơ bản ở điểm nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Lọc nhanh hơn vì không cần kiểm tra địa chỉ IP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Theo dõi và ghi nhớ bối cảnh kết nối, đối chiếu gói tin phản hồi của kết nối hợp lệ</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Chỉ cho phép các luồng truyền thông IPv6</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tích hợp sẵn tính năng diệt virus trực tiếp</div>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 12</span>
+                        <p class="font-semibold text-slate-900">Công nghệ nào giúp tạo ra một "đường hầm ảo" mã hóa dữ liệu truyền tải an toàn đi qua mạng Internet công cộng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. IDS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Mạng riêng ảo (VPN)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Switch Layer 3</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. DHCP Relay Agent</div>
+                        </div>
+                    </div>
+
+                    <!-- Q13 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 13</span>
+                        <p class="font-semibold text-slate-900">Hệ thống nào chuyên phát hiện và chủ động "ngăn chặn" các cuộc tấn công mạng dựa trên signature hoặc hành vi bất thường?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. IDS (Intrusion Detection System)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. IPS (Intrusion Prevention System)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Personal Firewall</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. NAC (Network Access Control)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 14</span>
+                        <p class="font-semibold text-slate-900">Giải pháp bảo mật "Phòng ngừa mất dữ liệu (DLP)" có chức năng chính là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Định tuyến dữ liệu qua các Router</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tạo kết nối VPN site-to-site</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Giám sát và tự động ngăn chặn việc rò rỉ dữ liệu nhạy cảm ra ngoài hệ thống</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Phân dải tên miền thành địa chỉ IP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 15</span>
+                        <p class="font-semibold text-slate-900">Mô hình phân đoạn mạng (Network Segmentation) mang lại lợi ích gì khi có sự cố bảo mật xảy ra?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tăng dung lượng băng thông lên gấp đôi</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Giới hạn và cô lập phạm vi ảnh hưởng của mã độc, tránh lây nhiễm diện rộng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Gán địa chỉ IP động nhanh hơn</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tắt hoàn toàn kết nối ra Internet</div>
+                        </div>
+                    </div>
+
+                    <!-- Q16 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 16</span>
+                        <p class="font-semibold text-slate-900">Giao thức VPN thế hệ mới nào được đánh giá là cực nhẹ, hiệu suất rất cao và dễ triển khai hơn OpenVPN và IPsec?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. WireGuard</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Telnet</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. FTP mode Active</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. PPTP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 17</span>
+                        <p class="font-semibold text-slate-900">Mô hình VPN nào dùng để nối thông an toàn các chi nhánh văn phòng ở xa của một doanh nghiệp?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. VPN Remote Access</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. VPN Site-to-Site</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Personal VPN</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Free VPN</div>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 18</span>
+                        <p class="font-semibold text-slate-900">Mối nguy hiểm lớn nhất khi sử dụng dịch vụ VPN miễn phí trôi nổi là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Bị tăng tốc độ truyền tải quá cao</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Bị thu thập, theo dõi và bán thông tin lịch sử duyệt web hoặc cài cắm mã độc</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Phải tự cấu hình giao thức IPsec phức tạp</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bị đổi địa chỉ MAC card mạng</div>
+                        </div>
+                    </div>
+
+                    <!-- Q19 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 19</span>
+                        <p class="font-semibold text-slate-900">Theo mô hình ứng phó sự cố an ninh mạng (NIST), bước "cô lập hệ thống nhiễm độc" thuộc về giai đoạn nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Đánh giá & Chuẩn bị</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Phát hiện sự cố</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Ứng phó sự cố (Containment/Respond)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Rút kinh nghiệm (Lessons Learned)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q20 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 20</span>
+                        <p class="font-semibold text-slate-900">Bản chất của triết lý kiến trúc bảo mật "Zero Trust" là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Luôn tin tưởng các thiết bị kết nối từ mạng LAN nội bộ</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Không bao giờ tin tưởng, luôn luôn xác minh mọi yêu cầu kết nối</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tắt bỏ toàn bộ tường lửa cá nhân</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Miễn phí bản quyền phần mềm bảo mật</div>
+                        </div>
+                    </div>
+
+                    <!-- Q21 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 21</span>
+                        <p class="font-semibold text-slate-900">Tại sao các thiết bị IoT như Camera thông minh thường là mục tiêu tấn công hàng đầu của hacker?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Do camera sử dụng tín hiệu ánh sáng sợi quang</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Do có kích thước vật lý quá lớn</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Do mật khẩu mặc định yếu, firmware lỗi thời ít được cập nhật và mở cổng bừa bãi</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Do camera không hỗ trợ dải IP Public</div>
+                        </div>
+                    </div>
+
+                    <!-- Q22 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 22</span>
+                        <p class="font-semibold text-slate-900">Việc mở cổng tự động UPnP (Universal Plug and Play) trên Router gây ra rủi ro gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Làm đứt cáp vật lý của mạng LAN</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tự động mở các cổng ra Internet, tạo lỗ hổng cho hacker xâm nhập vào thiết bị IoT</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Chặn đứng hoàn toàn dịch vụ DNS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Không cấp phát được IP động</div>
+                        </div>
+                    </div>
+
+                    <!-- Q23 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 23</span>
+                        <p class="font-semibold text-slate-900">Khi cấu hình bảo mật camera giám sát, biện pháp nào được khuyến nghị để cô lập thiết bị?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Gán dải IP Private lớp A</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tạo một VLAN riêng biệt cô lập camera khỏi mạng chính của máy tính chứa dữ liệu</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Gắn thêm Repeater khuếch đại</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cấu hình cổng Switch sang chế độ Trunk</div>
+                        </div>
+                    </div>
+
+                    <!-- Q24 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 24</span>
+                        <p class="font-semibold text-slate-900">Khái niệm nào chỉ "điểm yếu, lỗi mã lệnh trong phần mềm" có nguy cơ bị tin tặc khai thác?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Lỗ hổng bảo mật (Vulnerability)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Công cụ khai thác (Exploit)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Mối đe dọa (Threat)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Giao thức mạng (Protocol)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q25 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 25</span>
+                        <p class="font-semibold text-slate-900">Khi tin tặc sử dụng một lỗi lập trình cụ thể để đột nhập và chiếm quyền máy tính, hành động này là:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Social Engineering</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Khai thác lỗ hổng (Exploit / Hacking)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Mã hóa băm SHA</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Cấu hình cổng Trunk</div>
+                        </div>
+                    </div>
+
+                    <!-- Q26 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 26</span>
+                        <p class="font-semibold text-slate-900">Sự khác biệt bản chất giữa mã hóa đối xứng (Symmetric) và bất đối xứng (Asymmetric) nằm ở:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Đối xứng dùng chung 1 khóa để mã/giải; Bất đối xứng dùng cặp khóa Public/Private Key</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Đối xứng bảo mật cao hơn bất đối xứng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Bất đối xứng chỉ hoạt động ở tầng vật lý</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Đối xứng chỉ dùng mã hóa email</div>
+                        </div>
+                    </div>
+
+                    <!-- Q27 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 27</span>
+                        <p class="font-semibold text-slate-900">Trường hợp thực tế nào làm rò rỉ dữ liệu mật khi tin tặc tấn công thông qua một nhà cung cấp dịch vụ bên thứ ba của doanh nghiệp?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tấn công DDoS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Tấn công Chuỗi cung ứng (Supply Chain Attack)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Lừa đảo Phishing người dùng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tấn công brute force mật khẩu</div>
+                        </div>
+                    </div>
+
+                    <!-- Q28 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 28</span>
+                        <p class="font-semibold text-slate-900">Giải pháp bảo mật nào dùng trí tuệ nhân tạo (AI/ML) để phát hiện mã độc zero-day chưa từng có mẫu nhận diện trước đây?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Lọc gói tin IP header</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Giám sát và phân tích hành vi bất thường (Behavior Analysis AI/ML)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cấu hình DNS blacklist</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tắt router Wireless</div>
+                        </div>
+                    </div>
+
+                    <!-- Q29 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 29</span>
+                        <p class="font-semibold text-slate-900">Khái niệm "Cyber-Resilience" chỉ khía cạnh nào trong an ninh mạng hiện đại?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Khả năng chống hack tuyệt đối 100% không bao giờ gặp sự cố</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Khả năng phục hồi nhanh chóng hoạt động bình thường sau khi hệ thống bị tấn công</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Tốc độ truyền tải nhanh của cổng quang</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Mã hóa nhị phân dải Private IP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q30 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-red-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Câu 30</span>
+                        <p class="font-semibold text-slate-900">Khi một máy tính trong văn phòng bất ngờ nhận được thông số Gateway và DNS giả từ một máy chủ DHCP lạ do tin tặc cài vào, lỗ hổng này gọi là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. IP Address Conflict</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Máy chủ DHCP giả mạo (Rogue DHCP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. DNS cache poisoning</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Brute force port 21</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Section 2: 10 Practical Exercises -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="border-b border-slate-200 pb-4 mb-6">
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Hệ thống 10 Bài tập Tình huống Thực tế có Lời giải</h2>
+                    <p class="text-xs text-slate-500 mt-1">Bài tập thực tế rèn luyện tư duy thiết kế, xử lý sự cố khẩn cấp và hoạch định chính sách bảo mật mạng cho sinh viên.</p>
+                </div>
+
+                <div class="space-y-8">
+                    
+                    <!-- Prob 1 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 1: Phản ứng nhanh xử lý sự cố Ransomware lây lan</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Lúc 9:00 sáng, hệ thống giám sát cảnh báo có 3 máy chủ dữ liệu nội bộ của công ty X bất ngờ xuất hiện thông báo tống tiền của mã độc Ransomware, toàn bộ file dữ liệu đuôi `.doc`, `.xls` đều bị đổi định dạng sang đuôi mã hóa lạ và không thể mở. Dựa trên quy trình ứng phó xử lý sự cố an ninh mạng, hãy đề xuất các bước hành động khẩn cấp để kiểm soát thiệt hại.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Áp dụng quy trình ứng phó xử lý sự cố của NIST:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Bước 1: Cô lập hệ thống bị nhiễm (Ngăn chặn khẩn cấp):</strong> Ngay lập tức rút dây cáp mạng vật lý, ngắt kết nối Wi-Fi của 3 máy chủ bị lây nhiễm khỏi hệ thống mạng LAN nội bộ. Đồng thời tạm thời tắt toàn bộ chia sẻ file (Network Share, SMB/CIFS) trên tất cả máy chủ còn lại để chặn đứng con đường lây lan tự động của mã độc qua giao thức mạng.</li>
+                                    <li><strong>Bước 2: Xác định phạm vi ảnh hưởng (Điều tra nguồn lây):</strong> Kiểm tra log tường lửa và hệ thống email để tìm nguồn lây nhiễm (ví dụ: nhân viên tải tệp đính kèm chứa mã độc từ email phishing giả mạo). Thực hiện quét toàn bộ máy tính trong dải LAN bằng phần mềm diệt virus chuyên dụng để đảm bảo không còn ổ dịch ẩn nấp.</li>
+                                    <li><strong>Bước 3: Khôi phục hoạt động:</strong> Tiến hành cài đặt lại hệ điều hành sạch sẽ cho 3 máy chủ dữ liệu (để xóa bỏ hoàn toàn tàn dư ransomware), sau đó phục hồi lại dữ liệu thô từ bản sao lưu an toàn (Backup) gần nhất được lưu độc lập trước thời điểm xảy ra sự cố.</li>
+                                    <li><strong>Bước 4: Cải tiến & Rút kinh nghiệm:</strong> Đào tạo lại nhân viên cách nhận biết email lừa đảo, rà soát chính sách bảo mật, cập nhật firmware và cài đặt các giải pháp bảo vệ thiết bị đầu cuối EDR.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 2 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 2: Thiết lập quy tắc Firewall (Access Control List) logic</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một doanh nghiệp sở hữu dải mạng nội bộ văn phòng là `192.168.1.0/24` và một máy chủ Web dịch vụ đặt ở vùng DMZ có địa chỉ IP Public là `203.0.113.50`. Hãy thiết lập danh sách các quy tắc (Rules) tường lửa theo đúng thứ tự logic từ trên xuống dưới để thực hiện đầy đủ các yêu cầu sau: (1) Cho phép truy cập dịch vụ Web (HTTP/HTTPS) từ bên ngoài Internet vào máy chủ Web. (2) Chặn hoàn toàn kết nối từ xa Telnet (port 23) từ bên ngoài vào LAN. (3) Cho phép các máy tính thuộc dải mạng nội bộ được phép truy cập ra ngoài Internet dịch vụ web và DNS. (4) Chặn mọi truy cập kiểm tra ping (ICMP) từ bên ngoài quét vào mạng nội bộ.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Thiết lập danh sách quy tắc theo đúng thứ tự ưu tiên logic từ trên xuống dưới (nguyên tắc: quy tắc cụ thể viết trước, quy tắc chung chung viết sau; tường lửa sẽ quét từ trên xuống, gặp quy tắc khớp đầu tiên sẽ áp dụng và dừng quét):</p>
+                                <ol class="list-decimal pl-6 space-y-1 font-mono text-xs">
+                                    <li><strong>Rule 1:</strong> Allow TCP Any 203.0.113.50 Ports: 80, 443 (Cho phép web ngoài vào máy chủ Web)</li>
+                                    <li><strong>Rule 2:</strong> Deny TCP Any 192.168.1.0/24 Port: 23 (Chặn Telnet từ ngoài vào mạng nội bộ)</li>
+                                    <li><strong>Rule 3:</strong> Deny ICMP Any 192.168.1.0/24 (Chặn ping từ ngoài quét vào mạng nội bộ)</li>
+                                    <li><strong>Rule 4:</strong> Allow TCP 192.168.1.0/24 Any Ports: 80, 443 (Cho phép nội bộ ra ngoài lướt web)</li>
+                                    <li><strong>Rule 5:</strong> Allow UDP 192.168.1.0/24 Any Port: 53 (Cho phép nội bộ truy vấn tên miền DNS)</li>
+                                    <li><strong>Rule 6:</strong> Deny Any Any Any (Quy tắc chặn mặc định cuối cùng - Default Deny)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 3 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 3: Hoạch định kiến trúc mạng riêng ảo VPN doanh nghiệp</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một công ty tài chính có trụ sở chính tại TP. Hồ Chí Minh và 2 chi nhánh văn phòng đặt tại Đà Nẵng và Hà Nội. Ngoài ra, họ có khoảng 50 nhân viên kinh doanh thường xuyên phải di chuyển đi công tác tỉnh và làm việc từ xa. Hãy tư vấn đề xuất mô hình VPN phù hợp cho từng đối tượng trên, đồng thời so sánh lựa chọn giao thức VPN tối ưu nhất giữa OpenVPN, IPsec và WireGuard.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>1. Đề xuất kiến trúc mô hình VPN:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Đối với kết nối giữa Trụ sở chính và 2 Chi nhánh (Đà Nẵng & Hà Nội):</strong> Áp dụng mô hình <strong>VPN Site-to-Site</strong> cố định kết nối các thiết bị router tường lửa với nhau, giúp dữ liệu của các phòng ban trao đổi liên tục như đang cắm chung một Switch vật lý.</li>
+                                    <li><strong>Đối với 50 Nhân viên làm việc từ xa:</strong> Áp dụng mô hình <strong>VPN Remote Access</strong>. Mỗi nhân viên cài phần mềm VPN Client trên máy tính, thực hiện xác thực đa yếu tố (MFA) để tạo kênh truyền mã hóa tạm thời về mạng trụ sở chính khi cần truy cập dữ liệu.</li>
+                                </ul>
+                                <p><strong>2. Đề xuất lựa chọn giao thức tối ưu:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Khuyến nghị ưu tiên lựa chọn giao thức <strong>WireGuard</strong> vì đây là giao thức hiện đại nhất, cho hiệu suất băng thông cực cao, độ trễ cực thấp, tiết kiệm dung lượng pin cho thiết bị di động của nhân viên và cấu trúc mã nguồn gọn nhẹ giúp dễ dàng cấu hình quản trị hơn so với IPsec và OpenVPN truyền thống.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 4 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 4: Phối hợp mã hóa đối xứng và bất đối xứng trong giao dịch bảo mật</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Người gửi A muốn gửi một file tài liệu tài chính vô cùng nhạy cảm cho người nhận B qua môi trường Internet. Yêu cầu đặt ra là tài liệu phải được bảo mật tuyệt đối (không ai có thể xem trộm) và người nhận B có thể xác thực chính xác tài liệu do người gửi A tạo ra chứ không bị thay đổi. Hãy mô tả quy trình kết hợp cả hai kỹ thuật mã hóa đối xứng (Symmetric) và mã hóa bất đối xứng (Asymmetric) để giải quyết yêu cầu trên.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Quy trình triển khai phối hợp (Phương thức Lai - Hybrid Encryption) tận dụng tốc độ cực nhanh của mã hóa đối xứng và sự bảo mật phân phối khóa của mã hóa bất đối xứng:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Bước 1 (Mã hóa nội dung):</strong> Người gửi A tạo ra một khóa đối xứng tạm thời (Session Key, ví dụ khóa AES). Dùng khóa AES này để tiến hành mã hóa nhanh toàn bộ file tài liệu tài chính có kích thước lớn.</li>
+                                    <li><strong>Bước 2 (Bảo vệ khóa):</strong> Người gửi A lấy **khóa công khai (Public Key) của người nhận B** để tiến hành mã hóa khóa AES tạm thời ở Bước 1. Do chỉ có người nhận B giữ khóa bí mật (Private Key) tương ứng, nên chỉ duy nhất B mới giải mã được gói tin này để lấy khóa AES.</li>
+                                    <li><strong>Bước 3 (Tạo chữ ký số toàn vẹn):</strong> Người gửi A tạo mã băm SHA-256 từ file tài liệu gốc, lấy **khóa bí mật (Private Key) của mình (Người gửi A)** mã hóa mã băm này để tạo thành **Chữ ký số (Digital Signature)** gán kèm gói tin gửi đi.</li>
+                                    <li><strong>Bước 4 (Giải mã tại đích nhận B):</strong> Người nhận B dùng khóa bí mật (Private Key) của mình để giải mã lấy khóa đối xứng AES. Dùng khóa AES giải mã file tài liệu. Đồng thời lấy khóa công khai (Public Key) của người gửi A giải mã chữ ký số để lấy mã băm gốc, đối chiếu với mã băm tự tính toán từ tài liệu nhận được. Nếu khớp, B hoàn toàn tin tưởng tài liệu an toàn, nguyên vẹn và do chính A gửi.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 5 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 5: Thiết kế quy tắc phân đoạn vi mô (Micro-segmentation) cho Zero Trust</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một doanh nghiệp muốn chuyển đổi từ mô hình mạng truyền thống sang kiến trúc Không tin cậy Zero Trust. Họ có 3 nhóm thiết bị kết nối cắm chung Switch: Máy trạm của nhân viên hành chính, Máy chủ chứa cơ sở dữ liệu khách hàng nhạy cảm, và hệ thống camera an ninh thông minh. Hãy thiết kế giải pháp phân đoạn mạng phù hợp.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Thiết kế giải pháp phân đoạn vi mô (Micro-segmentation) tuân thủ Zero Trust:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Bước 1: Phân tách VLAN vật lý luận lý:</strong>
+                                        <ul class="list-disc pl-6">
+                                            <li>VLAN 10: ADMIN (gán cho máy trạm nhân viên).</li>
+                                            <li>VLAN 20: DATABASE (gán cho máy chủ cơ sở dữ liệu).</li>
+                                            <li>VLAN 30: CAMERA_IOT (gán cho toàn bộ hệ thống IP Camera).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Bước 2: Thiết lập quy tắc Firewall kiểm soát liên phòng ban (Inter-VLAN):</strong>
+                                        <ul class="list-disc pl-6">
+                                            <li>Chặn hoàn toàn mọi kết nối trực tiếp từ VLAN 30 (CAMERA) sang VLAN 10 và VLAN 20. Camera chỉ được phép truyền dữ liệu video hướng lên một máy chủ ghi hình chuyên dụng.</li>
+                                            <li>Cấm tuyệt đối mọi máy trạm thuộc VLAN 10 (ADMIN) truy cập trực tiếp vào máy chủ cơ sở dữ liệu VLAN 20 bằng các cổng hệ thống. Truy cập chỉ được phép thông qua một cổng dịch vụ Web API trung gian đã được cấu hình kiểm soát và yêu cầu xác thực đa yếu tố (MFA).</li>
+                                            <li>Mọi kết nối liên VLAN đều bị giám sát liên tục để phát hiện sớm các lưu lượng tăng đột biến đáng ngờ.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 6 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 6: Triển khai giải pháp khóa bảo mật toàn diện cho IP Camera</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một chuỗi siêu thị vừa lắp đặt 100 camera thông minh để giám sát an ninh các gian hàng. Hãy phân tích các mối đe dọa kỹ thuật và đề xuất quy trình 4 bước bảo mật khẩn cấp để đảm bảo camera không bị xâm nhập trái phép.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Quy trình 4 bước bảo mật toàn diện IP Camera an toàn:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Bước 1 (Đổi thông tin đăng trị):</strong> Thay đổi ngay lập tức mật khẩu đăng nhập mặc định (admin/admin, user/user) của toàn bộ 100 camera sang một chuỗi mật khẩu phức tạp riêng biệt cho từng con (bao gồm chữ hoa, chữ thường, số, ký tự đặc biệt) được quản lý bằng trình quản trị mật khẩu tập trung.</li>
+                                    <li><strong>Bước 2 (Vô hiệu hóa UPnP & Dịch vụ rác):</strong> Đăng nhập vào cấu hình của Wireless Router trung tâm và **tắt (Disable) tính năng UPnP (Universal Plug and Play)** để ngăn việc tự động mở cổng camera trực tiếp ra Internet. Đồng thời đăng nhập vào camera để tắt các dịch vụ rác không dùng đến như Telnet, FTP.</li>
+                                    <li><strong>Bước 3 (Phân dải dải mạng cô lập):</strong> Cấu hình đưa toàn bộ 100 camera vào một mạng LAN ảo VLAN riêng biệt. Ngăn chặn tuyệt đối mọi liên lạc từ dải VLAN Camera sang dải LAN máy tính kế toán, thu ngân của siêu thị.</li>
+                                    <li><strong>Bước 4 (Cập nhật Firmware & HTTPS):</strong> Bật chế độ tự động cập nhật phần sụn (firmware) mới nhất của nhà sản xuất camera để vá sạch các lỗ hổng zero-day. Bật cấu hình mã hóa giao thức HTTPS khi truy cập giám sát hình ảnh để tránh bị nghe lén trên đường truyền.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 7 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 7: Thiết lập chính sách bảo mật mật khẩu doanh nghiệp</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Để phòng chống các hình thức tấn công dò mật khẩu tự động Brute Force và tấn công Từ điển, bạn được giao trọng trách soạn thảo "Chính sách quản lý mật khẩu bắt buộc" cho toàn bộ nhân viên trong cơ quan. Hãy đề xuất ít nhất 5 quy tắc kỹ thuật cứng cần áp dụng trên hệ thống Active Directory Domain Controller.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Đề xuất 5 quy tắc kỹ thuật cứng cấu hình Group Policy trên Domain Controller:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Độ dài tối thiểu:</strong> Mật khẩu bắt buộc phải từ 12 ký tự trở lên đối với người dùng thông thường và tối thiểu 16 ký tự đối với tài khoản quản trị viên hệ thống.</li>
+                                    <li><strong>Độ phức tạp bắt buộc:</strong> Mật khẩu phải chứa đồng thời ít nhất 3 trong 4 nhóm ký tự: Chữ cái viết hoa (A-Z), chữ cái viết thường (a-z), chữ số (0-9) và ký tự đặc biệt (!@#$%^&*...). Không chứa tên tài khoản đăng nhập của người dùng.</li>
+                                    <li><strong>Chính sách khóa tài khoản (Account Lockout Policy):</strong> Tự động khóa tài khoản tạm thời trong 30 phút nếu người dùng nhập sai mật khẩu liên tiếp quá 5 lần trong vòng 10 phút để chặn đứng hoàn toàn cuộc tấn công Brute Force tự động.</li>
+                                    <li><strong>Thời gian hết hạn & Lịch sử:</strong> Mật khẩu bắt buộc phải thay đổi sau tối đa 90 ngày. Hệ thống ghi nhớ lịch sử 24 mật khẩu gần nhất để ngăn chặn nhân viên đổi đi đổi lại một mật khẩu cũ quen thuộc.</li>
+                                    <li><strong>Bắt buộc kích hoạt MFA:</strong> Đối với toàn bộ tài khoản đăng nhập hệ thống từ xa ngoài mạng công ty, bắt buộc phải vượt qua thêm một lớp xác thực OTP trên điện thoại mới được phép kết nối.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 8 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 8: Thiết kế hạ tầng phân đoạn mạng cho Bệnh viện đa khoa</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Một bệnh viện đa khoa lớn muốn xây dựng hạ tầng mạng LAN an toàn. Họ có các nhóm tài sản sau: (1) Máy tính phòng bệnh án lưu trữ lịch sử điều trị nhạy cảm của bệnh nhân, (2) Thiết bị y tế thông minh (nhịp tim, nội soi...), (3) Máy tính văn phòng của nhân viên hành chính, và (4) Mạng Wi-Fi miễn phí phục vụ người nhà bệnh nhân ở sảnh chờ. Hãy thiết kế mô hình phân đoạn cách ly an toàn.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Giải pháp thiết kế hạ tầng phân đoạn mạng an toàn đa vùng:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Phân tách 4 dải VLAN độc lập:</strong>
+                                        <ul class="list-disc pl-6">
+                                            <li>VLAN 10 (PATIENT_DATA): Gán cho máy tính lưu bệnh án của bệnh nhân (Vùng cực kỳ bảo mật).</li>
+                                            <li>VLAN 20 (MEDICAL_DEVICES): Gán cho toàn bộ máy móc y tế thông minh (Vùng nhạy cảm hiệu năng cao).</li>
+                                            <li>VLAN 30 (STAFF_OFFICE): Gán cho máy tính hành chính, kế toán của bệnh viện.</li>
+                                            <li>VLAN 40 (GUEST_WIFI): Gán cho mạng Wi-Fi miễn phí ngoài sảnh chờ của khách.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Quy tắc Firewall kiểm soát nghiêm ngặt:</strong>
+                                        <ul class="list-disc pl-6">
+                                            <li>Cấm tuyệt đối mọi lưu lượng dữ liệu đi từ VLAN 40 (GUEST_WIFI) sang bất kỳ dải VLAN nào khác bên trong hệ thống bệnh viện. Người nhà bệnh nhân chỉ được phép đi thẳng ra ngoài Internet.</li>
+                                            <li>Chặn mọi kết nối từ VLAN 30 (STAFF) sang VLAN 20 (MEDICAL_DEVICES) để tránh máy tính nhân viên hành chính bị lây nhiễm virus làm tê liệt thiết bị mổ, y tế.</li>
+                                            <li>Mọi truy cập từ VLAN 30 sang VLAN 10 (Dữ liệu bệnh án) phải đi qua máy chủ xác thực danh tính tập trung, ghi nhận chi tiết nhật ký truy cập (log audit) để phục vụ kiểm toán sau này.</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 9 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 9: Xử lý sự cố Hệ thống IDS báo động giả liên tục (False Positives)</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Bộ phận an ninh mạng vừa triển khai hệ thống IDS giám sát lưu lượng cho doanh nghiệp. Tuy nhiên, sau 1 ngày vận hành, hệ thống báo về hơn 10.000 cảnh báo nguy hiểm, nhưng khi rà soát thực tế thì 99% đều là lưu lượng quét cổng an toàn của các phần mềm quản trị nội bộ hợp pháp hoặc lưu lượng sao lưu dữ liệu tự động ban đêm. Tình trạng báo động giả (False Positives) này gây nhiễu nghiêm trọng, hãy đề xuất giải pháp khắc phục tối ưu.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Quy trình xử lý giảm thiểu tỷ lệ báo động giả (False Positives) của hệ thống IDS:</p>
+                                <ol class="list-decimal pl-6 space-y-1">
+                                    <li><strong>Bước 1 (Phân loại & Định nghĩa dải tin cậy):</strong> Xác định rõ địa chỉ IP và dải cổng dịch vụ của các phần mềm quản trị mạng nội bộ hợp pháp và máy chủ sao lưu dữ liệu (Backup Server).</li>
+                                    <li><strong>Bước 2 (Cấu hình Whitelist):</strong> Thêm các quy tắc loại trừ (Whitelist) trên hệ thống IDS đối với các IP quản trị hợp pháp. Chỉ định cho hệ thống không kích hoạt cảnh báo quét cổng (port scanning) đối với các nguồn tin cậy đã xác minh này.</li>
+                                    <li><strong>Bước 3 (Tinh chỉnh Ruleset - Tuning):</strong> Điều chỉnh lại ngưỡng nhạy cảm (threshold) của các quy tắc cảnh báo. Ví dụ: nâng giới hạn số lượng yêu cầu kết nối tối thiểu để kích hoạt cảnh báo quét DoS phù hợp với thực tế lưu lượng truyền tải tập tin dung lượng lớn của hệ thống backup ban đêm.</li>
+                                    <li><strong>Bước 4 (Kết hợp Heuristic/AI):</strong> Bật tính năng phân tích hành vi thông minh trên IDS để hệ thống tự động học tập hành vi mạng thông thường sau một khoảng thời gian làm mốc chuẩn (baseline), giảm bớt sự phụ thuộc cứng nhắc vào các mẫu signature tĩnh.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 10 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 10: Quy trình bắt tay 3 bước bảo mật SSL/TLS trong giao thức HTTPS</h4>
+                        <p class="text-sm mb-3"><strong>Tình huống:</strong> Hãy phân tích chi tiết quá trình một máy tính khách (Client) thực hiện kết nối an toàn với máy chủ Web qua giao thức HTTPS. Giải thích rõ vai trò của chứng chỉ số SSL/TLS và cách thức ngăn chặn cuộc tấn công nghe lén dữ liệu.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>1. Tiến trình thiết lập phiên HTTPS (SSL/TLS Handshake):</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Bước 1 (Client Hello):</strong> Máy khách gửi yêu cầu kết nối kèm theo danh sách các thuật toán mã hóa và phiên bản SSL/TLS mà máy khách hỗ trợ.</li>
+                                    <li><strong>Bước 2 (Server Hello & Certificate):</strong> Máy chủ phản hồi thuật toán mã hóa được chọn và gửi kèm **Chứng chỉ số SSL/TLS** (chứa khóa công khai Public Key của máy chủ) đã được ký thực chứng bởi tổ chức uy tín (CA).</li>
+                                    <li><strong>Bước 3 (Xác thực Chứng chỉ & Tạo khóa):</strong> Máy khách kiểm tra tính hợp lệ của chứng chỉ số gửi từ máy chủ. Nếu hợp lệ, máy khách tạo ra một mã khóa đối xứng ngẫu nhiên (Pre-Master Secret), lấy **khóa công khai (Public Key)** của máy chủ mã hóa Pre-Master Secret này gửi ngược lại cho máy chủ.</li>
+                                    <li><strong>Bước 4 (Giải mã & Bắt đầu phiên):</strong> Máy chủ dùng **khóa bí mật (Private Key)** của mình giải mã lấy Pre-Master Secret, hai bên cùng tạo ra khóa phiên đối xứng (Session Key). Từ thời điểm này, toàn bộ dữ liệu Web trao đổi qua lại giữa hai bên đều được mã hóa bằng khóa Session Key này.</li>
+                                </ul>
+                                <p><strong>2. Khả năng chống nghe lén:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Do luồng dữ liệu di chuyển trên Internet đã được mã hóa bằng khóa Session Key (chỉ có máy khách và máy chủ giữ), bất kỳ kẻ tấn công nghe lén nào ở giữa đường truyền cũng chỉ thu được dòng bit nhị phân vô nghĩa và không thể bẻ khóa đọc hiểu nội dung gốc.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-1">&copy; 2026 Học liệu điện tử thông minh. Trường Đại học Văn Hiến.</p>
+            <p>Biên soạn kỹ thuật bởi Giảng viên Khoa Công nghệ thông tin.</p>
+        </div>
+    </footer>
+
+    <!-- Tab switcher & teacher lock script -->
+    <script>
+        function switchTab(tabId) {
+            const theoryTab = document.getElementById('tab-theory');
+            const practiceTab = document.getElementById('tab-practice');
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractice = document.getElementById('btn-practice');
+
+            if (tabId === 'theory') {
+                theoryTab.classList.remove('hidden');
+                practiceTab.classList.add('hidden');
+                btnTheory.className = "border-b-2 border-red-600 text-red-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            } else {
+                theoryTab.classList.add('hidden');
+                practiceTab.classList.remove('hidden');
+                btnTheory.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-red-600 text-red-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('teacher-password').value;
+            if (passInput === 'VHU@INT4401') {
+                // Reveal hidden solutions
+                const hiddenElements = document.querySelectorAll('.teacher-only');
+                hiddenElements.forEach(el => {
+                    el.classList.remove('hidden');
+                });
+                
+                // Highlight correct MCQ answers
+                const correctMcqs = document.querySelectorAll('.mcq-correct');
+                correctMcqs.forEach(el => {
+                    el.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'font-semibold');
+                    el.classList.remove('border-slate-200');
+                    el.innerHTML += ' <span class="ml-2 text-xs bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Đúng</span>';
+                });
+
+                alert('🔑 KHÓA GIẢNG VIÊN ĐÃ ĐƯỢC GIẢI MÃ THÀNH CÔNG! Đã mở rộng lời giải tự luận chi tiết và tô xanh đáp án trắc nghiệm đúng.');
+            } else {
+                alert('❌ Sai mật khẩu bảo mật học phần! Vui lòng kiểm tra lại đề cương chi tiết môn học.');
+            }
+        }
+    </script>
+</body>
+</html>
