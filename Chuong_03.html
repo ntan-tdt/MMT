@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu Điện tử: Chương 3 - Giao thức Mạng và Địa chỉ IP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <!-- Icon -->
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 009 11.5V9M12 11c1.744 2.772 2.753 6.054 2.753 9.571m1.11-2.04l-.054-.09A13.916 13.916 0 0015 11.5V9M1.751 6C2.17 12.015 5.258 17.5 10 20.062M22.25 6c-.419 6.015-3.508 11.5-8.25 14.062M12 3a3 3 0 00-3 3v2a3 3 0 006 0V6a3 3 0 00-3-3z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-blue-300 uppercase">Trường Đại học Văn Hiến - Khoa CNTT</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">CHƯƠNG 3: GIAO THỨC MẠNG VÀ ĐỊA CHỈ IP</h1>
+                        <p class="text-sm text-slate-300 mt-1">Học phần: Mạng máy tính (INT4401 - 3 Tín chỉ)</p>
+                    </div>
+                </div>
+                <!-- Floating Teacher lock inside header -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-xs font-semibold text-blue-300 mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        MỞ KHÓA GÓC GIẢNG VIÊN (PASSWORD: VHU@INT4401)
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." class="px-3 py-1.5 text-slate-800 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-44">
+                        <button onclick="checkPassword()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded font-bold text-sm transition">Giải Mã</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="switchTab('theory')" id="btn-theory" class="border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>I. PHẦN LÝ THUYẾT CHI TIẾT</span>
+                </button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>II. CÂU HỎI & BÀI TẬP THỰC HÀNH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Tab 1: THEORY -->
+        <div id="tab-theory" class="space-y-12">
+            
+            <!-- Intro Card -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-4">Tóm tắt nội dung học tập Chương 3</h2>
+                <p class="text-slate-600 leading-relaxed text-justify mb-4">
+                    Giao thức mạng (Network Protocol) là bộ quy tắc và tiêu chuẩn cốt lõi điều phối dòng dữ liệu chạy trong hạ tầng liên kết toàn cầu. Để các thiết bị đầu cuối giao tiếp thông suốt, chúng đòi hỏi hai thành phần định danh thiết yếu: <strong>Địa chỉ vật lý (MAC)</strong> tại tầng liên kết dữ liệu và <strong>Địa chỉ logic (IP)</strong> tại tầng mạng. Nội dung chương này cung cấp kiến thức toàn diện từ lý thuyết nền tảng về giao thức mạng đến cấu trúc gói tin, đặc tính địa chỉ IPv4, cấu hình dải private/public và kiến trúc tiến bộ vượt bậc của IPv6 nhằm thay thế IPv4 đang cạn kiệt.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-blue-600 text-xl font-bold">01</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Tổng quan Giao thức</h4>
+                            <p class="text-xs text-slate-500 mt-1">Cú pháp, Ngữ nghĩa, Thời gian của bộ quy ước truyền thông dữ liệu.</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-indigo-600 text-xl font-bold">02</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Địa chỉ IPv4</h4>
+                            <p class="text-xs text-slate-500 mt-1">Cấu trúc 32-bit, các lớp địa chỉ A, B, C, địa chỉ Private và cơ chế Subnet Mask.</p>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-100 rounded-xl p-4 flex items-start space-x-3">
+                        <span class="text-purple-600 text-xl font-bold">03</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-900">Kiến trúc IPv6</h4>
+                            <p class="text-xs text-slate-500 mt-1">Không gian 128-bit, quy tắc viết gọn địa chỉ và phân cấp Prefix/Interface ID.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.1. Tổng quan giao thức -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.1. Tổng Quan về Giao Thức Mạng</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Giao thức mạng (Network Protocol)</strong> là một bộ quy tắc và tiêu chuẩn chung, được định nghĩa từ trước, giúp các thiết bị khác nhau trong hệ thống mạng (máy tính, máy chủ, switch, router) có thể trao đổi dữ liệu với nhau một cách thống nhất và chính xác [31, 206]. Giao thức đóng vai trò giống như ngôn ngữ giao tiếp chuẩn hóa toàn cầu [207].
+                    </p>
+                    <p><strong>Ba thành phần cốt lõi cấu thành giao thức:</strong></p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Cú pháp (Syntax):</strong> Quy định cấu trúc hoặc định dạng dữ liệu truyền tải (như vị trí các trường dữ liệu, tiêu đề header, tải dữ liệu payload) [208, 213].</li>
+                        <li><strong>Ngữ nghĩa (Semantics):</strong> Giải thích ý nghĩa của từng phần trong dòng dữ liệu nhị phân (ví dụ: mã trạng thái, hành động cần thực hiện) [208].</li>
+                        <li><strong>Thời gian (Timing):</strong> Quy định tốc độ truyền dữ liệu và cơ chế đồng bộ hóa tránh nghẽn luồng truyền tải giữa bên gửi và bên nhận [208, 213].</li>
+                    </ul>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                        <span class="font-semibold text-slate-900">Phân loại giao thức:</span>
+                        <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+                            <li><strong>Theo tính chất hoạt động:</strong> Hướng kết nối (Connection-Oriented - như TCP) đòi hỏi bắt tay trước khi gửi dữ liệu và không hướng kết nối (Connectionless - như IP, UDP) gửi dữ liệu độc lập không báo trước [212].</li>
+                            <li><strong>Theo chức năng:</strong> Định tuyến (RIP, OSPF, BGP), Truyền tải (TCP, UDP), Ứng dụng (HTTP, FTP, SMTP, DNS) [209, 210].</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.2. Bộ giao thức TCP/IP & Giao thức IP -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.2. Bộ Giao Thức TCP/IP & Giao Thức IP (Internet Protocol)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Bộ giao thức <strong>TCP/IP</strong> là nền tảng của mạng Internet toàn cầu [183, 215]. Trong đó, <strong>IP (Internet Protocol)</strong> hoạt động tại tầng mạng chịu trách nhiệm gán địa chỉ logic và định tuyến các gói tin qua các mạng con khác nhau [216, 221].
+                    </p>
+                    <p>
+                        Giao thức IP hoạt động theo cơ chế <strong>không hướng kết nối (Connectionless)</strong> và <strong>nỗ lực tối đa (Best Effort)</strong> [221, 226, 227]. Nó cố gắng hết sức để chuyển giao dữ liệu nhưng không đảm bảo độ tin cậy tuyệt đối, không kiểm soát thứ tự hay chống trùng lặp dữ liệu (các chức năng tin cậy này sẽ được ủy quyền cho tầng giao vận bên trên xử lý, tiêu biểu là TCP) [216, 227].
+                    </p>
+
+                    <!-- Header IPv4 Diagram -->
+                    <div class="mt-6">
+                        <span class="block text-sm font-semibold text-slate-900 mb-3 text-center">Hình 3.1. Sơ đồ cấu trúc gói tin IPv4 Header (Kích thước tối thiểu 20 Bytes)</span>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-center border-collapse border border-slate-300 text-xs sm:text-sm min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-indigo-900 text-white font-semibold">
+                                        <th class="border border-slate-300 p-2" colspan="4">Bit 0 - 3</th>
+                                        <th class="border border-slate-300 p-2" colspan="4">Bit 4 - 7</th>
+                                        <th class="border border-slate-300 p-2" colspan="8">Bit 8 - 15</th>
+                                        <th class="border border-slate-300 p-2" colspan="16">Bit 16 - 31</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="4">Version (4 bits)</td>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="4">IHL (4 bits)</td>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="8">Type of Service (8 bits)</td>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="16">Total Length (16 bits)</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="border border-slate-300 p-3 font-medium" colspan="16">Identification (16 bits)</td>
+                                        <td class="border border-slate-300 p-3 font-medium" colspan="3">Flags (3 bits)</td>
+                                        <td class="border border-slate-300 p-3 font-medium" colspan="13">Fragment Offset (13 bits)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="8">Time to Live (TTL - 8 bits)</td>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="8">Protocol (8 bits)</td>
+                                        <td class="border border-slate-300 p-3 bg-indigo-50 font-medium" colspan="16">Header Checksum (16 bits)</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="border border-slate-300 p-3 font-semibold text-indigo-900" colspan="32">Source IP Address (32 bits)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-3 bg-indigo-100 font-semibold text-indigo-950" colspan="32">Destination IP Address (32 bits)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h5 class="font-semibold text-slate-900 mb-1">Ý nghĩa TTL (Time To Live):</h5>
+                            <p class="text-xs text-slate-500">Giới hạn thời gian sống của gói tin bằng số bước nhảy (hop). Qua mỗi Router, giá trị TTL giảm đi 1 đơn vị. Khi TTL về 0, Router sẽ hủy gói tin và gửi lỗi ICMP báo về máy nguồn, ngăn chặn tình trạng gói tin bị lặp vòng vô hạn trên mạng.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h5 class="font-semibold text-slate-900 mb-1">Trường Protocol (8 bits):</h5>
+                            <p class="text-xs text-slate-500">Xác định giao thức của tầng giao vận kế tiếp sẽ nhận dữ liệu (ví dụ: giá trị 6 báo hiệu TCP, giá trị 17 báo hiệu UDP, giá trị 1 báo hiệu ICMP).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.3. Địa chỉ MAC -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.3. Địa Chỉ Vật Lý (MAC Address)</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Địa chỉ MAC (Media Access Control)</strong> là địa chỉ vật lý duy nhất toàn cầu được nhà sản xuất gán cứng vào chip nhớ của Card mạng (NIC) [224]. Nó hoạt động tại tầng thứ 2 (Liên kết dữ liệu) và đóng vai trò nhận diện thiết bị đích trong phân đoạn mạng cục bộ LAN [181, 225].
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 items-center bg-slate-50 p-5 rounded-xl border border-slate-100">
+                        <div class="text-center bg-indigo-900 text-white p-4 rounded-lg shadow-sm font-mono text-lg font-bold tracking-wider">
+                            00:1A:2B:3C:4D:5E
+                        </div>
+                        <div class="text-sm space-y-1">
+                            <p><strong>Cấu trúc:</strong> Gồm 48 bits (6 Bytes) diễn giải dưới dạng 12 ký tự thập lục phân [224, 225].</p>
+                            <p><strong>Phân chia:</strong> 3 Bytes đầu đại diện cho mã nhà sản xuất (OUI), 3 Bytes sau đại diện cho số seri duy nhất của thiết bị.</p>
+                            <p><strong>Quan hệ IP-MAC:</strong> Giao thức ARP (Address Resolution Protocol) giúp phân giải địa chỉ logic IP sang địa chỉ vật lý MAC [224].</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.4. Địa chỉ IPv4 -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.4. Địa Chỉ logic IPv4 & Mặt nạ mạng (Subnet Mask)</h2>
+                <div class="space-y-6 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        <strong>Địa chỉ IPv4</strong> gồm 32 bits (4 bytes), ngăn cách thành 4 octet bằng dấu chấm [230]. Mỗi địa chỉ chứa 2 thành phần logic: <strong>Địa chỉ mạng (NetID)</strong> xác định mạng chứa thiết bị và <strong>Địa chỉ thiết bị (HostID)</strong> xác định chính xác card mạng đầu cuối trong mạng con đó [228].
+                    </p>
+
+                    <!-- Phân lớp địa chỉ IP -->
+                    <div>
+                        <h4 class="font-bold text-slate-900 mb-2">A. Quy tắc Phân lớp địa chỉ IPv4 tiêu chuẩn:</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse border border-slate-200">
+                                <thead class="bg-slate-100 text-slate-700">
+                                    <tr>
+                                        <th class="border border-slate-200 p-3">Lớp mạng</th>
+                                        <th class="border border-slate-200 p-3">Giá trị Octet 1</th>
+                                        <th class="border border-slate-200 p-3">Cấu trúc NetID/HostID</th>
+                                        <th class="border border-slate-200 p-3">Subnet Mask mặc định</th>
+                                        <th class="border border-slate-200 p-3">Số lượng Host khả dụng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-200 p-3 font-semibold text-blue-600">Lớp A</td>
+                                        <td class="border border-slate-200 p-3">1 - 126</td>
+                                        <td class="border border-slate-200 p-3">1 Byte NetID / 3 Bytes HostID</td>
+                                        <td class="border border-slate-200 p-3 font-mono">255.0.0.0 (/8)</td>
+                                        <td class="border border-slate-200 p-3">16.777.214 (2^24 - 2)</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="border border-slate-200 p-3 font-semibold text-indigo-600">Lớp B</td>
+                                        <td class="border border-slate-200 p-3">128 - 191</td>
+                                        <td class="border border-slate-200 p-3">2 Bytes NetID / 2 Bytes HostID</td>
+                                        <td class="border border-slate-200 p-3 font-mono">255.255.0.0 (/16)</td>
+                                        <td class="border border-slate-200 p-3">65.534 (2^16 - 2)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-200 p-3 font-semibold text-purple-600">Lớp C</td>
+                                        <td class="border border-slate-200 p-3">192 - 223</td>
+                                        <td class="border border-slate-200 p-3">3 Bytes NetID / 1 Byte HostID</td>
+                                        <td class="border border-slate-200 p-3 font-mono">255.255.255.0 (/24)</td>
+                                        <td class="border border-slate-200 p-3">254 (2^8 - 2)</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 text-slate-500">
+                                        <td class="border border-slate-200 p-3 font-semibold">Lớp D</td>
+                                        <td class="border border-slate-200 p-3">224 - 239</td>
+                                        <td class="border border-slate-200 p-3">Dành riêng truyền thông đa hướng (Multicast)</td>
+                                        <td class="border border-slate-200 p-3 font-mono">Không có Subnet Mask</td>
+                                        <td class="border border-slate-200 p-3">N/A</td>
+                                    </tr>
+                                    <tr class="text-slate-500">
+                                        <td class="border border-slate-200 p-3 font-semibold">Lớp E</td>
+                                        <td class="border border-slate-200 p-3">240 - 255</td>
+                                        <td class="border border-slate-200 p-3">Dự trữ cho thí nghiệm, nghiên cứu phát triển</td>
+                                        <td class="border border-slate-200 p-3 font-mono">N/A</td>
+                                        <td class="border border-slate-200 p-3">N/A</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2"><strong>* Lưu ý đặc biệt:</strong> Dải địa chỉ bắt đầu bằng số 127 (ví dụ: 127.0.0.1) được dành riêng làm địa chỉ Loopback (tự kiểm thử phần mềm kết nối trên chính card mạng) nên không được phép gán cho các máy trạm trong mạng [231, 232].</p>
+                    </div>
+
+                    <!-- Private vs Public IP -->
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-3">
+                        <h4 class="font-bold text-slate-900">B. Địa chỉ IP Private (Sử dụng Nội bộ) vs IP Public (Quảng bá Toàn cầu)</h4>
+                        <p class="text-sm">Để giảm thiểu tốc độ cạn kiệt IP, tổ chức IANA quy định dải địa chỉ Private chạy miễn phí trong mạng LAN và không được định tuyến ra ngoài Internet [229, 237]:</p>
+                        <ul class="list-disc pl-6 text-sm text-slate-600 space-y-1">
+                            <li><strong>Lớp A Private:</strong> <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">10.0.0.0</code> đến <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">10.255.255.255</code> [238].</li>
+                            <li><strong>Lớp B Private:</strong> <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">172.16.0.0</code> đến <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">172.31.255.255</code> [238].</li>
+                            <li><strong>Lớp C Private:</strong> <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">192.168.0.0</code> đến <code class="font-mono text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">192.168.255.255</code> [238].</li>
+                        </ul>
+                    </div>
+
+                    <!-- Subnet Mask -->
+                    <div>
+                        <h4 class="font-bold text-slate-900 mb-2">C. Cơ chế hoạt động của Mặt nạ mạng (Subnet Mask):</h4>
+                        <p class="text-sm mb-3">
+                            Subnet Mask là một chuỗi 32-bit (đi song hành cùng IP) có các bit 1 liên tục nằm bên trái (NetID) và các bit 0 liên tục nằm bên phải (HostID) [240]. Khi thực hiện phép toán logic AND nhị phân giữa IP và Subnet Mask, ta sẽ bóc tách được **Địa chỉ mạng (Network ID)** chứa IP đó [241, 242]:
+                        </p>
+                        <div class="bg-slate-900 text-slate-300 font-mono p-4 rounded-xl text-xs sm:text-sm space-y-1 overflow-x-auto">
+                            <p class="text-blue-400"># Phép logic AND nhị phân:</p>
+                            <p>IP Address:  192.168.5.155  --> 11000000.10101000.00000101.10011011</p>
+                            <p>Subnet Mask: 255.255.255.240 --> 11111111.11111111.11111111.11110000</p>
+                            <p class="border-t border-slate-700 pt-1 text-emerald-400">Network ID:  192.168.5.144  --> 11000000.10101000.00000101.10010000 (Ký hiệu: 192.168.5.144/28)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.5. Địa chỉ IPv6 -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.5. Thế Hệ Địa Chỉ Mới IPv6</h2>
+                <div class="space-y-6 text-slate-600 leading-relaxed text-justify">
+                    <p>
+                        Với kích thước lên đến <strong>128 bits (16 bytes)</strong>, địa chỉ IPv6 cung cấp kho IP khổng lồ (khoảng \(3.4 	imes 10^{38}\) địa chỉ) giúp giải quyết triệt để tình trạng cạn kiệt IP trên thế giới [243, 252]. Địa chỉ IPv6 được biểu diễn bằng hệ cơ số thập lục phân chia làm 8 nhóm độc lập (gọi là một **hextet**), ngăn cách nhau bằng dấu hai chấm `:` [243].
+                    </p>
+
+                    <!-- Quy tắc viết gọn -->
+                    <div class="space-y-3 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900">Ba nguyên tắc rút gọn địa chỉ IPv6 tiêu chuẩn [247, 248]:</h4>
+                        <ol class="list-decimal pl-6 text-sm space-y-3">
+                            <li>
+                                <strong>Bỏ các chữ số 0 đứng đầu:</strong> Trong mỗi nhóm hextet, các chữ số 0 nằm bên trái ngoài cùng được phép lược bỏ [247].
+                                <p class="text-xs font-mono text-indigo-700 mt-1">Ví dụ: 2001:0db8:0100:000a:... --> 2001:db8:100:a:...</p>
+                            </li>
+                            <li>
+                                <strong>Thay nhóm chỉ chứa số 0 thành chữ số 0 duy nhất:</strong> Nếu hextet chỉ có 4 số 0 (`0000`), ta rút gọn thành một số `0` [247].
+                            </li>
+                            <li>
+                                <strong>Sử dụng dấu "::" thay thế chuỗi số 0 liên tiếp:</strong> Chuỗi một hoặc nhiều hextet số 0 liên tiếp được thay bằng dấu `::` (áp dụng tối đa **1 lần duy nhất** trong toàn bộ địa chỉ IP để tránh lỗi mơ hồ phân giải cấu trúc) [248].
+                                <p class="text-xs font-mono text-indigo-700 mt-1">Ví dụ: 2001:db8:0:0:0:0:0:1 --> 2001:db8::1</p>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Thành phần IPv6 -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-900">Phân bố cấu trúc địa chỉ IPv6:</h4>
+                        <p class="text-sm">Địa chỉ IPv6 gồm hai thành phần cơ bản phân chia rõ rệt [249, 250]:</p>
+                        <ul class="list-disc pl-6 text-sm space-y-1">
+                            <li><strong>Prefix:</strong> Phần định danh mạng logic (tương tự như NetID của IPv4), độ dài Prefix thường được ký hiệu phía sau (ví dụ: `/64`) [249, 250].</li>
+                            <li><strong>Interface ID:</strong> Phần định danh duy nhất cho card mạng vật lý của thiết bị đầu cuối (tương tự như HostID của IPv4) [250].</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.6. So sánh IPv4 và IPv6 -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-indigo-600 pl-4 mb-4">3.6. Bảng So Sánh Kỹ Thuật Toàn Diện IPv4 vs IPv6</h2>
+                <div class="overflow-x-auto text-slate-600">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[600px]">
+                        <thead class="bg-indigo-900 text-white font-semibold">
+                            <tr>
+                                <th class="border border-slate-300 p-3">Đặc tính kỹ thuật</th>
+                                <th class="border border-slate-300 p-3">Địa chỉ IPv4</th>
+                                <th class="border border-slate-300 p-3">Địa chỉ IPv6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900 bg-slate-50">Độ dài địa chỉ</td>
+                                <td class="border border-slate-200 p-3">32 bits (4 Bytes) [230, 252]</td>
+                                <td class="border border-slate-200 p-3">128 bits (16 Bytes) [243, 252]</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900" bg-slate-50>Tổng số lượng địa chỉ</td>
+                                <td class="border border-slate-200 p-3">Khoảng 4.3 tỷ IP (2^32) [252]</td>
+                                <td class="border border-slate-200 p-3">Khoảng 3.4 x 10^38 IP (2^128) [252]</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900 bg-slate-50">Định dạng hiển thị</td>
+                                <td class="border border-slate-200 p-3 font-mono text-xs">Thập phân phân tách bằng dấu chấm (ví dụ: 192.168.1.1) [230, 252]</td>
+                                <td class="border border-slate-200 p-3 font-mono text-xs">Thập lục phân phân tách bằng dấu hai chấm (ví dụ: 2001:db8::1) [243, 252]</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900">Phân lớp (Class)</td>
+                                <td class="border border-slate-200 p-3">Phân chia thành các lớp A, B, C, D, E rõ rệt [231, 252]</td>
+                                <td class="border border-slate-200 p-3">Không phân lớp, phân bổ theo Prefix quy chuẩn [252]</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900 bg-slate-50">Bảo mật tích hợp</td>
+                                <td class="border border-slate-200 p-3">Kém hơn, phải cài bổ sung gói ngoài [253]</td>
+                                <td class="border border-slate-200 p-3 font-semibold text-emerald-700">Tốt hơn nhờ hỗ trợ bắt buộc cơ chế IPSec bảo mật [253]</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900">Cơ chế cấu hình</td>
+                                <td class="border border-slate-200 p-3">Thủ công hoặc gán động qua DHCP Server [253]</td>
+                                <td class="border border-slate-200 p-3 font-semibold text-emerald-700">Tự cấu hình không trạng thái (SLAAC) hoặc DHCPv6 [253]</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-3 font-semibold text-slate-900 bg-slate-50">Truyền thông quảng bá</td>
+                                <td class="border border-slate-200 p-3">Sử dụng cơ chế Broadcast gửi cho cả mạng LAN [236, 237]</td>
+                                <td class="border border-slate-200 p-3 font-semibold text-emerald-700">Hủy bỏ hoàn toàn Broadcast, thay bằng cơ chế Multicast, Anycast hiệu quả hơn [246]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Tab 2: PRACTICE -->
+        <div id="tab-practice" class="space-y-12 hidden">
+            
+            <!-- MCQ section -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-2">A. 30 Câu Hỏi Trắc Nghiệm Ôn Tập Trọng Tâm</h2>
+                <p class="text-sm text-slate-500 mb-6">Mẹo tự luyện: Hãy suy nghĩ tự giải đáp án trước, sau đó giảng viên sẽ mở khóa chế độ hiển thị đáp án đúng (tô xanh lá) để đối chiếu kết quả.</p>
+                
+                <div class="space-y-8">
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 1</span>
+                        <p class="font-semibold text-slate-900">Kích thước chuẩn của địa chỉ vật lý MAC là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 32 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 48 bits (6 Bytes)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 128 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 64 bits</div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 2</span>
+                        <p class="font-semibold text-slate-900">Khái niệm chuẩn về "Giao thức mạng" là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Tập hợp các quy tắc và quy ước thống nhất cách truyền nhận dữ liệu</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Phần mềm điều phối trình duyệt web kết nối máy chủ</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Một card mạng gắn vào máy tính để kết nối vật lý</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Hệ thống cáp truyền tải dữ liệu nhị phân</div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 3</span>
+                        <p class="font-semibold text-slate-900">Giao thức nào hoạt động ở chế độ không hướng kết nối (Connectionless)?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. TCP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. HTTP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. IP và UDP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. SSH</div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 4</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IPv4 đặc biệt nào được sử dụng làm địa chỉ Loopback tự kiểm thử card mạng?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. 127.0.0.1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 255.255.255.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 192.168.1.1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 0.0.0.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 5</span>
+                        <p class="font-semibold text-slate-900">Dải địa chỉ IP Private nào dưới đây thuộc phân lớp Lớp C?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 10.0.0.0 đến 10.255.255.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 172.16.0.0 đến 172.31.255.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 192.168.0.0 đến 192.168.255.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 169.254.0.0 đến 169.254.255.255</div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 6</span>
+                        <p class="font-semibold text-slate-900">Thế hệ địa chỉ IPv6 có chiều dài bao nhiêu bits?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 32 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 64 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 128 bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 256 bits</div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 7</span>
+                        <p class="font-semibold text-slate-900">Thiết bị mạng Router hoạt động tại tầng (lớp) nào của mô hình OSI?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Tầng Vật lý</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Tầng Liên kết dữ liệu</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Tầng Mạng (Tầng 3)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Tầng Giao vận</div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 8</span>
+                        <p class="font-semibold text-slate-900">Dịch vụ phân giải tên miền thành địa chỉ IP có tên viết tắt là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. DNS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. DHCP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. NAT</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. FTP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 9</span>
+                        <p class="font-semibold text-slate-900">Tiến trình D.O.R.A (Discover, Offer, Request, Acknowledge) thuộc dịch vụ nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Web Server (HTTP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Cấp phát IP động (DHCP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Email (SMTP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Phân giải tên miền (DNS)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 10</span>
+                        <p class="font-semibold text-slate-900">Cổng dịch vụ (Port) mặc định của giao thức HTTP là bao nhiêu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 21</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 80</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 443</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 53</div>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 11</span>
+                        <p class="font-semibold text-slate-900">Giao thức nào tại tầng Transport hoạt động hướng kết nối và đảm bảo truyền dữ liệu tin cậy?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. TCP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. UDP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. ICMP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ARP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 12</span>
+                        <p class="font-semibold text-slate-900">Đơn vị dữ liệu (PDU) đặc trưng hoạt động tại tầng Mạng (Network Layer) là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Khung (Frames)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Gói tin (Packets)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Phân đoạn (Segments)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bits</div>
+                        </div>
+                    </div>
+
+                    <!-- Q13 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 13</span>
+                        <p class="font-semibold text-slate-900">Trường TTL (Time To Live) trong Header gói tin IPv4 có mục đích chính là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Xác định tốc độ truyền dữ liệu tối đa</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Ngăn chặn hiện tượng gói tin chạy vòng lặp vô hạn trên mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Mã hóa dữ liệu bảo mật gói tin</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Đóng gói dữ liệu SDU thành PDU</div>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 14</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IPv4 nào dưới đây được phân loại thuộc dải địa chỉ Lớp B?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 10.20.30.40</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 172.16.10.20</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 192.168.1.100</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 224.0.0.1</div>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 15</span>
+                        <p class="font-semibold text-slate-900">Hãy viết rút gọn địa chỉ IPv6 sau: 2001:0db8:0000:0000:0001:0000:0000:0200?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 2001:db8::1::200</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 2001:db8::1:0:0:200</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 2001:db8:0:0:1::200</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 2001:0db8::1::0200</div>
+                        </div>
+                    </div>
+
+                    <!-- Q16 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 16</span>
+                        <p class="font-semibold text-slate-900">Thành phần nào của địa chỉ IPv6 tương đương với khái niệm NetID của địa chỉ IPv4?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Interface ID</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Prefix</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. MAC Address</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Subnet Mask</div>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 17</span>
+                        <p class="font-semibold text-slate-900">Giao thức nào chịu trách nhiệm ánh xạ địa chỉ IP logic sang địa chỉ vật lý MAC?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">A. ICMP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs mcq-correct">B. ARP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">C. DNS</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition font-mono text-xs">D. DHCP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 18</span>
+                        <p class="font-semibold text-slate-900">Đơn vị dữ liệu (PDU) của tầng Giao vận (Transport Layer) là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Bits</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. Segments (TCP) / Datagrams (UDP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Packets</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Frames</div>
+                        </div>
+                    </div>
+
+                    <!-- Q19 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 19</span>
+                        <p class="font-semibold text-slate-900">Giao thức mạng bao gồm ba thành phần cơ bản nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Cú pháp (Syntax), Ngữ nghĩa (Semantics), Thời gian (Timing)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Phần cứng, phần mềm, người dùng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Cáp quang, card mạng, tín hiệu ánh sáng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Web, Email, DNS</div>
+                        </div>
+                    </div>
+
+                    <!-- Q20 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 20</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ quảng bá trực tiếp (Direct Broadcast) của mạng 192.168.10.0/24 là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.10.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. 192.168.10.1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. 192.168.10.255</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.255.255.255</div>
+                        </div>
+                    </div>
+
+                    <!-- Q21 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 21</span>
+                        <p class="font-semibold text-slate-900">Giao thức nào dưới đây dùng để chuyển gửi thư điện tử (Email) tiêu chuẩn?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. POP3</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. IMAP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. SMTP</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. HTTP</div>
+                        </div>
+                    </div>
+
+                    <!-- Q22 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 22</span>
+                        <p class="font-semibold text-slate-900">Dải địa chỉ IPv4 lớp nào dùng chuyên biệt cho truyền thông Multicast?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Lớp A</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Lớp C</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Lớp D</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Lớp E</div>
+                        </div>
+                    </div>
+
+                    <!-- Q23 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 23</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ IPv6 Link-Local dùng nội bộ phân đoạn mạng luôn bắt đầu bằng chuỗi ký tự nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 2001::</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. fe80::</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. ::1</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ff00::</div>
+                        </div>
+                    </div>
+
+                    <!-- Q24 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 24</span>
+                        <p class="font-semibold text-slate-900">Giao thức kết nối từ xa bảo mật SSH mặc định chạy trên cổng dịch vụ (Port) nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 23 (Telnet)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 22</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 21 (FTP)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 25</div>
+                        </div>
+                    </div>
+
+                    <!-- Q25 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 25</span>
+                        <p class="font-semibold text-slate-900">Dải địa chỉ Private Lớp A được phép sử dụng miễn phí trong mạng LAN là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 192.168.0.0/16</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 10.0.0.0/8</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 172.16.0.0/12</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 127.0.0.0/8</div>
+                        </div>
+                    </div>
+
+                    <!-- Q26 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 26</span>
+                        <p class="font-semibold text-slate-900">Giao thức ICMP hoạt động tại tầng mạng có nhiệm vụ chính là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">A. Gửi thông tin báo lỗi và chẩn đoán hoạt động mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Phân dải IP sang MAC</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. Đồng bộ hóa đồng hồ thiết bị</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Truyền tập tin nhị phân dung lượng lớn</div>
+                        </div>
+                    </div>
+
+                    <!-- Q27 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 27</span>
+                        <p class="font-semibold text-slate-900">Địa chỉ MAC (48 bits) được biểu diễn trên thiết bị dưới hệ số nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Nhị phân (Binary)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Thập phân (Decimal)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Thập lục phân (Hexadecimal)</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Bát phân (Octal)</div>
+                        </div>
+                    </div>
+
+                    <!-- Q28 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 28</span>
+                        <p class="font-semibold text-slate-900">Subnet Mask mặc định của các IP thuộc phân lớp Lớp B là gì?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. 255.0.0.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. 255.255.0.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. 255.255.255.0</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. 255.255.255.255</div>
+                        </div>
+                    </div>
+
+                    <!-- Q29 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 29</span>
+                        <p class="font-semibold text-slate-900">Tổ chức quốc tế nào chịu trách nhiệm quản trị và cấp phát dải IP toàn cầu?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. IEEE</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">B. IANA</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">C. W3C</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. ISO</div>
+                        </div>
+                    </div>
+
+                    <!-- Q30 -->
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition space-y-3">
+                        <span class="inline-block px-2.5 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Câu 30</span>
+                        <p class="font-semibold text-slate-900">Trong địa chỉ IPv6, cơ chế truyền Anycast đại diện cho hành động nào?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">A. Gửi gói tin đồng thời tới tất cả các node trong liên mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">B. Gửi dữ liệu cho một node duy nhất trên mạng</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition mcq-correct">C. Gửi gói tin đến thiết bị gần nhất (hoặc tốt nhất) trong nhóm nhận</div>
+                            <div class="p-3 rounded border border-slate-200 cursor-pointer hover:bg-slate-50 transition">D. Loopback thử nghiệm cục bộ trên router</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Practical Problems -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 border-l-4 border-blue-600 pl-4 mb-2">B. 10 Bài Tập Tự Luận Thực Tế & Lời Giải Chi Tiết</h2>
+                <p class="text-sm text-slate-500 mb-6">Mở khóa Góc Giảng Viên để xem toàn bộ lời giải chi tiết (bôi vàng/xanh kèm phân tích toán học).</p>
+
+                <div class="space-y-6">
+                    
+                    <!-- Prob 1 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 1: Xác định phân lớp địa chỉ IPv4</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Cho các địa chỉ IPv4 sau, hãy xác định lớp mạng của chúng và cho biết Subnet Mask mặc định của lớp đó:</p>
+                        <ul class="list-decimal pl-6 text-sm mb-3 font-mono">
+                            <li>10.0.0.1</li>
+                            <li>172.16.5.254</li>
+                            <li>192.168.10.1</li>
+                            <li>224.1.1.1</li>
+                            <li>127.0.0.1</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Áp dụng quy tắc phân lớp dựa vào octet đầu tiên của địa chỉ IP [231]:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>10.0.0.1:</strong> Octet 1 = 10 (nằm trong dải 1 - 126) --> <strong>Lớp A</strong>. Subnet Mask mặc định: <code class="font-mono bg-slate-100 px-1 py-0.5">255.0.0.0</code> [231, 233].</li>
+                                    <li><strong>172.16.5.254:</strong> Octet 1 = 172 (nằm trong dải 128 - 191) --> <strong>Lớp B</strong>. Subnet Mask mặc định: <code class="font-mono bg-slate-100 px-1 py-0.5">255.255.0.0</code> [231, 234].</li>
+                                    <li><strong>192.168.10.1:</strong> Octet 1 = 192 (nằm trong dải 192 - 223) --> <strong>Lớp C</strong>. Subnet Mask mặc định: <code class="font-mono bg-slate-100 px-1 py-0.5">255.255.255.0</code> [231, 235].</li>
+                                    <li><strong>224.1.1.1:</strong> Octet 1 = 224 (nằm trong dải 224 - 239) --> <strong>Lớp D</strong>. Dùng cho truyền thông Multicast, không có Subnet Mask mặc định [231, 232].</li>
+                                    <li><strong>127.0.0.1:</strong> Địa chỉ đặc biệt Loopback (Lớp A) dùng để kiểm tra card mạng nội bộ [231, 232].</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 2 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 2: Tính toán địa chỉ mạng, địa chỉ broadcast và dải IP Host khả dụng</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Cho IP nguồn: <code class="font-mono text-indigo-700">172.16.100.200</code> đi kèm Subnet Mask là <code class="font-mono text-indigo-700">255.255.240.0</code>. Hãy tính toán: Địa chỉ mạng, địa chỉ Broadcast trực tiếp, và dải địa chỉ IP khả dụng có thể gán cho các host.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Bước 1: Đổi Octet 3 sang hệ nhị phân:</strong></p>
+                                <p class="font-mono text-xs">IP Octet 3: 100 --> 01100100</p>
+                                <p class="font-mono text-xs">Mask Octet 3: 240 --> 11110000</p>
+                                <p><strong>Bước 2: Thực hiện phép toán logic AND nhị phân để lấy địa chỉ mạng:</strong></p>
+                                <p class="font-mono text-xs">01100100 AND 11110000 = 01100000 (tức là 96 trong thập phân)</p>
+                                <p class="font-semibold">--> Địa chỉ mạng: <code class="font-mono bg-slate-100 px-1 py-0.5">172.16.96.0/20</code></p>
+                                <p><strong>Bước 3: Tính địa chỉ Broadcast (cho tất cả bit HostID bằng 1):</strong></p>
+                                <p class="text-xs">Phần HostID chiếm 12 bits cuối (4 bits cuối octet 3 và 8 bits octet 4).</p>
+                                <p class="font-mono text-xs">Octet 3 Broadcast: 01101111 = 111</p>
+                                <p class="font-mono text-xs">Octet 4 Broadcast: 11111111 = 255</p>
+                                <p class="font-semibold">--> Địa chỉ Broadcast: <code class="font-mono bg-slate-100 px-1 py-0.5">172.16.111.255</code></p>
+                                <p><strong>Bước 4: Xác định dải IP Host khả dụng:</strong></p>
+                                <p class="font-semibold text-emerald-700">--> Dải IP Host: <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">172.16.96.1</code> đến <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">172.16.111.254</code> (Có tổng cộng 4094 địa chỉ IP khả dụng).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 3 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 3: Tìm địa chỉ mạng chứa địa chỉ IP bất kỳ</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Giả sử bạn nhận được một địa chỉ IP gán cho máy trạm là <code class="font-mono text-indigo-700">192.168.16.99/27</code>. Hãy xác định địa chỉ mạng logic chứa thiết bị này.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Ký hiệu <code class="font-mono">/27</code> cho biết Subnet Mask có 27 bit 1 liên tục (tương ứng thập phân là: <code class="font-mono">255.255.255.224</code>) [242].</p>
+                                <p><strong>Phân tích Octet 4 chứa HostID:</strong></p>
+                                <p class="font-mono text-xs">IP Octet 4: 99  --> 01100011</p>
+                                <p class="font-mono text-xs">Mask Octet 4 (3 bit 1, 5 bit 0): 224 --> 11100000</p>
+                                <p><strong>Thực hiện phép AND logic nhị phân:</strong></p>
+                                <p class="font-mono text-xs">01100011 AND 11100000 = 01100000 (tức là 96 trong thập phân)</p>
+                                <p class="font-semibold text-emerald-700">--> Địa chỉ mạng cần tìm: <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">192.168.16.96/27</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 4 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 4: Viết gọn tối đa địa chỉ IPv6</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Viết gọn tối đa địa chỉ IPv6 đầy đủ sau bằng cách áp dụng các nguyên tắc rút gọn tiêu chuẩn: <code class="font-mono text-indigo-700">2001:0db8:0000:0000:abcd:0000:0000:1234</code>.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Áp dụng các bước rút gọn tuần tự [247, 248]:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Bước 1:</strong> Lược bỏ các số 0 đứng đầu ở mỗi nhóm --> <code class="font-mono bg-slate-100 px-1 py-0.5">2001:db8:0:0:abcd:0:0:1234</code> [247].</li>
+                                    <li><strong>Bước 2:</strong> Thay chuỗi 0 liên tiếp bằng "::". Lưu ý chỉ được dùng "::" một lần duy nhất. Ta chọn dải 0 dài nhất hoặc đầu tiên. Ở đây dải 1 và dải 2 đều dài 2 nhóm. Ta chọn dải đầu tiên để thay thế bằng "::" [248]:</li>
+                                    <li class="font-semibold text-emerald-700">--> Kết quả rút gọn tối ưu: <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">2001:db8::abcd:0:0:1234</code> (hoặc <code class="font-mono">2001:db8:0:0:abcd::1234</code>).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 5 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 5: Khôi phục địa chỉ IPv6 rút gọn về dạng đầy đủ</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Khôi phục địa chỉ IPv6 rút gọn <code class="font-mono text-indigo-700">FE80::3B:2A5</code> về định dạng đầy đủ 32 ký tự hex (đầy đủ 8 hextet và 4 ký tự mỗi nhóm).</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Phân tích địa chỉ rút gọn <code class="font-mono">FE80::3B:2A5</code>:</p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Hiện tại đang hiển thị rõ rệt 3 nhóm hextet: <code class="font-mono">FE80</code>, <code class="font-mono">3B</code>, <code class="font-mono">2A5</code>.</li>
+                                    <li>Một địa chỉ IPv6 tiêu chuẩn bắt buộc phải có đủ 8 nhóm hextet [243]. Như vậy dải "::" đang che giấu 5 nhóm hextet số 0 (8 - 3 = 5 nhóm) [248].</li>
+                                    <li>Thêm lại các số 0 đứng đầu mỗi nhóm để đủ cấu trúc 4 ký tự hexadecimal cho mỗi hextet [247]:</li>
+                                    <li class="font-semibold text-emerald-700">--> Dạng đầy đủ khôi phục: <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">fe80:0000:0000:0000:0000:0000:003b:02a5</code>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 6 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 6: Phân tích Header gói tin IPv4 đối với hoạt động định tuyến</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một gói tin IPv4 có trường TTL được thiết lập ban đầu bằng 64, trường Protocol là 17. Gói tin này phải đi qua 3 router trung gian để đến được đích. Hãy xác định giá trị trường TTL và Protocol khi gói tin đến đích, đồng thời cho biết tầng Giao vận bên trên của bên nhận sẽ xử lý gói tin này thông qua giao thức nào?</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Trường TTL:</strong> Mỗi khi đi qua một thiết bị định tuyến Router trung gian, giá trị TTL trong header gói tin sẽ bị trừ đi 1 đơn vị. Đi qua 3 router, TTL còn lại: <code class="font-mono text-indigo-700 bg-white px-1 border border-slate-200">64 - 3 = 61</code>.</li>
+                                    <li><strong>Trường Protocol:</strong> Giá trị này không bị thay đổi dọc đường truyền tải dữ liệu, vẫn giữ nguyên bằng **17**.</li>
+                                    <li><strong>Giao thức tầng trên nhận:</strong> Giá trị Protocol = 17 chỉ định gói tin thuộc giao thức truyền tải không hướng kết nối **UDP** (User Datagram Protocol) [179, 185].</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 7 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 7: Nhận diện địa chỉ IP hợp lệ để gán cho các host</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Cho dải mạng logic <code class="font-mono text-indigo-700">192.168.10.64/27</code>. Hãy phân tích xem các địa chỉ IP dưới đây có được phép gán tĩnh cho máy tính của người dùng trong văn phòng hay không? Giải thích tại sao:</p>
+                        <ul class="list-decimal pl-6 text-sm mb-3 font-mono">
+                            <li>192.168.10.64</li>
+                            <li>192.168.10.75</li>
+                            <li>192.168.10.95</li>
+                            <li>192.168.10.96</li>
+                        </ul>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Phân tích dải mạng <code class="font-mono">192.168.10.64/27</code>:</p>
+                                <ul class="list-disc pl-6 space-y-2">
+                                    <li>Subnet mask mới: <code class="font-mono">255.255.255.224</code>.</li>
+                                    <li>Địa chỉ mạng (Network ID): <strong class="text-amber-800 bg-amber-50 px-1 border border-amber-200">192.168.10.64</strong>. Địa chỉ đầu tiên này là chung cho cả mạng, <strong>KHÔNG được phép gán cho host</strong> [235].</li>
+                                    <li>Địa chỉ Quảng bá trực tiếp (Direct Broadcast): <strong class="text-amber-800 bg-amber-50 px-1 border border-amber-200">192.168.10.95</strong> (mọi bit HostID bằng 1). Địa chỉ này <strong>KHÔNG được phép gán cho host</strong> [236, 237].</li>
+                                    <li>Dải IP khả dụng để gán cho host: <code class="font-mono text-emerald-700">192.168.10.65</code> đến <code class="font-mono text-emerald-700">192.168.10.94</code>.</li>
+                                </ul>
+                                <p><strong>Kết quả phân tích cụ thể:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><code class="font-mono">192.168.10.64</code>: <strong>Không hợp lệ</strong> (Là địa chỉ mạng) [235].</li>
+                                    <li><code class="font-mono">192.168.10.75</code>: <strong class="text-emerald-700">Hợp lệ</strong> (Nằm trong dải khả dụng).</li>
+                                    <li><code class="font-mono">192.168.10.95</code>: <strong>Không hợp lệ</strong> (Là địa chỉ broadcast) [237].</li>
+                                    <li><code class="font-mono">192.168.10.96</code>: <strong>Không hợp lệ</strong> (Địa chỉ này đã thuộc về phân đoạn mạng con kế tiếp).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 8 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 8: Tính toán nhị phân logic AND cho cấu trúc Subnet /28</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Thực hiện chuyển đổi sang hệ nhị phân và tính toán logic AND để xác định địa chỉ mạng cho IP: <code class="font-mono text-indigo-700">10.10.100.200/28</code>.</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p>Prefix <code class="font-mono">/28</code> tương ứng Subnet Mask có 28 bit 1: <code class="font-mono">11111111.11111111.11111111.11110000</code> (<code class="font-mono">255.255.255.240</code>) [242].</p>
+                                <p>Ta chỉ cần chuyển đổi và AND ở octet thứ 4 chứa ranh giới phân tách:</p>
+                                <p class="font-mono text-xs">IP Octet 4: 200  --> 11001000</p>
+                                <p class="font-mono text-xs">Mask Octet 4: 240 --> 11110000</p>
+                                <p>Thực hiện phép toán logic AND nhị phân:</p>
+                                <p class="font-mono text-xs">11001000 AND 11110000 = 11000000 (tương ứng thập phân là: 192)</p>
+                                <p class="font-semibold text-emerald-700">--> Địa chỉ mạng logic: <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">10.10.100.192/28</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 9 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 9: Cơ chế hoạt động của ARP vs DNS trong quá trình chuyển tiếp gói tin</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Giải thích ngắn gọn sự khác biệt về bản chất hoạt động giữa giao thức ARP và dịch vụ DNS khi một máy tính người dùng truy cập một trang web?</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <ul class="list-disc pl-6 space-y-2">
+                                    <li>
+                                        <strong>DNS (Domain Name System):</strong> Là dịch vụ phân giải ở <strong>Tầng Ứng dụng</strong>, giúp ánh xạ ngược xuôi giữa Tên miền chữ dễ nhớ (ví dụ: <code class="font-mono">vhu.edu.vn</code>) thành Địa chỉ IP logic (ví dụ: <code class="font-mono">45.123.96.88</code>) giúp con người tương tác dễ dàng [210, 219, 399].
+                                    </li>
+                                    <li>
+                                        <strong>ARP (Address Resolution Protocol):</strong> Là giao thức ở <strong>Tầng Mạng/Liên kết dữ liệu</strong>, giúp ánh xạ Địa chỉ IP logic thành Địa chỉ vật lý MAC duy nhất của card mạng đích trong cùng phân đoạn mạng LAN để Switch có thể đóng và chuyển tiếp khung dữ liệu vật lý thành công [181, 185, 224].
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prob 10 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-2">Bài tập 10: Phân tích tại sao địa chỉ IP Private lại bị chặn định tuyến trên Internet</h4>
+                        <p class="text-sm mb-3"><strong>Đề bài:</strong> Một sinh viên Khoa CNTT cấu hình một Web Server trong mạng LAN gia đình sử dụng IP Private là <code class="font-mono text-indigo-700">192.168.1.15</code>. Sinh viên này gửi địa chỉ IP đó cho một người bạn ở ngoài Internet để truy cập thử trang web. Tại sao người bạn đó không thể kết nối được? Giải pháp khắc phục tiêu chuẩn là gì?</p>
+                        <!-- Hidden solution -->
+                        <div class="teacher-only hidden mt-4 pt-4 border-t border-dashed border-slate-300 bg-white p-4 rounded-lg">
+                            <span class="inline-block px-2 py-0.5 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded mb-2">Lời giải giáo viên:</span>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Nguyên nhân kỹ thuật:</strong></p>
+                                <p class="text-slate-600">
+                                    Địa chỉ <code class="font-mono">192.168.1.15</code> là địa chỉ thuộc dải IP Private Lớp C [238]. Địa chỉ Private chỉ hoạt động nội bộ trong mạng LAN gia đình và theo quy chuẩn cấu hình mặc định toàn cầu, toàn bộ thiết bị định tuyến Router của các nhà mạng ISP trên Internet đều chặn (không chuyển tiếp định tuyến) dải IP Private này để tránh xung đột trùng lặp [238].
+                                </p>
+                                <p><strong>Giải pháp khắc phục tiêu chuẩn:</strong></p>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li><strong>Giải pháp 1:</strong> Thiết lập quy tắc <strong>Port Forwarding (NAT)</strong> trên thiết bị Wireless Router tại nhà để ánh xạ cổng dịch vụ Web từ IP Public (thuê từ nhà mạng) vào IP Private của máy chủ. Người bạn ngoài Internet sẽ truy cập thông qua địa chỉ IP Public của đường truyền nhà sinh viên [296].</li>
+                                    <li><strong>Giải pháp 2:</strong> Thuê một máy chủ ảo Cloud VPS hoặc Web Hosting có gán IP Public thực tế để xuất bản trang web một cách chuyên nghiệp [239, 434].</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-1">&copy; 2026 Học liệu điện tử thông minh. Trường Đại học Văn Hiến.</p>
+            <p>Biên soạn kỹ thuật bởi Giảng viên Khoa Công nghệ thông tin.</p>
+        </div>
+    </footer>
+
+    <!-- Tab switcher & teacher lock script -->
+    <script>
+        function switchTab(tabId) {
+            const theoryTab = document.getElementById('tab-theory');
+            const practiceTab = document.getElementById('tab-practice');
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractice = document.getElementById('btn-practice');
+
+            if (tabId === 'theory') {
+                theoryTab.classList.remove('hidden');
+                practiceTab.classList.add('hidden');
+                btnTheory.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            } else {
+                theoryTab.classList.add('hidden');
+                practiceTab.classList.remove('hidden');
+                btnTheory.className = "border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+                btnPractice.className = "border-b-2 border-blue-600 text-blue-600 px-1 py-4 text-sm font-semibold flex items-center space-x-2 transition";
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('teacher-password').value;
+            if (passInput === 'VHU@INT4401') {
+                // Reveal hidden solutions
+                const hiddenElements = document.querySelectorAll('.teacher-only');
+                hiddenElements.forEach(el => {
+                    el.classList.remove('hidden');
+                });
+                
+                // Highlight correct MCQ answers
+                const correctMcqs = document.querySelectorAll('.mcq-correct');
+                correctMcqs.forEach(el => {
+                    el.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'font-semibold');
+                    el.classList.remove('border-slate-200');
+                    el.innerHTML += ' <span class="ml-2 text-xs bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Đúng</span>';
+                });
+
+                alert('🔑 KHÓA GIẢNG VIÊN ĐÃ ĐƯỢC GIẢI MÃ THÀNH CÔNG! Đã mở rộng lời giải tự luận chi tiết và tô xanh đáp án trắc nghiệm đúng.');
+            } else {
+                alert('❌ Sai mật khẩu bảo mật học phần! Vui lòng kiểm tra lại đề cương chi tiết môn học.');
+            }
+        }
+    </script>
+</body>
+</html>
